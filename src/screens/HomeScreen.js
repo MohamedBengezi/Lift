@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
-import Fire from '../../Fire';
 import { Context } from '../components/context/CreateContext';
 import CardComponent from '../components/common/CardComponent';
 import { ScrollView } from 'react-native-gesture-handler';
