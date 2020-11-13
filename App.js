@@ -7,7 +7,6 @@ import HeaderRight from './src/components/HeaderRight';
 import MainScreen from './src/screens/MainScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import HomeScreen from './src/screens/HomeScreen';
-import CreateScreen from './src/screens/CreateScreen';
 import { Provider } from './src/components/context/CreateContext';
 
 const navigator = createStackNavigator(
@@ -29,8 +28,7 @@ const navigator = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         ...TransitionPresets.ModalSlideFromBottomIOS,
       }),
-    },
-    Create: CreateScreen
+    }
   },
   {
     initialRouteName: 'Main',
