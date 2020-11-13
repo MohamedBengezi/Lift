@@ -1,49 +1,66 @@
 import React from 'react'
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator, TransitionPresets } from 'react-navigation-stack';
-import Header from './src/components/Header';
-import HeaderLeft from './src/components/HeaderLeft';
-import HeaderRight from './src/components/HeaderRight';
+import { StyleSheet } from 'react-native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MainScreen from './src/screens/MainScreen';
-import ChatScreen from './src/screens/ChatScreen';
+import ProfileScreen from './src/screens/ProfileIndex';
 import HomeScreen from './src/screens/HomeScreen';
-import { Provider } from './src/components/context/CreateContext';
 
-const navigator = createStackNavigator(
-  {
-    Main: {
-      screen: MainScreen,
-      navigationOptions: ({ navigation }) => ({
-        ...TransitionPresets.ModalSlideFromBottomIOS,
-      }),
-    },
-    Feed: {
-      screen: HomeScreen,
-      navigationOptions: ({ navigation }) => ({
-        ...TransitionPresets.ModalSlideFromBottomIOS,
-      }),
-    },
-    Profile: {
-      screen: ChatScreen,
-      navigationOptions: ({ navigation }) => ({
-        ...TransitionPresets.ModalSlideFromBottomIOS,
-      }),
-    }
-  },
-  {
-    initialRouteName: 'Main',
-    defaultNavigationOptions: ({ navigation }) => {
-      return {
-        headerStyle: {
-          backgroundColor: '#ffffff',
-        },
-      }
-    }
+const Tab = createMaterialTopTabNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Feed') {
+              iconName = focused
+                ? 'ios-information-circle'
+                : 'ios-information-circle-outline';
+            } else if (route.name === 'Main') {
+              iconName = focused ? 'md-camera' : 'md-camera';
+            } else {
+              iconName = focused ? 'md-person' : 'md-person';
+            }
+
+            return <Ionicons name={iconName} size={size} color={color} style={styles.container} />;
+          },
+        })}
+        tabBarPosition='bottom'
+        tabBarOptions={{
+          activeTintColor: 'tomato',
+          inactiveTintColor: 'gray',
+          showIcon: true,
+          showLabel: false,
+          style: {
+            backgroundColor: 'transparent',
+            borderTopWidth: 0,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0
+          }
+        }}
+        initialRouteName={'Main'}
+      >
+        <Tab.Screen name="Feed" component={HomeScreen} />
+        <Tab.Screen name="Main" component={MainScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    fontSize: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   }
-);
-const App = createAppContainer(navigator);
-export default () => {
-  return <Provider>
-    <App />
-  </Provider>
-};
+});
