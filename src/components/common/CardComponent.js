@@ -8,11 +8,12 @@ import {
     Linking
 } from "react-native";
 
-import { Card, CardItem, Thumbnail, Body, Left, Right, Button, Icon } from 'native-base';
+import { Card, CardItem, Thumbnail, Body, Left, Right, Button } from 'native-base';
 import { WebView } from 'react-native-webview';
 import { Dimensions } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -193,17 +194,17 @@ class CardComponent extends Component {
                         <CardItem style={{ height: 30 }}>
                             <Left>
                                 <Button transparent>
-                                    <Icon name="ios-heart-outline" style={{ color: 'black' }} />
+                                    <Ionicons name="md-heart" color='black' />
                                     <Text> {this.props.likes}</Text>
                                 </Button>
                                 <Button transparent>
-                                    <Icon name="ios-chatbubbles-outline" style={{ color: 'black' }} />
+                                    <Ionicons name="md-chatbubbles" color="black" />
                                     <Text> {this.props.nb_commentaires}</Text>
                                 </Button>
                             </Left>
                             <Right>
                                 <Button transparent>
-                                    <Icon name="ios-send-outline" style={{ color: 'black' }} />
+                                    <Ionicons name="md-heart" color="black" />
                                 </Button>
                             </Right>
                         </CardItem>

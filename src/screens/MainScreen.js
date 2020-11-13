@@ -6,6 +6,7 @@ import * as Permissions from 'expo-permissions';
 import { FlingGestureHandler, Directions } from 'react-native-gesture-handler'
 import HeaderLeft from '../components/HeaderLeft';
 import HeaderRight from '../components/HeaderRight';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const MainScreen = ({ navigation }) => {
     const [camera, setCamera] = useState({
@@ -15,11 +16,13 @@ const MainScreen = ({ navigation }) => {
 
     const [image, setImage] = useState(null);
 
-    useEffect(async () => {
-        const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    useEffect(() => {
+        const runEffect = async () => {
+            const { status } = await Permissions.askAsync(Permissions.CAMERA);
 
-        setCamera(prevState => ({ ...prevState, hasCameraPermission: status === 'granted' }));
-
+            setCamera(prevState => ({ ...prevState, hasCameraPermission: status === 'granted' }));
+        };
+        runEffect()
     }, []);
 
     takePicture = () => {
@@ -30,7 +33,8 @@ const MainScreen = ({ navigation }) => {
     };
 
     onPictureSaved = photo => {
-        console.log("Image" + photo.uri);
+        str = JSON.stringify(photo);
+        console.log("Image: " + str);
         setImage(photo);
     }
 
@@ -46,19 +50,11 @@ const MainScreen = ({ navigation }) => {
                         source={{ uri: image.uri }}
                         style={styles.preview}
                     />
-                    <Text
-                        style={styles.post}
-                        onPress={() => setImage(null)}
-                    >
-                        Cancel
-                    </Text>
+                    <Ionicons name="md-send" style={styles.post} onPress={() => navigation.navigate('Feed', { image })} />
 
-                    <Text
-                        style={styles.cancel}
-                        onPress={() => navigation.navigate('Feed', { image })}
-                    >
-                        Post
-                    </Text>
+
+                    <Ionicons name="md-backspace" onPress={() => setImage(null)} style={styles.cancel} />
+
                 </View>
             );
         } else {
@@ -84,14 +80,12 @@ const MainScreen = ({ navigation }) => {
                                             camera.type === Camera.Constants.Type.back ? Camera.Constants.Type.front : Camera.Constants.Type.back,
                                     });
                                 }}>
-                                <Text style={{ fontSize: 18, marginTop: 10, color: 'white' }}>
-                                    {' '}
-                        Flip{' '}
+                                <Text style={styles.flip} >
+                                    <Ionicons name="md-camera" style={styles.flip} />
                                 </Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.menu}>
-                            <HeaderLeft onPress={() => navigation.navigate('Feed')} />
 
                             <TouchableHighlight
                                 style={styles.capture}
@@ -101,7 +95,6 @@ const MainScreen = ({ navigation }) => {
                                 <View />
                             </TouchableHighlight>
 
-                            <HeaderRight onPress={() => navigation.navigate('Profile')} />
                         </View>
                     </Camera>
                 </View>
@@ -138,29 +131,33 @@ const styles = StyleSheet.create({
         borderRadius: 35,
         borderWidth: 5,
         borderColor: '#FFF',
-        marginBottom: 15,
-        alignSelf: 'center'
+        marginBottom: 50,
+        alignSelf: 'center',
     },
     cancel: {
         position: 'absolute',
-        right: 20,
-        top: 20,
-        backgroundColor: 'transparent',
-        color: '#000',
+        left: 20,
+        top: 40,
+        color: '#ffffff',
         fontWeight: '600',
-        fontSize: 17,
+        fontSize: 28,
     },
     post: {
         position: 'absolute',
         right: 20,
-        bottom: 20,
-        backgroundColor: 'transparent',
-        color: '#000',
+        top: 40,
+        color: '#ffffff',
         fontWeight: '600',
-        fontSize: 17,
+        fontSize: 28,
+    },
+    flip: {
+        fontSize: 28,
+        marginTop: 30,
+        marginRight: 30,
+        color: 'white'
     },
     menu: {
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         flexDirection: "row"
 
     }
