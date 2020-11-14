@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.10",
-    "expo": "~38.0.1",
+    "expo": "^38.0.10",
+    "expo-av": "^8.6.0",
     "expo-camera": "^9.0.0",
     "expo-permissions": "^9.3.0",
     "expo-status-bar": "^1.0.0",
