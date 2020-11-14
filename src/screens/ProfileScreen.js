@@ -7,6 +7,7 @@ import {
     StyleSheet,
     Text,
     View,
+    YellowBox
 } from 'react-native'
 import { Icon } from 'react-native-elements'
 import {
@@ -140,6 +141,10 @@ class Profile extends Component {
                 { key: '4', title: 'followers', count: '1.3 K' },
             ],
         },
+    }
+
+    componentDidMount() {
+        YellowBox.ignoreWarnings(['VirtualizedLists should never be nested']);
     }
 
     onPressPlace = () => {

@@ -18,13 +18,11 @@ export default function App() {
             let iconName;
 
             if (route.name === 'Feed') {
-              iconName = focused
-                ? 'ios-information-circle'
-                : 'ios-information-circle-outline';
+              iconName = 'md-paper';
             } else if (route.name === 'Main') {
-              iconName = focused ? 'md-camera' : 'md-camera';
+              iconName = 'md-camera';
             } else {
-              iconName = focused ? 'md-person' : 'md-person';
+              iconName = 'md-person';
             }
 
             return <Ionicons name={iconName} size={size} color={color} style={styles.container} />;
@@ -33,7 +31,7 @@ export default function App() {
         tabBarPosition='bottom'
         tabBarOptions={{
           activeTintColor: 'tomato',
-          inactiveTintColor: 'gray',
+          inactiveTintColor: 'white',
           showIcon: true,
           showLabel: false,
           style: {
