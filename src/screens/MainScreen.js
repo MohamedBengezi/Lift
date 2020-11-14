@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -63,6 +64,7 @@ const MainScreen = ({ navigation }) => {
         const data = await promise;
         onVideoSaved(data);
       }
+
     }
   };
 
@@ -129,6 +131,7 @@ const MainScreen = ({ navigation }) => {
         </View>
       );
     } else {
+
       return (
         <View style={{ flex: 1 }}>
           <Camera
@@ -194,6 +197,7 @@ MainScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     alignItems: "center",
@@ -244,6 +248,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
   },
+
 });
 
 export default MainScreen;
