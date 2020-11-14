@@ -31,7 +31,7 @@ export default function App() {
         tabBarPosition='bottom'
         tabBarOptions={{
           activeTintColor: 'tomato',
-          inactiveTintColor: 'gray',
+          inactiveTintColor: 'white',
           showIcon: true,
           showLabel: false,
           style: {
