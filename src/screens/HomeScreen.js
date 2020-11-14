@@ -4,10 +4,12 @@ import { Context } from '../components/context/CreateContext';
 import CardComponent from '../components/common/CardComponent';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const HomeScreen = ({ navigation }) => {
-    let image = navigation.getParam('image');
-    if (image == null || image == undefined) {
-        image = require("../../assets/icon.png");
+const HomeScreen = ({ route, navigation }) => {
+    let image;
+    if (route.params == undefined || route.params.image == undefined) {
+        image = Image.resolveAssetSource(require("../../assets/icon.png"));
+    } else {
+        image = route.params.image;
     }
 
     const onPress = () => {
