@@ -9,19 +9,15 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.10",
-
-    "expo": "^38.0.10",
-    "expo-av": "^8.6.0",
-
     "@react-navigation/bottom-tabs": "^5.11.1",
     "@react-navigation/material-top-tabs": "^5.3.9",
     "@react-navigation/native": "^5.8.9",
-
-
+    "expo": "~38.0.1",
+    "expo-av": "^8.6.0",
     "expo-camera": "^9.0.0",
     "expo-permissions": "^9.3.0",
     "expo-status-bar": "^1.0.0",
-    "firebase": "^4.8.1",
+    "grpc": "^1.24.4",
     "native-base": "^2.13.14",
     "react": "~16.11.0",
     "react-dom": "~16.11.0",

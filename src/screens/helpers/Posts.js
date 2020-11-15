@@ -54,6 +54,7 @@ class Posts extends Component {
                     removeClippedSubviews={false}
                     contentContainerStyle={[styles.container, this.props.containerStyle]}
                     data={this.props.posts}
+                    keyExtractor={item => item.id.toString()}
                     renderItem={list => {
                         return (
                             <Post
