@@ -262,9 +262,20 @@ class Profile extends Component {
 
     render() {
         return (
-            <View>
-
-            </View>
+            <ScrollView style={styles.scroll}>
+                <View style={[styles.container, this.props.containerStyle]}>
+                    <View style={styles.cardContainer}>
+                        {this.renderContactHeader()}
+                        <TabView
+                            style={[styles.tabContainer, this.props.tabContainerStyle]}
+                            navigationState={this.state.tabs}
+                            renderScene={this.renderScene}
+                            renderTabBar={this.renderTabBar}
+                            onIndexChange={this.handleIndexChange}
+                        />
+                    </View>
+                </View>
+            </ScrollView>
         )
     }
 }
