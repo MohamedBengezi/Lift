@@ -1,1 +1,2 @@
-node server/poc/app.js
+cd server/poc
+node app.js
