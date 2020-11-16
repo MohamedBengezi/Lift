@@ -18,6 +18,7 @@ import { FlingGestureHandler, Directions } from "react-native-gesture-handler";
 import HeaderLeft from "../components/HeaderLeft";
 import HeaderRight from "../components/HeaderRight";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as SplashScreen from 'expo-splash-screen';
 
 const MainScreen = ({ navigation }) => {
     const [camera, setCamera] = useState({
@@ -33,7 +34,19 @@ const MainScreen = ({ navigation }) => {
     const [video, setVideo] = useState(null);
 
     useEffect(() => {
-        async function fetchPermissions() {
+        async function displaySplashWhileLoading() {
+            try {
+                await SplashScreen.preventAutoHideAsync();
+            } catch (e) {
+                console.warn(e);
+            }
+            fetchPermissions();
+        }
+        displaySplashWhileLoading()
+    }, []);
+
+    async function fetchPermissions() {
+        try {
             const { status } = await Permissions.askAsync(Permissions.CAMERA);
             setCamera((prevState) => ({
                 ...prevState,
@@ -46,9 +59,12 @@ const MainScreen = ({ navigation }) => {
                 ...prevState,
                 hasAudioPermissions: status2 === "granted",
             }));
+        } catch (e) {
+            console.warn(e);
+        } finally {
+            await SplashScreen.hideAsync();
         }
-        fetchPermissions();
-    }, []);
+    }
 
     takePicture = () => {
         if (this.camera) {
@@ -94,7 +110,7 @@ const MainScreen = ({ navigation }) => {
                         source={{ uri: image.uri }}
                         style={styles.preview}
                     />
-                    <Ionicons name="md-send" style={styles.post} onPress={() => navigation.navigate('Feed', { image })} />
+                    <Ionicons name="md-send" style={styles.post} onPress={() => navigation.navigate('Feed', { image, video })} />
 
 
                     <Ionicons name="md-backspace" onPress={() => setImage(null)} style={styles.cancel} />

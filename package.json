@@ -16,6 +16,7 @@
     "expo-av": "^8.6.0",
     "expo-camera": "^9.0.0",
     "expo-permissions": "^9.3.0",
+    "expo-splash-screen": "^0.6.2",
     "expo-status-bar": "^1.0.0",
     "grpc": "^1.24.4",
     "native-base": "^2.13.14",
