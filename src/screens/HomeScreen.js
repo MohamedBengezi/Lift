@@ -15,21 +15,24 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
 
 const HomeScreen = ({ route, navigation }) => {
-  let image;
+  let image = null, video = null, count = 0;
   const [play, setPlay] = useState(false);
-  if (route.params == undefined || route.params.image == undefined) {
+  url = "http://0dcbc9672557.ngrok.io/sample";
+
+  if (route.params == undefined) {
     image = Image.resolveAssetSource(require("../../assets/icon.png"));
   } else {
-    image = route.params.image;
+    image = [route.params.image, route.params.image, route.params.image, route.params.image];
+  }
+  if (url != "") {
+    video = [url, url, url, url];
   }
 
-  const onPress = () => {
-    navigation.navigate("Profile", { name: navigation.getParam("image") });
-  };
-
-  return (
-    <View style={styles.background}>
+  const renderVid = (vid) =>
+    <View style={styles.container}>
       <ScrollView>
+        <Text>this is a video post</Text>
+
         <WebView
           source={{
             html: `<!DOCTYPE html>
@@ -38,7 +41,7 @@ const HomeScreen = ({ route, navigation }) => {
                 <title></title>
             </head>
             <body>
-            <video preload autoplay="true" src="http://db142acf3d26.ngrok.io/sample" controls="true">
+            <video id=${count} preload autoplay="false" src=${vid.item} controls="true">
             </video>
             </body>
             </html>`,
@@ -47,7 +50,43 @@ const HomeScreen = ({ route, navigation }) => {
         />
       </ScrollView>
     </View>
-  );
+
+  const renderImage = (image) =>
+    <View style={styles.container}>
+      <Text>this is an image post</Text>
+      <Image
+        source={{ uri: image.item.uri }}
+        style={styles.post}
+      />
+    </View>
+
+
+  if (video) {
+    return (
+      <View style={styles.background}>
+        <ScrollView>
+          <FlatList
+            data={video}
+            renderItem={vid => renderVid(vid)}
+            keyExtractor={vid => vid + count++}
+          />
+        </ScrollView>
+      </View >
+    );
+  } else {
+    return (
+      <View style={styles.background}>
+        <ScrollView>
+          <FlatList
+            data={image}
+            renderItem={photo => renderImage(photo)}
+            keyExtractor={photo => photo.uri + count++}
+          />
+
+        </ScrollView>
+      </View >
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -62,6 +101,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
+  },
+  container: {
+    alignItems: 'center',
+    marginTop: 20,
+    borderRadius: 1,
+    borderWidth: 2,
+    borderColor: 'black',
+
   },
   row: {
     height: 100,

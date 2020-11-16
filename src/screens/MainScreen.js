@@ -121,7 +121,10 @@ const MainScreen = ({ navigation }) => {
           <Ionicons
             name="md-send"
             style={styles.post}
-            onPress={() => navigation.navigate("Feed", { video })}
+            onPress={() => {
+              //UPLOAD HERE
+              navigation.navigate("Feed", { video })
+            }}
           />
 
           <Ionicons
