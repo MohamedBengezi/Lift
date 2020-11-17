@@ -1,64 +1,129 @@
-import React from 'react'
-import { StyleSheet } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MainScreen from './src/screens/MainScreen';
-import ProfileScreen from './src/screens/ProfileIndex';
-import HomeScreen from './src/screens/HomeScreen';
+import React from "react";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
+import { createMaterialTopTabNavigator } from "react-navigation-tabs";
+import { StyleSheet } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MainScreen from "./src/screens/MainScreen";
+import ProfileScreen from "./src/screens/ProfileIndex";
+import HomeScreen from "./src/screens/HomeScreen";
+import SigninScreen from "./src/screens/SigninScreen";
+import SignupScreen from "./src/screens/SignupScreen";
+import { Provider as AuthProvider } from "./src/context/AuthContext";
+import { setNavigator } from "./src/navigationRef";
 
-const Tab = createMaterialTopTabNavigator();
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === 'Feed') {
-              iconName = 'md-paper';
-            } else if (route.name === 'Main') {
-              iconName = 'md-camera';
-            } else {
-              iconName = 'md-person';
-            }
-
-            return <Ionicons name={iconName} size={size} color={color} style={styles.container} />;
-          },
-        })}
-        tabBarPosition='bottom'
-        tabBarOptions={{
-          activeTintColor: 'tomato',
-          inactiveTintColor: 'white',
-          showIcon: true,
-          showLabel: false,
-          style: {
-            backgroundColor: 'transparent',
-            borderTopWidth: 0,
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0
-          }
-        }}
-        initialRouteName={'Main'}
-      >
-        <Tab.Screen name="Feed" component={HomeScreen} />
-        <Tab.Screen name="Main" component={MainScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
-}
+//const Tab = createMaterialTopTabNavigator();
+const styleTab = {
+  activeTintColor: "blue",
+  labelStyle: {
+    fontSize: 20,
+  },
+  showIcon: true,
+  showLabel: false,
+  inactiveTintColor: "#DDD",
+  style: { elevation: 0 },
+  tabStyle: {
+    height: 50,
+    backgroundColor: "#fff",
+  },
+  scrollEnabled: false,
+  swipeEnabled: true,
+  upperCaseLabel: false,
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     fontSize: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  }
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
 });
+
+const switchNavigator = createSwitchNavigator({
+  loginFlow: createStackNavigator({
+    Signup: SignupScreen,
+    Signin: SigninScreen,
+  }),
+
+  mainFlow: createMaterialTopTabNavigator(
+    {
+      Feed: {
+        screen: HomeScreen,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: "Feed",
+          tabBarOptions: styleTab,
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            let iconName = `md-paper`;
+            return (
+              <Ionicons
+                name={iconName}
+                size={horizontal ? 20 : 25}
+                color={tintColor}
+                style={styles.container}
+              />
+            );
+          },
+        },
+      },
+      Main: {
+        screen: MainScreen,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: "Main",
+          tabBarOptions: styleTab,
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            let iconName = `md-camera`;
+            return (
+              <Ionicons
+                name={iconName}
+                size={horizontal ? 20 : 25}
+                color={tintColor}
+                style={styles.container}
+              />
+            );
+          },
+        },
+      },
+      Profile: {
+        screen: ProfileScreen,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: "Profile",
+          tabBarOptions: styleTab,
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            let iconName = `md-person`;
+            return (
+              <Ionicons
+                name={iconName}
+                size={horizontal ? 20 : 25}
+                color={tintColor}
+                style={styles.container}
+              />
+            );
+          },
+        },
+      },
+    },
+    {
+      initialRouteName: "Main",
+      tabBarPosition: "bottom",
+    }
+  ),
+});
+
+const App = createAppContainer(switchNavigator);
+
+export default () => {
+  return (
+    <AuthProvider>
+      <App
+        ref={(navigator) => {
+          setNavigator(navigator);
+        }}
+      />
+    </AuthProvider>
+  );
+};
