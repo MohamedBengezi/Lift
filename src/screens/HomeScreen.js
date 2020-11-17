@@ -14,21 +14,20 @@ import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
 
-const HomeScreen = ({ route, navigation }) => {
-  let image = null, video = null, count = 0;
+const HomeScreen = ({ navigation }) => {
+  let image = null,
+    video = null,
+    count = 0;
   const [play, setPlay] = useState(false);
   url = "http://0dcbc9672557.ngrok.io/sample";
 
-  if (route.params == undefined) {
-    image = Image.resolveAssetSource(require("../../assets/icon.png"));
-  } else {
-    image = [route.params.image, route.params.image, route.params.image, route.params.image];
-  }
+  image = Image.resolveAssetSource(require("../../assets/icon.png"));
+
   if (url != "") {
     video = [url, url, url, url];
   }
 
-  const renderVid = (vid) =>
+  const renderVid = (vid) => (
     <View style={styles.container}>
       <ScrollView>
         <Text>this is a video post</Text>
@@ -50,16 +49,14 @@ const HomeScreen = ({ route, navigation }) => {
         />
       </ScrollView>
     </View>
+  );
 
-  const renderImage = (image) =>
+  const renderImage = (image) => (
     <View style={styles.container}>
       <Text>this is an image post</Text>
-      <Image
-        source={{ uri: image.item.uri }}
-        style={styles.post}
-      />
+      <Image source={{ uri: image.item.uri }} style={styles.post} />
     </View>
-
+  );
 
   if (video) {
     return (
@@ -67,11 +64,11 @@ const HomeScreen = ({ route, navigation }) => {
         <ScrollView>
           <FlatList
             data={video}
-            renderItem={vid => renderVid(vid)}
-            keyExtractor={vid => vid + count++}
+            renderItem={(vid) => renderVid(vid)}
+            keyExtractor={(vid) => vid + count++}
           />
         </ScrollView>
-      </View >
+      </View>
     );
   } else {
     return (
@@ -79,12 +76,11 @@ const HomeScreen = ({ route, navigation }) => {
         <ScrollView>
           <FlatList
             data={image}
-            renderItem={photo => renderImage(photo)}
-            keyExtractor={photo => photo.uri + count++}
+            renderItem={(photo) => renderImage(photo)}
+            keyExtractor={(photo) => photo.uri + count++}
           />
-
         </ScrollView>
-      </View >
+      </View>
     );
   }
 };
@@ -103,12 +99,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
     borderRadius: 1,
     borderWidth: 2,
-    borderColor: 'black',
-
+    borderColor: "black",
   },
   row: {
     height: 100,
