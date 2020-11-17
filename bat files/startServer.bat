@@ -1,3 +1,3 @@
-cd server/poc
+cd ../server/poc
 node app.js
 pause
