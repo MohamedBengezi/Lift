@@ -41,7 +41,7 @@ const MainScreen = ({ navigation }) => {
       }
       fetchPermissions();
     }
-    displaySplashWhileLoading()
+    fetchPermissions()
   }, []);
 
   async function fetchPermissions() {
@@ -109,7 +109,12 @@ const MainScreen = ({ navigation }) => {
             source={{ uri: image.uri }}
             style={styles.preview}
           />
-          <Ionicons name="md-send" style={styles.post} onPress={() => navigation.navigate('Feed', { image, video })} />
+          <Ionicons name="md-send"
+            style={styles.post}
+            onPress={() => {
+              navigation.navigate('Post', { image, video })
+            }}
+          />
 
 
           <Ionicons name="md-backspace" onPress={() => setImage(null)} style={styles.cancel} />
