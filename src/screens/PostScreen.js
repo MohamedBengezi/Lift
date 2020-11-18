@@ -49,9 +49,9 @@ const PostScreen = ({ navigation }) => {
 
     const onSubmit = () => {
         if (video != null) {
-            navigation.navigate('Feed', { video })
+            navigation.navigate('Feed', { video, title })
         } else {
-            navigation.navigate('Feed', { image })
+            navigation.navigate('Feed', { image, title })
 
         }
     };
