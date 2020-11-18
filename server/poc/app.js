@@ -3,6 +3,7 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 var cors = require("cors");
+const formData = require("express-form-data");
 
 // Set up disk storage system. Field name is based of the field value expected from the form-data,
 // which will be myFile for now. Files are stored locally. Will move to services such as aws s3 later.
@@ -51,17 +52,12 @@ const streamVideo = (req, res, path) => {
 
 const app = express();
 app.use(cors());
-
+app.use(formData.parse());
 // Generic upload route. Can uplaod images or videos through here. All files are names myFile.jpg (or .mp4).
 // We only store one file of a specific type for now (will change later)
-app.post("/upload", (req, res) => {
-  upload(req, res, (err) => {
-    if (err) {
-      console.log("Error uploading file");
-    } else {
-      res.send("Upload success");
-    }
-  });
+app.post("/upload", async (req, res) => {
+  console.log(req);
+  return res.send("Upload success");
 });
 
 // Fetches a file with a specified name. For now, all files will be named 'myFile.(*)' so only request that. Extentsion must be passed for this to work

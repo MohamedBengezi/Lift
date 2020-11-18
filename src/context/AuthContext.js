@@ -2,6 +2,7 @@ import { AsyncStorage } from "react-native";
 import createDataContext from "./createDataContext";
 import serverApi from "../api/server";
 import { navigate } from "../navigationRef";
+import FormData from "form-data";
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -43,14 +44,32 @@ const signout = (dispatch) => {
   };
 };
 
-const upload = (dispatch) => async ({ video }) => {
+const upload = (dispatch) => async ({ image, video }) => {
   try {
     console.log("In upload");
-    const fileUri = video.uri;
-    const response = await serverApi.post("/upload", { myFile: fileUri });
-    await AsyncStorage.setItem("token", response.data.token);
-    dispatch({ type: "signup", payload: response.data.token });
+    console.log(image);
+    const formdata = new FormData();
+    formdata.append("myFile", {
+      uri: image.uri,
+      type: "image/jpeg/jpg",
+      name: "test.jpg",
+      data: image.data,
+    });
+    const testForm = new FormData();
+    console.log(formdata);
+    testForm.append("test", image);
+    const response = await serverApi.post("/upload", testForm, {
+      headers: {
+        accept: "application/json",
+        "Accept-Language": "en-US,en;q=0.8",
+        "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+      },
+    });
+    console.log(response);
+    //   await AsyncStorage.setItem("token", response.data.token);
+    //   dispatch({ type: "signup", payload: response.data.token });
   } catch (err) {
+    console.log("in error", err);
     dispatch({
       type: "add_error",
       payload: "Something went wrong with upload",
