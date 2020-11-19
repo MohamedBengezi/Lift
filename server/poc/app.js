@@ -2,14 +2,23 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
-var cors = require("cors");
 
 // Set up disk storage system. Field name is based of the field value expected from the form-data,
 // which will be myFile for now. Files are stored locally. Will move to services such as aws s3 later.
 const storage = multer.diskStorage({
   destination: "./public/uploads",
   filename: (req, file, cb) => {
-    cb(null, file.fieldname + path.extname(file.originalname));
+    console.log("multer file", file);
+    let type;
+    const fileType = file.mimetype.toString();
+    console.log(fileType.includes("jpeg"));
+    console.log("image/jpeg" == fileType);
+    if (fileType.includes("jpeg")) {
+      type = ".jpg";
+    } else if (fileType.includes("mp4")) {
+      type = ".mp4";
+    }
+    cb(null, file.fieldname + path.extname(file.originalname) + type);
   },
 });
 
@@ -50,12 +59,12 @@ const streamVideo = (req, res, path) => {
 };
 
 const app = express();
-app.use(cors());
 
 // Generic upload route. Can uplaod images or videos through here. All files are names myFile.jpg (or .mp4).
 // We only store one file of a specific type for now (will change later)
 app.post("/upload", (req, res) => {
   upload(req, res, (err) => {
+    console.log(req.files);
     if (err) {
       console.log("Error uploading file");
     } else {
@@ -83,7 +92,6 @@ app.get("/video", (req, res) => {
 
 // Test route. Sends a video via stream
 app.get("/sample", (req, res) => {
-  console.log("In sample get path");
   const path = "assets/sample.mp4";
   streamVideo(req, res, path);
 });
