@@ -2,6 +2,10 @@ import { AsyncStorage } from "react-native";
 import createDataContext from "./createDataContext";
 import serverApi from "../api/server";
 import { navigate } from "../navigationRef";
+import FormData from "form-data";
+import Axios from "axios";
+
+const apiLink = serverApi.defaults.baseURL;
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -43,20 +47,53 @@ const signout = (dispatch) => {
   };
 };
 
-const upload = (dispatch) => async ({ video }) => {
+const upload = (dispatch) => async ({ image, video }) => {
   try {
-    console.log("In upload");
-    const fileUri = video.uri;
-    const response = await serverApi.post("/upload", { myFile: fileUri });
-    await AsyncStorage.setItem("token", response.data.token);
-    dispatch({ type: "signup", payload: response.data.token });
+    const body = new FormData();
+    let fileUri;
+    if (image != null) {
+      fileUri = image.uri;
+    } else if (video != null) {
+      fileUri = video.uri;
+    }
+    body.append("myFile", {
+      uri: fileUri,
+      type: "image/jpeg",
+      name: "myFile",
+    });
+
+    const response = await sendXmlHttpRequest(body);
+    console.log(response);
   } catch (err) {
+    console.log(err);
     dispatch({
       type: "add_error",
-      payload: "Something went wrong with upload",
+      payload: "Something went wrong with upload ",
     });
   }
 };
+
+function sendXmlHttpRequest(data) {
+  const xhr = new XMLHttpRequest();
+
+  return new Promise((resolve, reject) => {
+    xhr.onreadystatechange = (e) => {
+      if (xhr.readyState !== 4) {
+        return;
+      }
+
+      if (xhr.status === 200) {
+        resolve(xhr.responseText);
+      } else {
+        reject("Request Failed");
+      }
+    };
+    xhr.open("POST", `${apiLink}/upload`);
+    xhr.setRequestHeader("Content-Type", "multipart/form-data");
+    xhr.send(data);
+  });
+}
+
 export const { Provider, Context } = createDataContext(
   authReducer,
   { signin, signout, signup, upload },
