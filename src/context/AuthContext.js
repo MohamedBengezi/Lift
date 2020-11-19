@@ -46,36 +46,51 @@ const signout = (dispatch) => {
 
 const upload = (dispatch) => async ({ image, video }) => {
   try {
-    console.log("In upload");
-    console.log(image);
-    const formdata = new FormData();
-    formdata.append("myFile", {
-      uri: image.uri,
-      type: "image/jpeg/jpg",
-      name: "test.jpg",
-      data: image.data,
+    const body = new FormData();
+    let fileUri;
+    if (image != null) {
+      fileUri = image.uri;
+    } else if (video != null) {
+      fileUri = video.uri;
+    }
+    body.append("myFile", {
+      uri: fileUri,
+      type: "image/jpeg",
+      name: "myFile",
     });
-    const testForm = new FormData();
-    console.log(formdata);
-    testForm.append("test", image);
-    const response = await serverApi.post("/upload", testForm, {
-      headers: {
-        accept: "application/json",
-        "Accept-Language": "en-US,en;q=0.8",
-        "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-      },
-    });
+
+    const response = await sendXmlHttpRequest(body);
     console.log(response);
-    //   await AsyncStorage.setItem("token", response.data.token);
-    //   dispatch({ type: "signup", payload: response.data.token });
   } catch (err) {
-    console.log("in error", err);
+    console.log(err);
     dispatch({
       type: "add_error",
-      payload: "Something went wrong with upload",
+      payload: "Something went wrong with upload ",
     });
   }
 };
+
+function sendXmlHttpRequest(data) {
+  const xhr = new XMLHttpRequest();
+
+  return new Promise((resolve, reject) => {
+    xhr.onreadystatechange = (e) => {
+      if (xhr.readyState !== 4) {
+        return;
+      }
+
+      if (xhr.status === 200) {
+        resolve(xhr.responseText);
+      } else {
+        reject("Request Failed");
+      }
+    };
+    xhr.open("POST", "http://a7f2b210efec.ngrok.io/upload");
+    xhr.setRequestHeader("Content-Type", "multipart/form-data");
+    xhr.send(data);
+  });
+}
+
 export const { Provider, Context } = createDataContext(
   authReducer,
   { signin, signout, signup, upload },
