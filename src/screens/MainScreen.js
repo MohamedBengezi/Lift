@@ -107,16 +107,14 @@ const MainScreen = ({ navigation }) => {
             source={{ uri: image.uri }}
             style={styles.preview}
           />
-          <TouchableHighlight
-            <Ionicons name="md-send"
-              style={styles.post}
-              onPress={() => {
-                upload({ image });
-                navigation.navigate('Post', { image, video })
-                setImage(null);
-              }}
-            />
-          </TouchableHighlight>
+          <Ionicons name="md-send"
+            style={styles.post}
+            onPress={() => {
+              upload({ image });
+              navigation.navigate('Post', { image, video })
+              setImage(null);
+            }}
+          />
 
           <Ionicons name="md-backspace" onPress={() => setImage(null)} style={styles.cancel} />
 
@@ -261,6 +259,8 @@ const styles = StyleSheet.create({
     top: 40,
     width: 40,
     height: 40,
+    fontSize: 28,
+    color: 'white'
   },
   flip: {
     fontSize: 28,
