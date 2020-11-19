@@ -39,7 +39,7 @@ const MainScreen = ({ navigation }) => {
       }
       fetchPermissions();
     }
-    displaySplashWhileLoading();
+    fetchPermissions();
   }, []);
 
   async function fetchPermissions() {
@@ -103,17 +103,22 @@ const MainScreen = ({ navigation }) => {
     if (image != null) {
       return (
         <View>
-          <Image source={{ uri: image.uri }} style={styles.preview} />
+          <Image
+            source={{ uri: image.uri }}
+            style={styles.preview}
+          />
           <TouchableHighlight
-            style={styles.post}
-            onPress={() => {
-              upload({ image });
-              navigation.navigate("Feed", { image });
-              setImage(null);
-            }}
-          >
-            <Ionicons name="md-send" style={styles.sendIcon} />
+            <Ionicons name="md-send"
+              style={styles.post}
+              onPress={() => {
+                upload({ image });
+                navigation.navigate('Post', { image, video })
+                setImage(null);
+              }}
+            />
           </TouchableHighlight>
+
+          <Ionicons name="md-backspace" onPress={() => setImage(null)} style={styles.cancel} />
 
           <Ionicons
             name="md-backspace"
