@@ -3,6 +3,9 @@ import createDataContext from "./createDataContext";
 import serverApi from "../api/server";
 import { navigate } from "../navigationRef";
 import FormData from "form-data";
+import Axios from "axios";
+
+const apiLink = serverApi.defaults.baseURL;
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -85,7 +88,7 @@ function sendXmlHttpRequest(data) {
         reject("Request Failed");
       }
     };
-    xhr.open("POST", "http://a7f2b210efec.ngrok.io/upload");
+    xhr.open("POST", `${apiLink}/upload`);
     xhr.setRequestHeader("Content-Type", "multipart/form-data");
     xhr.send(data);
   });
