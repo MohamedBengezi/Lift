@@ -1,16 +1,23 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 
 const HeaderLeft = ({ onPress }) => { //pull out onPress and title properties from prop
 
     return (
-        <TouchableOpacity onPress={onPress}>
-            <MaterialIcons name="account-circle" size={30} color="#003f5c" />
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+            <Text>Back</Text>
         </TouchableOpacity>
     );
 };
 
+const styles = StyleSheet.create({
+    button: {
+        marginLeft: 10,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+});
 
 export default HeaderLeft;

@@ -9,8 +9,10 @@ import ProfileScreen from "./src/screens/ProfileIndex";
 import HomeScreen from "./src/screens/HomeScreen";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
+import PostScreen from './src/screens/PostScreen';
 import { Provider as AuthProvider } from "./src/context/AuthContext";
 import { setNavigator } from "./src/navigationRef";
+import HeaderLeft from './src/components/HeaderLeft';
 
 //const Tab = createMaterialTopTabNavigator();
 const styleTab = {
@@ -44,9 +46,20 @@ const styles = StyleSheet.create({
 const switchNavigator = createSwitchNavigator({
   loginFlow: createStackNavigator({
     Signup: SignupScreen,
-    Signin: SigninScreen,
+    Signin: SigninScreen
   }),
-
+  makePostFlow: createStackNavigator({
+    Post: PostScreen
+  }, {
+    defaultNavigationOptions: ({ navigation }) => {
+      return {
+        headerStyle: {
+          backgroundColor: 'transparent',
+        },
+        headerLeft: () => (<HeaderLeft onPress={() => navigation.navigate('Main')} />),
+      }
+    }
+  }),
   mainFlow: createMaterialTopTabNavigator(
     {
       Feed: {
