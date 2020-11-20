@@ -1,3 +1,3 @@
 call getNGROKurl.bat
-cd ../
+cd ../FrontEnd
 npm start
