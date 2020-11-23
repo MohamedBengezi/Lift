@@ -1,1 +1,40 @@
-<mxfile host="app.diagrams.net" modified="2020-11-23T16:25:51.489Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69" version="13.10.0" etag="-ThiAru_tK_F8b4blht4" type="github"><diagram id="N1IDl5KR9YERxw9PhFut">UzV2zq1wL0osyPDNT0nNUTV2VTV2LsrPL4GwciucU3NyVI0MMlNUjV1UjYwMgFjVyA2HrCFY1qAgsSg1rwSLBiADYTaQg2Y1AA==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2020-11-23T17:12:50.236Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69" etag="G-GqP3iHlwMmPBPO2I3u" version="13.10.1" type="github">
+  <diagram id="N1IDl5KR9YERxw9PhFut" name="Page-1">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-1" value="getRequestsFeed(userId,count, sinceId ) -&amp;gt; JSON object containing feed" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="350" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-2" value="" style="endArrow=classic;html=1;exitX=0.531;exitY=0.983;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.479;entryY=-0.033;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-1" target="2BmxNYdpE2mA4GeSp4_O-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="420" as="sourcePoint" />
+            <mxPoint x="450" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-4" value="Feed cache (key, value) userId: JSON&amp;lt;Feed&amp;gt;&lt;br&gt;&lt;br&gt;- We can&#39;t keep all users in the cache, prioritize using something like LRU algorithm&amp;nbsp;&lt;br&gt;- Around ~300 - 500 posts can be stored in the cache but the user will not need all 300 in one request so we can break it down into smaller chunks&lt;br&gt;- Can use a data structure like Linked Hashmap to store the posts; allows posts to maintain a specific order, while also being able to quickly search the last sent id" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="170" width="300" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-6" value="Feed Generation Service&lt;br&gt;- Called periodically or through event trigger or direct request and updates the cache for a specific user" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="380" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-7" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-6" target="2BmxNYdpE2mA4GeSp4_O-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-8" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="470" width="250" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-9" value="Feedback Post Collector" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="120" y="490" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-10" value="- [DB READ] Fetch all topics that the user is interested in from the database&lt;br&gt;- [DB READ] select all feedback posts that are tagged with the fetched topics, sort by most recent and limit to an arbitrary number, around 100 or so&lt;br&gt;-&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="525" width="240" height="110" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
