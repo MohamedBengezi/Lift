@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net" modified="2020-11-25T21:43:04.998Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69" etag="rq0u8S63KXufVqZZ42yp" version="13.10.1" type="github">
+  <diagram id="N1IDl5KR9YERxw9PhFut" name="Page-1">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-1" value="&lt;b&gt;getRequestsFeed(userId,count, sinceId ) -&amp;gt; JSON object containing feed&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="350" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-2" value="" style="endArrow=classic;html=1;exitX=0.531;exitY=0.983;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.483;entryY=0.005;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-1" target="2BmxNYdpE2mA4GeSp4_O-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="420" as="sourcePoint" />
+            <mxPoint x="510" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-4" value="&lt;b&gt;Feed cache (key, value) userId: JSON&amp;lt;Feed&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;\&lt;/b&gt;&lt;br&gt;- Can host using &lt;b&gt;redis&lt;/b&gt;&lt;br&gt;&lt;br&gt;- We can&#39;t keep all users in the cache, prioritize using something like LRU algorithm&amp;nbsp;&lt;br&gt;&lt;br&gt;&lt;br&gt;- Around ~300 - 500 posts can be stored in the cache but the user will not need all 300 in one request so we can break it down into smaller chunks&lt;br&gt;&lt;br&gt;- Can use a data structure like Linked Hashmap to store the posts; allows posts to maintain a specific order, while also being able to quickly search the last sent id" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="265" y="140" width="375" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-6" value="&lt;b&gt;Feed Generation Service&lt;br&gt;&lt;/b&gt;- Called periodically or through event trigger or direct request and updates the cache for a specific user" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="332.5" y="380" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-7" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-6" target="2BmxNYdpE2mA4GeSp4_O-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint" />
+            <mxPoint x="450" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-8" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="570" width="250" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-9" value="&lt;b&gt;Feedback Post Collector&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="120" y="590" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-10" value="- [DB READ] Fetch all topics that the user is interested in from the database&lt;br&gt;&lt;br&gt;- [DB READ] select all feedback posts that are tagged with the fetched topics, sort by most recent and limit to an arbitrary number, around 100 or so&lt;br&gt;-&amp;nbsp;&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="625" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-11" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="580" width="240" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-12" value="&lt;b&gt;Post Ranker&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="535" y="590" width="150" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-13" value="" style="endArrow=classic;html=1;exitX=0.996;exitY=0.436;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.008;entryY=0.443;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-10" target="2BmxNYdpE2mA4GeSp4_O-11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="530" as="sourcePoint" />
+            <mxPoint x="529" y="573" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-14" value="- Many approached to ranking; simple ranker can place newer posts higher&lt;br&gt;&lt;br&gt;- The next step is to arrange by activity (ex. number of upvotes, amount of comments/feedback already sent)&lt;br&gt;&lt;br&gt;- ?? If an feedback request is already resolved, it can be placed as a lower rank" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="510" y="615" width="210" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-15" value="" style="endArrow=classic;html=1;exitX=0.538;exitY=0.01;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-11" target="2BmxNYdpE2mA4GeSp4_O-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="340" as="sourcePoint" />
+            <mxPoint x="450" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-16" value="Trigger: User A posts something, some of user A&#39;s followers will have their feeds recomputed&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="375" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-17" value="" style="endArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-16" target="2BmxNYdpE2mA4GeSp4_O-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="480" y="450" as="sourcePoint" />
+            <mxPoint x="530" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
