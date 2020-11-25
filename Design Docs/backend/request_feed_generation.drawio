@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2020-11-23T19:41:25.468Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69" etag="JL-a61h6TOFRLBqFTY-A" version="13.10.1" type="github">
+<mxfile host="app.diagrams.net" modified="2020-11-25T21:43:04.998Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69" etag="rq0u8S63KXufVqZZ42yp" version="13.10.1" type="github">
   <diagram id="N1IDl5KR9YERxw9PhFut" name="Page-1">
-    <mxGraphModel dx="981" dy="548" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -53,6 +53,15 @@
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="400" y="340" as="sourcePoint" />
             <mxPoint x="450" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-16" value="Trigger: User A posts something, some of user A&#39;s followers will have their feeds recomputed&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="375" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="2BmxNYdpE2mA4GeSp4_O-17" value="" style="endArrow=classic;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2BmxNYdpE2mA4GeSp4_O-16" target="2BmxNYdpE2mA4GeSp4_O-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="480" y="450" as="sourcePoint" />
+            <mxPoint x="530" y="400" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
