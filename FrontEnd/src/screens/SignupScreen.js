@@ -20,8 +20,9 @@ const SignupScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Ionicons name="ios-arrow-round-back" style={styles.cancel} />
       <KeyboardAvoidingView
-        behavior={Platform.OS == "android" ? "flex" : 1}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
         style={styles.input}
+        contentContainerStyle={styles.keyboardView}
       >
         <Text style={styles.label}>Username:</Text>
         <TextInput
@@ -153,6 +154,10 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "600",
     fontSize: 28,
+  },
+  keyboardView: {
+    flex: 0.5,
+    backgroundColor: colors.black,
   },
   errorMessage: {
     fontSize: 16,
