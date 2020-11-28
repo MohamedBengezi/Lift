@@ -14,7 +14,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
 
-const HomeScreen = ({ navigation }) => {
+const FeedScreen = ({ navigation }) => {
   let image = null,
     video = null,
     count = 0;
@@ -150,4 +150,4 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 });
-export default HomeScreen;
+export default FeedScreen;
