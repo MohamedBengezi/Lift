@@ -15,7 +15,8 @@ const SignupScreen = ({ navigation }) => {
   const { state, signup } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState("");
   return (
     <View style={styles.container}>
       <Ionicons name="ios-arrow-round-back" style={styles.cancel} />
@@ -27,8 +28,8 @@ const SignupScreen = ({ navigation }) => {
         <Text style={styles.label}>Username:</Text>
         <TextInput
           label="Username:"
-          value={email}
-          onChangeText={setEmail}
+          value={username}
+          onChangeText={setUsername}
           autoCapitalize="none"
           autoCorrect={false}
           style={styles.inputBox}
@@ -42,7 +43,7 @@ const SignupScreen = ({ navigation }) => {
       >
         <Text style={styles.label}>Email:</Text>
         <TextInput
-          label="Username:"
+          label="Email:"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -77,8 +78,8 @@ const SignupScreen = ({ navigation }) => {
         <TextInput
           secureTextEntry
           label="Username:"
-          value={password}
-          onChangeText={setPassword}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
           autoCapitalize="none"
           autoCorrect={false}
           style={styles.inputBox}
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 0.15,
     width: "50%",
+    marginTop: "5%",
   },
   button: {
     backgroundColor: colors.yellow,
@@ -138,14 +140,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   containerStyle: {
-    margin: "auto",
     justifyContent: "center",
     flex: 0.25,
     alignItems: "center",
   },
   buttonText: {
     color: colors.black,
-    margin: "auto",
+    textAlign: "center",
   },
   cancel: {
     position: "absolute",
