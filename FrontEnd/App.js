@@ -11,10 +11,11 @@ import FeedTwo from "./src/screens/Feeds/FeedTwo";
 import FeedThree from "./src/screens/Feeds/FeedThree";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
-import PostScreen from './src/screens/PostScreen';
+import IntroScreen from "./src/screens/IntroScreen";
+import PostScreen from "./src/screens/PostScreen";
 import { Provider as AuthProvider } from "./src/context/AuthContext";
 import { setNavigator } from "./src/navigationRef";
-import HeaderLeft from './src/components/HeaderLeft';
+import HeaderLeft from "./src/components/HeaderLeft";
 
 //const Tab = createMaterialTopTabNavigator();
 const styleTab = {
@@ -127,21 +128,27 @@ const FeedStack = createMaterialTopTabNavigator({
 
 const switchNavigator = createSwitchNavigator({
   loginFlow: createStackNavigator({
+    Intro: IntroScreen,
     Signup: SignupScreen,
-    Signin: SigninScreen
+    Signin: SigninScreen,
   }),
-  makePostFlow: createStackNavigator({
-    Post: PostScreen
-  }, {
-    defaultNavigationOptions: ({ navigation }) => {
-      return {
-        headerStyle: {
-          backgroundColor: 'transparent',
-        },
-        headerLeft: () => (<HeaderLeft onPress={() => navigation.navigate('Main')} />),
-      }
+  makePostFlow: createStackNavigator(
+    {
+      Post: PostScreen,
+    },
+    {
+      defaultNavigationOptions: ({ navigation }) => {
+        return {
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
+          headerLeft: () => (
+            <HeaderLeft onPress={() => navigation.navigate("Main")} />
+          ),
+        };
+      },
     }
-  }),
+  ),
   mainFlow: createMaterialTopTabNavigator(
     {
       Feed: {

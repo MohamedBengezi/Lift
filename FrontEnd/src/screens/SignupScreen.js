@@ -10,8 +10,9 @@ import Spacer from "../components/Spacer";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { navigate } from "../navigationRef";
 
-const SignupScreen = ({ navigation }) => {
+const SignupScreen = () => {
   const { state, signup } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +20,13 @@ const SignupScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   return (
     <View style={styles.container}>
-      <Ionicons name="ios-arrow-round-back" style={styles.cancel} />
+      <Ionicons
+        name="ios-arrow-round-back"
+        style={styles.cancel}
+        onPress={() => {
+          navigate("Intro");
+        }}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
         style={styles.input}
@@ -94,7 +101,10 @@ const SignupScreen = ({ navigation }) => {
       <Spacer>
         <Button
           title="Sign Up"
-          onPress={() => signup({ email, password })}
+          onPress={() => {
+            signup(email, password);
+            navigate("Main");
+          }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
           containerStyle={styles.containerStyle}
@@ -141,12 +151,12 @@ const styles = StyleSheet.create({
   },
   containerStyle: {
     justifyContent: "center",
-    flex: 0.25,
     alignItems: "center",
+    flex: 0.25,
   },
   buttonText: {
     color: colors.black,
-    textAlign: "center",
+    flex: 1,
   },
   cancel: {
     position: "absolute",
