@@ -6,7 +6,9 @@ import { StyleSheet } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MainScreen from "./src/screens/MainScreen";
 import ProfileScreen from "./src/screens/ProfileIndex";
-import HomeScreen from "./src/screens/HomeScreen";
+import FeedScreen from "./src/screens/FeedScreen";
+import FeedTwo from "./src/screens/Feeds/FeedTwo";
+import FeedThree from "./src/screens/Feeds/FeedThree";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import IntroScreen from "./src/screens/IntroScreen";
@@ -34,6 +36,16 @@ const styleTab = {
   upperCaseLabel: false,
 };
 
+const feedStyleTab = {
+  ...styleTab,
+  style: {},
+  activeTintColor: "red",
+  tabStyle: {
+    height: 40,
+    backgroundColor: "#fff",
+  },
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -42,7 +54,77 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
   },
+  feed: {
+    flex: 1,
+    fontSize: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
 });
+
+const FeedStack = createMaterialTopTabNavigator({
+  MainFeed: {
+    screen: FeedScreen,
+    navigationOptions: {
+      tabBarVisible: true,
+      tabBarLabel: "FeedOne",
+      tabBarOptions: feedStyleTab,
+      swipeEnabled: false,
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        let iconName = `md-fitness`;
+        return (
+          <Ionicons
+            name={iconName}
+            size={horizontal ? 20 : 25}
+            color={tintColor}
+            style={styles.feed}
+          />
+        );
+      },
+    },
+  },
+  FeedTwo: {
+    screen: FeedTwo,
+    navigationOptions: {
+      tabBarVisible: true,
+      tabBarLabel: "FeedTwo",
+      tabBarOptions: feedStyleTab,
+      swipeEnabled: false,
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        let iconName = `md-water`;
+        return (
+          <Ionicons
+            name={iconName}
+            size={horizontal ? 20 : 25}
+            color={tintColor}
+            style={styles.feed}
+          />
+        );
+      },
+    },
+  },
+  FeedThree: {
+    screen: FeedThree,
+    navigationOptions: {
+      tabBarVisible: true,
+      tabBarLabel: "FeedThree",
+      tabBarOptions: feedStyleTab,
+      swipeEnabled: false,
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        let iconName = `md-hammer`;
+        return (
+          <Ionicons
+            name={iconName}
+            size={horizontal ? 20 : 25}
+            color={tintColor}
+            style={styles.feed}
+          />
+        );
+      },
+    },
+  }
+})
 
 const switchNavigator = createSwitchNavigator({
   loginFlow: createStackNavigator({
@@ -70,7 +152,7 @@ const switchNavigator = createSwitchNavigator({
   mainFlow: createMaterialTopTabNavigator(
     {
       Feed: {
-        screen: HomeScreen,
+        screen: FeedStack,
         navigationOptions: {
           tabBarVisible: true,
           tabBarLabel: "Feed",
