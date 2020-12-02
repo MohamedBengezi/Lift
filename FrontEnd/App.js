@@ -16,8 +16,10 @@ import PostScreen from "./src/screens/PostScreen";
 import { Provider as AuthProvider } from "./src/context/AuthContext";
 import { setNavigator } from "./src/navigationRef";
 import HeaderLeft from "./src/components/HeaderLeft";
-
+import { SafeAreaProvider, useSafeArea } from "react-native-safe-area-context";
+import RouteScreen from "./RouteScreen";
 //const Tab = createMaterialTopTabNavigator();
+
 const styleTab = {
   activeTintColor: "blue",
   labelStyle: {
@@ -42,6 +44,7 @@ const feedStyleTab = {
   activeTintColor: "red",
   tabStyle: {
     height: 40,
+    marginTop: 0,
     backgroundColor: "#fff",
   },
 };
@@ -123,8 +126,8 @@ const FeedStack = createMaterialTopTabNavigator({
         );
       },
     },
-  }
-})
+  },
+});
 
 const switchNavigator = createSwitchNavigator({
   loginFlow: createStackNavigator({
@@ -220,12 +223,10 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
   return (
-    <AuthProvider>
-      <App
-        ref={(navigator) => {
-          setNavigator(navigator);
-        }}
-      />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <RouteScreen />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 };
