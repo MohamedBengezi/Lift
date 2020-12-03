@@ -21,6 +21,7 @@ const MainScreen = ({ navigation }) => {
   const [camera, setCamera] = useState({
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
+    flashMode: "off",
   });
 
   const [audio, setAudio] = useState({
@@ -96,6 +97,34 @@ const MainScreen = ({ navigation }) => {
     setVideo(video);
   };
 
+  toggleFlashLight = () => {
+    //Logic to turn on & turn off flashlight
+    console.log("Clicked toggle flashlight ", camera.flashMode);
+    var newVal = "";
+    if (camera.flashMode === "on") {
+      newVal = "off";
+    } else {
+      newVal = "on";
+    }
+
+    setCamera((prevState) => ({
+      ...prevState,
+      flashMode: newVal,
+    }));
+  };
+
+  toggleCamera = () => {
+    //Logic to toggle camera
+    console.log("Clicked toggle camera");
+    setCamera((prevState) => ({
+      ...prevState,
+      type:
+        camera.type === Camera.Constants.Type.back
+          ? Camera.Constants.Type.front
+          : Camera.Constants.Type.back,
+    }));
+  };
+
   if (camera.hasCameraPermission === null) {
     return <View />;
   } else if (camera.hasCameraPermission === false) {
@@ -167,31 +196,32 @@ const MainScreen = ({ navigation }) => {
           <Camera
             style={{ flex: 1 }}
             type={camera.type}
+            flashMode={camera.flashMode}
             ref={(ref) => {
               this.camera = ref;
             }}
           >
             <View style={styles.menu}>
               <View style={styles.subMenu}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setCamera({
-                      type:
-                        camera.type === Camera.Constants.Type.back
-                          ? Camera.Constants.Type.front
-                          : Camera.Constants.Type.back,
-                    });
-                  }}
-                >
+                <TouchableOpacity onPress={() => toggleCamera()}>
                   <Text style={styles.button}>
                     <Ionicons name="md-reverse-camera" style={styles.button} />
                   </Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.subMenu}>
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => toggleFlashLight()}>
                   <Text style={styles.button}>
-                    <Ionicons name="md-flash" style={styles.button} />
+                    <Ionicons
+                      name="md-flash"
+                      style={{
+                        ...styles.button,
+                        color:
+                          camera.flashMode === "on"
+                            ? colors.white
+                            : colors.black,
+                      }}
+                    />
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -264,7 +294,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   button: {
-    fontSize: 28,
+    fontSize: 32,
     color: colors.black,
   },
   cameraButton: {
@@ -279,7 +309,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: "1%",
     top: "5%",
-    width: "7%",
+    width: "10%",
     height: "15%",
     backgroundColor: "transparent",
     flexDirection: "column",
