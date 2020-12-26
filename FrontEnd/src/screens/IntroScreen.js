@@ -40,10 +40,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
+    flex: 1,
     backgroundColor: colors.yellow,
-    width: "40%",
-    height: "40%",
+    width: "70%",
+    height: "20%",
     borderRadius: 10,
+    alignSelf: 'center',
+    marginBottom: "20%"
   },
   containerStyle: {
     justifyContent: "center",
@@ -52,6 +55,7 @@ const styles = StyleSheet.create({
   buttonText: {
     flex: 1,
     color: colors.black,
+    fontSize: 13
   },
   logo: {
     flex: 0.25,
