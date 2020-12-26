@@ -35,15 +35,20 @@ export default function RouteScreen() {
     upperCaseLabel: false,
   };
 
+
   const feedStyleTab = {
     ...styleTab,
-    style: {},
-    activeTintColor: "red",
+    activeTintColor: "black",
+    labelStyle: {
+      fontSize: 15,
+    },
+    showLabel: true,
     tabStyle: {
-      height: 40,
+      height: 50,
       marginTop: StatusBar.currentHeight + 15,
+      fontSize: 10,
       backgroundColor: "#fff",
-      borderWidth: 2,
+      borderRightWidth: 1
     },
   };
 
@@ -65,67 +70,41 @@ export default function RouteScreen() {
       borderWidth: 2,
     },
   });
-
-  const FeedStack = createMaterialTopTabNavigator(
-    {
-      MainFeed: {
-        screen: FeedScreen,
-        navigationOptions: {
-          tabBarVisible: true,
-          tabBarLabel: "FeedOne",
-          tabBarOptions: feedStyleTab,
-          swipeEnabled: false,
-          tabBarLabel: "Following",
-        },
-      },
-      FeedTwo: {
-        screen: FeedTwo,
-        navigationOptions: {
-          tabBarVisible: true,
-          tabBarLabel: "FeedTwo",
-          tabBarOptions: feedStyleTab,
-          swipeEnabled: false,
-          tabBarIcon: ({ focused, horizontal, tintColor }) => {
-            let iconName = `md-water`;
-            return (
-              <Ionicons
-                name={iconName}
-                size={horizontal ? 20 : 25}
-                color={tintColor}
-                style={styles.feed}
-              />
-            );
-          },
-        },
-      },
-      FeedThree: {
-        screen: FeedThree,
-        navigationOptions: {
-          tabBarVisible: true,
-          tabBarLabel: "FeedThree",
-          tabBarOptions: feedStyleTab,
-          swipeEnabled: false,
-          tabBarIcon: ({ focused, horizontal, tintColor }) => {
-            let iconName = `md-hammer`;
-            return (
-              <Ionicons
-                name={iconName}
-                size={horizontal ? 20 : 25}
-                color={tintColor}
-                style={styles.feed}
-              />
-            );
-          },
-        },
+  const FeedStack = createMaterialTopTabNavigator({
+    MainFeed: {
+      screen: FeedScreen,
+      navigationOptions: {
+        tabBarVisible: true,
+        tabBarLabel: "Posts",
+        tabBarOptions: feedStyleTab,
+        swipeEnabled: false
       },
     },
+    FeedTwo: {
+      screen: FeedTwo,
+      navigationOptions: {
+        tabBarVisible: true,
+        tabBarLabel: "Diet Plans",
+        tabBarOptions: feedStyleTab,
+        swipeEnabled: false
+      },
+    },
+    FeedThree: {
+      screen: FeedThree,
+      navigationOptions: {
+        tabBarVisible: true,
+        tabBarLabel: "Workout Plans",
+        tabBarOptions: feedStyleTab,
+        swipeEnabled: false
+      },
+    },
+  },
     {
       tabBarOptions: {
         showLabel: true,
         labelStyle: { color: "#000000", fontSize: 12 },
-      },
-    }
-  );
+      }
+    });
 
   const switchNavigator = createSwitchNavigator({
     loginFlow: createStackNavigator({

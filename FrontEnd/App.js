@@ -57,14 +57,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-  },
-  feed: {
-    flex: 1,
-    fontSize: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-  },
+  }
 });
 
 const FeedStack = createMaterialTopTabNavigator({
