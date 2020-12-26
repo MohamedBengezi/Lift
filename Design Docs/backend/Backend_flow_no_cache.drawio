@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net" modified="2020-11-23T03:56:22.477Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69" etag="uLm1W1kUbKbjBi31YsPo" version="13.10.0" type="github">
+  <diagram id="5DPtDh1HgJzNSaMUif5g" name="Page-1">
+    <mxGraphModel dx="981" dy="548" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-1" value="" style="outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.mobile_client;" parent="1" vertex="1">
+          <mxGeometry x="60" y="290" width="41" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-2" value="" style="endArrow=classic;html=1;" parent="1" source="DvNGrMA5b_OGX1REUt0T-1" target="DvNGrMA5b_OGX1REUt0T-4" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="101" y="290" as="sourcePoint" />
+            <mxPoint x="290" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-4" value="&lt;h1 style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;POST : createFeedbackPost&lt;/font&gt;&lt;/h1&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;HTTP Firebase Cloud function&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;- [FS UPLOAD] upload the media from the client to the cloud storage, save the url/id generated&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;- [DB WRITE]&amp;nbsp; Write all details about the post, including the reference to the media in the cloud storage&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 13px&quot;&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;strokeColor=#000000;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="270" y="100" width="210" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-6" value="Cloud&#xa;Firestore" style="html=1;fillColor=#5184F3;strokeColor=none;verticalAlign=top;labelPosition=center;verticalLabelPosition=bottom;align=center;spacingTop=-6;fontSize=11;fontStyle=1;fontColor=#999999;shape=mxgraph.gcp2.hexIcon;prIcon=cloud_firestore" parent="1" vertex="1">
+          <mxGeometry x="691" y="368" width="110" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-7" value="" style="endArrow=classic;html=1;" parent="1" source="DvNGrMA5b_OGX1REUt0T-1" target="DvNGrMA5b_OGX1REUt0T-8" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="230" as="sourcePoint" />
+            <mxPoint x="240" y="329" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-8" value="&lt;h1 style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;GET : getRequestsFeed&lt;/font&gt;&lt;/h1&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;HTTP Firebase Cloud function&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;- [DB READ] Get all categories that the user follows&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;- [DB READ] Get all posts in those categories&amp;nbsp; (fetch unresolved?)&amp;nbsp;&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;- Generate order using upvotes and timestamp&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;- **Post objects will contain urls to media content that the frontend will need to request separately&amp;nbsp;&lt;/font&gt;&lt;/p&gt;" style="text;html=1;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;strokeColor=#000000;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="320" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-9" value="&lt;h1 style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;GET : getGeneralFeed&lt;/font&gt;&lt;/h1&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;HTTP Firebase Cloud function&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;- [DB READ] Get all categories and ids of users who the user follows&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;- [DB READ] Get all posts of users with the id specified&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;-[DB READ] Get all posts with the matching interest categories&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-size: 10px&quot;&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;strokeColor=#000000;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="530" width="250" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-10" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="DvNGrMA5b_OGX1REUt0T-1" target="DvNGrMA5b_OGX1REUt0T-9" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="230" as="sourcePoint" />
+            <mxPoint x="430" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-11" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/google-i-o-2016/512/google_firebase-2-128.png;dashed=1;strokeColor=#000000;" parent="1" vertex="1">
+          <mxGeometry x="691" y="650" width="110" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-12" value="&lt;font color=&quot;#808080&quot;&gt;&lt;b&gt;Firebase Cloud Storage&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
+          <mxGeometry x="671" y="760" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-14" value="&lt;h1 style=&quot;font-size: 18px&quot;&gt;&lt;font style=&quot;font-size: 18px&quot;&gt;Backend Functional Flow (No Caching)&lt;/font&gt;&lt;/h1&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;dashed=1;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="230" y="40" width="410" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="DvNGrMA5b_OGX1REUt0T-15" value="" style="endArrow=classic;html=1;fontSize=18;exitX=0.25;exitY=0.67;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="DvNGrMA5b_OGX1REUt0T-6" target="DvNGrMA5b_OGX1REUt0T-8" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="450" y="620" as="sourcePoint" />
+            <mxPoint x="500" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4N6kk8QebFWthyWx0cZD-1" value="" style="endArrow=classic;html=1;fontSize=18;entryX=1.008;entryY=0.593;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.34;exitY=0.83;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="DvNGrMA5b_OGX1REUt0T-6" target="DvNGrMA5b_OGX1REUt0T-9">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="440" y="560" as="sourcePoint" />
+            <mxPoint x="490" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4N6kk8QebFWthyWx0cZD-2" value="&lt;font style=&quot;font-size: 14px&quot;&gt;Client fetches any media required for displaying posts in a separate http call. The feed calls will provide the respective urls&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;strokeColor=#000000;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="101" y="730" width="310" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="4N6kk8QebFWthyWx0cZD-5" value="" style="endArrow=classic;html=1;fontSize=18;entryX=0.297;entryY=0.025;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="DvNGrMA5b_OGX1REUt0T-1" target="4N6kk8QebFWthyWx0cZD-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="440" y="350" as="sourcePoint" />
+            <mxPoint x="490" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="4N6kk8QebFWthyWx0cZD-6" value="" style="endArrow=classic;html=1;fontSize=18;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="DvNGrMA5b_OGX1REUt0T-11" target="4N6kk8QebFWthyWx0cZD-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="440" y="480" as="sourcePoint" />
+            <mxPoint x="490" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

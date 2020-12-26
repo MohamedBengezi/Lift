@@ -13,13 +13,16 @@ import CardComponent from "../components/common/CardComponent";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
+import serverApi from "../api/server";
+
+const apiLink = serverApi.defaults.baseURL;
 
 const FeedScreen = ({ navigation }) => {
   let image = null,
     video = null,
     count = 0;
   const [play, setPlay] = useState(false);
-  url = "http://0dcbc9672557.ngrok.io/sample";
+  url = apiLink + "/sample";
 
   image = Image.resolveAssetSource(require("../../assets/icon.png"));
 
