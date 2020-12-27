@@ -14,6 +14,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
 import serverApi from "../api/server";
+import { navigate } from "../navigationRef";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -31,11 +32,11 @@ const FeedScreen = ({ navigation }) => {
   }
 
   const renderVid = (vid) => (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={() => navigate("ViewPost", { post })}>
       <ScrollView>
         <Text>this is a video post</Text>
 
-        <WebView
+        {/* <WebView
           source={{
             html: `<!DOCTYPE html>
             <html>
@@ -49,43 +50,52 @@ const FeedScreen = ({ navigation }) => {
             </html>`,
           }}
           style={{ width: 300, height: 300 }}
-        />
+        /> */}
       </ScrollView>
-    </View>
+    </TouchableOpacity>
   );
 
   const renderImage = (image) => (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={navigate("Main")}>
       <Text>this is an image post</Text>
       <Image source={{ uri: image.item.uri }} style={styles.post} />
-    </View>
+    </TouchableOpacity>
+
   );
 
-  if (video) {
+  function VideoPost() {
     return (
-      <View style={styles.background}>
-        <ScrollView>
-          <FlatList
-            data={video}
-            renderItem={(vid) => renderVid(vid)}
-            keyExtractor={(vid) => vid + count++}
-          />
-        </ScrollView>
-      </View>
+      <FlatList
+        data={video}
+        renderItem={(vid) => renderVid(vid)}
+        keyExtractor={(vid) => vid + count++}
+      />
     );
-  } else {
-    return (
-      <View style={styles.background}>
-        <ScrollView>
-          <FlatList
-            data={image}
-            renderItem={(photo) => renderImage(photo)}
-            keyExtractor={(photo) => photo.uri + count++}
-          />
-        </ScrollView>
-      </View>
-    );
+  };
+
+  function ImagePost() {
+    <FlatList
+      data={image}
+      renderItem={(photo) => renderImage(photo)}
+      keyExtractor={(photo) => photo.uri + count++}
+    />
   }
+
+  let post;
+  if (video) {
+    post = <VideoPost />
+  } else {
+    post = <ImagePost />
+  }
+
+  return (
+    <View style={styles.background}>
+      <ScrollView>
+        {post}
+      </ScrollView>
+    </View>
+
+  );
 };
 
 const styles = StyleSheet.create({
