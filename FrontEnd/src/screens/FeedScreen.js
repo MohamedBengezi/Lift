@@ -31,12 +31,12 @@ const FeedScreen = ({ navigation }) => {
     video = [url, url, url, url];
   }
 
-  const renderVid = (vid) => (
-    <TouchableOpacity style={styles.container} onPress={() => navigate("ViewPost", { post })}>
-      <ScrollView>
+  function VidPost({ vid }) {
+    return (
+      <View style={styles.post}>
         <Text>this is a video post</Text>
 
-        {/* <WebView
+        <WebView
           source={{
             html: `<!DOCTYPE html>
             <html>
@@ -50,15 +50,37 @@ const FeedScreen = ({ navigation }) => {
             </html>`,
           }}
           style={{ width: 300, height: 300 }}
-        /> */}
-      </ScrollView>
+        />
+      </View>
+    );
+  }
+
+  function ImgPost() {
+    return (
+      <View>
+        <Text>this is an image post</Text>
+        <Image source={{ uri: image.item.uri }} style={styles.post} />
+      </View>
+    );
+  }
+
+  const renderVid = (vid) => (
+    <TouchableOpacity style={styles.container} onPress={() => viewVidPost(vid)}>
+      <VidPost vid={vid} />
     </TouchableOpacity>
   );
+
+
+  function viewVidPost(item) {
+    console.log("YYY0 ", item)
+    let post = <VidPost vid={item} />
+    navigation.navigate("ViewPost", { post })
+  }
 
   const renderImage = (image) => (
     <TouchableOpacity style={styles.container} onPress={navigate("Main")}>
       <Text>this is an image post</Text>
-      <Image source={{ uri: image.item.uri }} style={styles.post} />
+      <Image source={{ uri: image.item.uri }} />
     </TouchableOpacity>
 
   );
@@ -80,18 +102,17 @@ const FeedScreen = ({ navigation }) => {
       keyExtractor={(photo) => photo.uri + count++}
     />
   }
-
-  let post;
+  let posts;
   if (video) {
-    post = <VideoPost />
+    posts = <VideoPost />
   } else {
-    post = <ImagePost />
+    posts = <ImagePost />
   }
 
   return (
     <View style={styles.background}>
       <ScrollView>
-        {post}
+        {posts}
       </ScrollView>
     </View>
 
@@ -99,12 +120,6 @@ const FeedScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  flip: {
-    fontSize: 28,
-    marginTop: 30,
-    marginRight: 30,
-    color: "black",
-  },
   background: {
     backgroundColor: "#ffffff",
     flex: 1,
@@ -118,49 +133,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "black",
   },
-  row: {
-    height: 100,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    paddingVertical: 20,
-    alignItems: "center",
-  },
-  col: {
-    flexDirection: "column",
-  },
-  title: {
-    fontSize: 15,
-    paddingLeft: 10,
-    textAlign: "left",
-    fontWeight: "bold",
-    color: "#003f5c",
-    marginTop: 15,
-  },
-  icon: {
-    fontSize: 27,
-    paddingRight: 10,
-  },
-  chatIcon: {
-    width: 70,
-    height: 70,
-    marginLeft: 14,
-    borderWidth: 1,
-  },
-  chatName: {
-    fontSize: 18,
-    paddingLeft: 10,
-    fontWeight: "bold",
-    color: "#000000",
-  },
-  lastSent: {
-    paddingLeft: 10,
-    color: "#808080",
-  },
-  lastSentTime: {
-    color: "#808080",
-    alignSelf: "flex-end",
+  post: {
     flex: 1,
-    margin: 10,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    width: "70%",
+    height: "50%"
   },
 });
 export default FeedScreen;
