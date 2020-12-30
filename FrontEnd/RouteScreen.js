@@ -74,7 +74,8 @@ export default function RouteScreen() {
 
   const PostStack = createStackNavigator({
     Feed: FeedScreen,
-    ViewPost: ViewPostScreen
+    ViewPost: ViewPostScreen,
+    Post: PostScreen
   },
     {
       headerMode: 'none',
@@ -125,23 +126,6 @@ export default function RouteScreen() {
       Signup: SignupScreen,
       Signin: SigninScreen,
     }),
-    makePostFlow: createStackNavigator(
-      {
-        Post: PostScreen,
-      },
-      {
-        defaultNavigationOptions: ({ navigation }) => {
-          return {
-            headerStyle: {
-              backgroundColor: "transparent",
-            },
-            headerLeft: () => (
-              <HeaderLeft onPress={() => navigation.navigate("Main")} />
-            ),
-          };
-        },
-      }
-    ),
     mainFlow: createMaterialTopTabNavigator(
       {
         Feed: {
