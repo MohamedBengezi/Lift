@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Image } from 'react-native';
 import Button from '../components/common/Button';
 import { Video } from "expo-av";
@@ -8,14 +8,11 @@ const PostScreen = ({ navigation }) => {
     const [title, setTitle] = useState('');
 
     let image = Image.resolveAssetSource(require("../../assets/icon.png")), video = null;
-    console.log('XXX', navigation.getParam('image'))
     if (navigation.getParam('video')) {
         video = navigation.getParam('video');
     } else if (navigation.getParam('image')) {
         image = navigation.getParam('image');
     }
-    console.log("XXX", JSON.stringify(video));
-    console.log("XXX1", JSON.stringify(image));
 
     const renderCapture = () => {
         if (video != null) {
