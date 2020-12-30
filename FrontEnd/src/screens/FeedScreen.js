@@ -35,7 +35,6 @@ const FeedScreen = ({ navigation }) => {
     return (
       <View style={styles.post}>
         <Text>{title}</Text>
-
         <WebView
           source={{
             html: `<!DOCTYPE html>
@@ -70,21 +69,25 @@ const FeedScreen = ({ navigation }) => {
   function LikeAndComment() {
     return (
       <View style={styles.icons}>
-        <Ionicons
-          name="md-heart"
-          style={styles.iconStyle}
-          onPress={() => {
-            console.log("Like!")
-          }}
-        />
+        <TouchableOpacity style={styles.icons}>
+          <Ionicons
+            name="md-heart"
+            style={styles.iconStyle}
+            onPress={() => {
+              console.log("Like!")
+            }}
+          />
+        </TouchableOpacity>
 
-        <Ionicons
-          name="md-chatbubbles"
-          style={styles.iconStyle}
-          onPress={() => {
-            console.log("Comment!")
-          }}
-        />
+        <TouchableOpacity>
+          <Ionicons
+            name="md-chatbubbles"
+            style={styles.iconStyle}
+            onPress={() => {
+              console.log("Comment!")
+            }}
+          />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -98,23 +101,6 @@ const FeedScreen = ({ navigation }) => {
   const renderImage = (image) => (
     <TouchableOpacity style={styles.container} onPress={() => viewImagePost(image)}>
       <ImageElement image={image} />
-      <View style={styles.icons}>
-        <Ionicons
-          name="md-heart"
-          style={styles.iconStyle}
-          onPress={() => {
-            console.log("Like!")
-          }}
-        />
-
-        <Ionicons
-          name="md-chatbubbles"
-          style={styles.iconStyle}
-          onPress={() => {
-            console.log("Comment!")
-          }}
-        />
-      </View>
     </TouchableOpacity>
 
   );
