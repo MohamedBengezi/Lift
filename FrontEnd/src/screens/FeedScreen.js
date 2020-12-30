@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,14 +7,9 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Video } from "expo-av";
-import { Context } from "../components/context/CreateContext";
-import CardComponent from "../components/common/CardComponent";
-import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
 import serverApi from "../api/server";
-import { navigate } from "../navigationRef";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -25,16 +20,21 @@ const FeedScreen = ({ navigation }) => {
   const [play, setPlay] = useState(false);
   url = apiLink + "/sample";
 
-  image = Image.resolveAssetSource(require("../../assets/icon.png"));
+  let img = (navigation.getParam('image')) ? navigation.getParam('image') : null;
+  let title = (navigation.getParam('title')) ? navigation.getParam('title') : "this is a post";
+  console.log("AAA1", navigation)
 
-  if (url != "") {
+  if (url != "" && img == null) {
     video = [url, url, url, url];
+  } else {
+    image = [img, img, img, img];
+    //  image = navigation.state.params.image
   }
 
-  function VidPost({ vid }) {
+  function VideoElement({ vid }) {
     return (
       <View style={styles.post}>
-        <Text>this is a video post</Text>
+        <Text>{title}</Text>
 
         <WebView
           source={{
@@ -44,46 +44,91 @@ const FeedScreen = ({ navigation }) => {
                 <title></title>
             </head>
             <body>
-            <video id=${count} preload autoplay="false" src=${vid.item} controls="true">
+            <video id=${count} preload autoplay="false" src=${vid.item} controls="true" style="width: 50; height: 150">
             </video>
             </body>
             </html>`,
           }}
-          style={{ width: 300, height: 300 }}
+          style={{ width: 300, height: 150, borderWidth: 2 }}
         />
+        <LikeAndComment />
+
       </View>
     );
   }
 
-  function ImgPost() {
+  function ImageElement({ image }) {
     return (
-      <View>
-        <Text>this is an image post</Text>
-        <Image source={{ uri: image.item.uri }} style={styles.post} />
+      <View style={styles.post}>
+        <Text>{title}</Text>
+        <Image source={{ uri: image.item.uri }} style={{ width: 300, height: 150, borderWidth: 2 }} />
+        <LikeAndComment />
+      </View>
+    );
+  }
+
+  function LikeAndComment() {
+    return (
+      <View style={styles.icons}>
+        <Ionicons
+          name="md-heart"
+          style={styles.iconStyle}
+          onPress={() => {
+            console.log("Like!")
+          }}
+        />
+
+        <Ionicons
+          name="md-chatbubbles"
+          style={styles.iconStyle}
+          onPress={() => {
+            console.log("Comment!")
+          }}
+        />
       </View>
     );
   }
 
   const renderVid = (vid) => (
     <TouchableOpacity style={styles.container} onPress={() => viewVidPost(vid)}>
-      <VidPost vid={vid} />
+      <VideoElement vid={vid} />
     </TouchableOpacity>
   );
 
+  const renderImage = (image) => (
+    <TouchableOpacity style={styles.container} onPress={() => viewImagePost(image)}>
+      <ImageElement image={image} />
+      <View style={styles.icons}>
+        <Ionicons
+          name="md-heart"
+          style={styles.iconStyle}
+          onPress={() => {
+            console.log("Like!")
+          }}
+        />
+
+        <Ionicons
+          name="md-chatbubbles"
+          style={styles.iconStyle}
+          onPress={() => {
+            console.log("Comment!")
+          }}
+        />
+      </View>
+    </TouchableOpacity>
+
+  );
 
   function viewVidPost(item) {
-    console.log("YYY0 ", item)
-    let post = <VidPost vid={item} />
+    let post = <VideoElement vid={item} />
     navigation.navigate("ViewPost", { post })
   }
 
-  const renderImage = (image) => (
-    <TouchableOpacity style={styles.container} onPress={navigate("Main")}>
-      <Text>this is an image post</Text>
-      <Image source={{ uri: image.item.uri }} />
-    </TouchableOpacity>
+  function viewImagePost(item) {
+    let post = <ImageElement image={item} />
+    navigation.navigate("ViewPost", { post })
+  }
 
-  );
 
   function VideoPost() {
     return (
@@ -96,11 +141,14 @@ const FeedScreen = ({ navigation }) => {
   };
 
   function ImagePost() {
-    <FlatList
-      data={image}
-      renderItem={(photo) => renderImage(photo)}
-      keyExtractor={(photo) => photo.uri + count++}
-    />
+    return (
+      <FlatList
+        data={image}
+        renderItem={(photo) => renderImage(photo)}
+        keyExtractor={(photo) => photo.uri + count++}
+      />
+    );
+
   }
   let posts;
   if (video) {
@@ -111,10 +159,8 @@ const FeedScreen = ({ navigation }) => {
 
   return (
     <View style={styles.background}>
-      <ScrollView>
-        {posts}
-      </ScrollView>
-    </View>
+      {posts}
+    </View >
 
   );
 };
@@ -140,5 +186,17 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "50%"
   },
+  icons: {
+    flex: 1,
+    flexDirection: 'row',
+    fontSize: 200,
+    alignItems: 'flex-start'
+  },
+  iconStyle: {
+    position: "relative",
+    fontWeight: "600",
+    fontSize: 25,
+    marginRight: 5
+  }
 });
 export default FeedScreen;
