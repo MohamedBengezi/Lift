@@ -1,12 +1,9 @@
-import React, { useReducer } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Button from '../components/common/Button';
-import { navigate } from "../navigationRef";
-import { WebView } from "react-native-webview";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-
-const ViewPostScreen = (props) => {
-    let post = props.navigation.state.params.post
+const ViewPostScreen = ({ navigation }) => {
+    console.log("XXX", navigation)
+    let post = navigation.getParam('post');
     return (
         <View style={styles.post} >
             {post}
@@ -18,7 +15,7 @@ const styles = StyleSheet.create({
     post: {
         flex: 1,
         alignItems: 'center'
-    },
+    }
 });
 
 export default ViewPostScreen;
