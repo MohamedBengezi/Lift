@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,10 +7,6 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Video } from "expo-av";
-import { Context } from "../components/context/CreateContext";
-import CardComponent from "../components/common/CardComponent";
-import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
 import serverApi from "../api/server";
@@ -24,17 +20,21 @@ const FeedScreen = ({ navigation }) => {
   const [play, setPlay] = useState(false);
   url = apiLink + "/sample";
 
-  image = Image.resolveAssetSource(require("../../assets/icon.png"));
+  let img = (navigation.getParam('image')) ? navigation.getParam('image') : null;
+  let title = (navigation.getParam('title')) ? navigation.getParam('title') : "this is a post";
+  console.log("AAA1", navigation)
 
-  if (url != "") {
+  if (url != "" && img == null) {
     video = [url, url, url, url];
+  } else {
+    image = [img, img, img, img];
+    //  image = navigation.state.params.image
   }
 
-  const renderVid = (vid) => (
-    <View style={styles.container}>
-      <ScrollView>
-        <Text>this is a video post</Text>
-
+  function VideoElement({ vid }) {
+    return (
+      <View style={styles.post}>
+        <Text>{title}</Text>
         <WebView
           source={{
             html: `<!DOCTYPE html>
@@ -43,58 +43,115 @@ const FeedScreen = ({ navigation }) => {
                 <title></title>
             </head>
             <body>
-            <video id=${count} preload autoplay="false" src=${vid.item} controls="true">
+            <video id=${count} preload autoplay="false" src=${vid.item} controls="true" style="width: 50; height: 150">
             </video>
             </body>
             </html>`,
           }}
-          style={{ width: 300, height: 300 }}
+          style={{ width: 300, height: 150, borderWidth: 2 }}
         />
-      </ScrollView>
-    </View>
-  );
+        <LikeAndComment />
 
-  const renderImage = (image) => (
-    <View style={styles.container}>
-      <Text>this is an image post</Text>
-      <Image source={{ uri: image.item.uri }} style={styles.post} />
-    </View>
-  );
-
-  if (video) {
-    return (
-      <View style={styles.background}>
-        <ScrollView>
-          <FlatList
-            data={video}
-            renderItem={(vid) => renderVid(vid)}
-            keyExtractor={(vid) => vid + count++}
-          />
-        </ScrollView>
-      </View>
-    );
-  } else {
-    return (
-      <View style={styles.background}>
-        <ScrollView>
-          <FlatList
-            data={image}
-            renderItem={(photo) => renderImage(photo)}
-            keyExtractor={(photo) => photo.uri + count++}
-          />
-        </ScrollView>
       </View>
     );
   }
+
+  function ImageElement({ image }) {
+    return (
+      <View style={styles.post}>
+        <Text>{title}</Text>
+        <Image source={{ uri: image.item.uri }} style={{ width: 300, height: 150, borderWidth: 2 }} />
+        <LikeAndComment />
+      </View>
+    );
+  }
+
+  function LikeAndComment() {
+    return (
+      <View style={styles.icons}>
+        <TouchableOpacity style={styles.icons}>
+          <Ionicons
+            name="md-heart"
+            style={styles.iconStyle}
+            onPress={() => {
+              console.log("Like!")
+            }}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Ionicons
+            name="md-chatbubbles"
+            style={styles.iconStyle}
+            onPress={() => {
+              console.log("Comment!")
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const renderVid = (vid) => (
+    <TouchableOpacity style={styles.container} onPress={() => viewVidPost(vid)}>
+      <VideoElement vid={vid} />
+    </TouchableOpacity>
+  );
+
+  const renderImage = (image) => (
+    <TouchableOpacity style={styles.container} onPress={() => viewImagePost(image)}>
+      <ImageElement image={image} />
+    </TouchableOpacity>
+
+  );
+
+  function viewVidPost(item) {
+    let post = <VideoElement vid={item} />
+    navigation.navigate("ViewPost", { post })
+  }
+
+  function viewImagePost(item) {
+    let post = <ImageElement image={item} />
+    navigation.navigate("ViewPost", { post })
+  }
+
+
+  function VideoPost() {
+    return (
+      <FlatList
+        data={video}
+        renderItem={(vid) => renderVid(vid)}
+        keyExtractor={(vid) => vid + count++}
+      />
+    );
+  };
+
+  function ImagePost() {
+    return (
+      <FlatList
+        data={image}
+        renderItem={(photo) => renderImage(photo)}
+        keyExtractor={(photo) => photo.uri + count++}
+      />
+    );
+
+  }
+  let posts;
+  if (video) {
+    posts = <VideoPost />
+  } else {
+    posts = <ImagePost />
+  }
+
+  return (
+    <View style={styles.background}>
+      {posts}
+    </View >
+
+  );
 };
 
 const styles = StyleSheet.create({
-  flip: {
-    fontSize: 28,
-    marginTop: 30,
-    marginRight: 30,
-    color: "black",
-  },
   background: {
     backgroundColor: "#ffffff",
     flex: 1,
@@ -108,49 +165,24 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "black",
   },
-  row: {
-    height: 100,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    paddingVertical: 20,
-    alignItems: "center",
-  },
-  col: {
-    flexDirection: "column",
-  },
-  title: {
-    fontSize: 15,
-    paddingLeft: 10,
-    textAlign: "left",
-    fontWeight: "bold",
-    color: "#003f5c",
-    marginTop: 15,
-  },
-  icon: {
-    fontSize: 27,
-    paddingRight: 10,
-  },
-  chatIcon: {
-    width: 70,
-    height: 70,
-    marginLeft: 14,
-    borderWidth: 1,
-  },
-  chatName: {
-    fontSize: 18,
-    paddingLeft: 10,
-    fontWeight: "bold",
-    color: "#000000",
-  },
-  lastSent: {
-    paddingLeft: 10,
-    color: "#808080",
-  },
-  lastSentTime: {
-    color: "#808080",
-    alignSelf: "flex-end",
+  post: {
     flex: 1,
-    margin: 10,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    width: "70%",
+    height: "50%"
   },
+  icons: {
+    flex: 1,
+    flexDirection: 'row',
+    fontSize: 200,
+    alignItems: 'flex-start'
+  },
+  iconStyle: {
+    position: "relative",
+    fontWeight: "600",
+    fontSize: 25,
+    marginRight: 5
+  }
 });
 export default FeedScreen;

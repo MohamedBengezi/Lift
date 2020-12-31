@@ -15,6 +15,7 @@ import IntroScreen from "./src/screens/IntroScreen";
 import PostScreen from "./src/screens/PostScreen";
 import { setNavigator } from "./src/navigationRef";
 import HeaderLeft from "./src/components/HeaderLeft";
+import ViewPostScreen from "./src/screens/ViewPostScreen";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -70,9 +71,22 @@ export default function RouteScreen() {
       borderWidth: 2,
     },
   });
+
+  const PostStack = createStackNavigator({
+    Feed: FeedScreen,
+    ViewPost: ViewPostScreen,
+    Post: PostScreen
+  },
+    {
+      headerMode: 'none',
+      navigationOptions: {
+        header: null
+      },
+    })
+
   const FeedStack = createMaterialTopTabNavigator({
     MainFeed: {
-      screen: FeedScreen,
+      screen: PostStack,
       navigationOptions: {
         tabBarVisible: true,
         tabBarLabel: "Posts",
@@ -112,23 +126,6 @@ export default function RouteScreen() {
       Signup: SignupScreen,
       Signin: SigninScreen,
     }),
-    makePostFlow: createStackNavigator(
-      {
-        Post: PostScreen,
-      },
-      {
-        defaultNavigationOptions: ({ navigation }) => {
-          return {
-            headerStyle: {
-              backgroundColor: "transparent",
-            },
-            headerLeft: () => (
-              <HeaderLeft onPress={() => navigation.navigate("Main")} />
-            ),
-          };
-        },
-      }
-    ),
     mainFlow: createMaterialTopTabNavigator(
       {
         Feed: {
