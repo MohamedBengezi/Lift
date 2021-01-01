@@ -13,7 +13,7 @@ import serverApi from "../api/server";
 
 const apiLink = serverApi.defaults.baseURL;
 
-const FeedScreen = ({ navigation }) => {
+const Feed = ({ navigation }) => {
   let image = null,
     video = null,
     count = 0;
@@ -185,4 +185,4 @@ const styles = StyleSheet.create({
     marginRight: 5
   }
 });
-export default FeedScreen;
+export default Feed;
