@@ -6,15 +6,14 @@ import { StyleSheet, StatusBar, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MainScreen from "./src/screens/MainScreen";
 import ProfileScreen from "./src/screens/ProfileIndex";
-import FeedScreen from "./src/screens/FeedScreen";
-import FeedTwo from "./src/screens/Feeds/FeedTwo";
-import FeedThree from "./src/screens/Feeds/FeedThree";
+import PostsScreen from "./src/screens/Feeds/PostsScreen";
+import DietPlansScreen from "./src/screens/Feeds/DietPlansScreen";
+import WorkoutPlansScreen from "./src/screens/Feeds/WorkoutPlansScreen";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import IntroScreen from "./src/screens/IntroScreen";
 import PostScreen from "./src/screens/PostScreen";
 import { setNavigator } from "./src/navigationRef";
-import HeaderLeft from "./src/components/HeaderLeft";
 import ViewPostScreen from "./src/screens/ViewPostScreen";
 
 export default function RouteScreen() {
@@ -73,7 +72,7 @@ export default function RouteScreen() {
   });
 
   const PostStack = createStackNavigator({
-    Feed: FeedScreen,
+    Feed: PostsScreen,
     ViewPost: ViewPostScreen,
     Post: PostScreen
   },
@@ -94,8 +93,8 @@ export default function RouteScreen() {
         swipeEnabled: false
       },
     },
-    FeedTwo: {
-      screen: FeedTwo,
+    DietFeed: {
+      screen: DietPlansScreen,
       navigationOptions: {
         tabBarVisible: true,
         tabBarLabel: "Diet Plans",
@@ -103,8 +102,8 @@ export default function RouteScreen() {
         swipeEnabled: false
       },
     },
-    FeedThree: {
-      screen: FeedThree,
+    WorkoutPlanFeed: {
+      screen: WorkoutPlansScreen,
       navigationOptions: {
         tabBarVisible: true,
         tabBarLabel: "Workout Plans",
