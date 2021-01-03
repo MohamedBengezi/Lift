@@ -13,22 +13,15 @@ import serverApi from "../api/server";
 
 const apiLink = serverApi.defaults.baseURL;
 
-const Feed = ({ navigation }) => {
+const Feed = ({ navigation, img, url, title }) => {
   let image = null,
     video = null,
     count = 0;
-  const [play, setPlay] = useState(false);
-  url = apiLink + "/sample";
 
-  let img = (navigation.getParam('image')) ? navigation.getParam('image') : null;
-  let title = (navigation.getParam('title')) ? navigation.getParam('title') : "this is a post";
-  console.log("AAA1", navigation)
-
-  if (url != "" && img == null) {
-    video = [url, url, url, url];
-  } else {
+  if (img != null) {
     image = [img, img, img, img];
-    //  image = navigation.state.params.image
+  } else {
+    video = [url, url, url, url];
   }
 
   function VideoElement({ vid }) {
