@@ -5,6 +5,8 @@ import { navigate } from "../navigationRef";
 import FormData from "form-data";
 import Axios from "axios";
 
+import firebaseApp from "../../firebase";
+
 const apiLink = serverApi.defaults.baseURL;
 
 const authReducer = (state, action) => {
@@ -18,19 +20,27 @@ const authReducer = (state, action) => {
   }
 };
 
-const signup = (dispatch) => async ({ video }) => {
-  try {
+const signup = (dispatch) => {
+  return async ({ email, password }) => {
     //  const response = await serverApi.post("/signup", { email, password });
     //  await AsyncStorage.setItem("token", response.data.token);
     //  dispatch({ type: "signup", payload: response.data.token });
+    console.log(email);
+    firebaseApp
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then((user) => {
+        console.log(user);
+        navigate("Main");
+      })
+      .catch((error) => {
+        dispatch({
+          type: "add_error",
+          payload: "Something went wrong with sign up. Reason:" + error.message,
+        });
+      });
     console.log("in signup");
-    navigate("Main");
-  } catch (err) {
-    dispatch({
-      type: "add_error",
-      payload: "Something went wrong with sign up",
-    });
-  }
+  };
 };
 
 const signin = (dispatch) => {
@@ -38,12 +48,25 @@ const signin = (dispatch) => {
     // Try to signin
     // Handle success by updating state
     // Handle failure by showing error message (somehow)
+    firebaseApp
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((user) => {
+        console.log(user);
+      })
+      .catch((error) => {
+        dispatch({
+          type: "add_error",
+          payload: "Something went wrong with sign in. Reason:" + error.message,
+        });
+      });
   };
 };
 
 const signout = (dispatch) => {
   return () => {
     // somehow sign out!!!
+    firebaseApp.auth().signOut();
   };
 };
 

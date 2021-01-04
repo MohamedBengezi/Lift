@@ -12,6 +12,8 @@ import colors from "../hooks/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 
+import firebaseApp from "../../firebase";
+
 const SignupScreen = () => {
   const { state, signup } = useContext(AuthContext);
   const [email, setEmail] = useState("");
@@ -103,7 +105,25 @@ const SignupScreen = () => {
           title="Sign Up"
           onPress={() => {
             signup(email, password);
-            navigate("Main");
+
+            // --- This works
+            // firebaseApp
+            //   .auth()
+            //   .createUserWithEmailAndPassword(email, password)
+            //   .then((user) => {
+            //     console.log(user);
+            //     navigate("Main");
+            //   })
+            //   .catch((error) => {
+            //     console.log(error.message);
+            //     // dispatch({
+            //     //   type: "add_error",
+            //     //   payload:
+            //     //     "Something went wrong with sign up. Reason:" +
+            //     //     error.message,
+            //     // });
+            //   });
+            // navigate("Main");
           }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
