@@ -2,7 +2,7 @@ import React from "react";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MainScreen from "./src/screens/MainScreen";
 import ProfileScreen from "./src/screens/ProfileIndex";
@@ -11,17 +11,17 @@ import FeedTwo from "./src/screens/Feeds/FeedTwo";
 import FeedThree from "./src/screens/Feeds/FeedThree";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
-import PostScreen from './src/screens/PostScreen';
+import IntroScreen from "./src/screens/IntroScreen";
+import PostScreen from "./src/screens/PostScreen";
 import { Provider as AuthProvider } from "./src/context/AuthContext";
 import { setNavigator } from "./src/navigationRef";
-import HeaderLeft from './src/components/HeaderLeft';
-
+import HeaderLeft from "./src/components/HeaderLeft";
+import { SafeAreaProvider, useSafeArea } from "react-native-safe-area-context";
+import RouteScreen from "./RouteScreen";
 //const Tab = createMaterialTopTabNavigator();
+
 const styleTab = {
-  activeTintColor: "blue",
-  labelStyle: {
-    fontSize: 20,
-  },
+  activeTintColor: "red",
   showIcon: true,
   showLabel: false,
   inactiveTintColor: "#DDD",
@@ -37,11 +37,16 @@ const styleTab = {
 
 const feedStyleTab = {
   ...styleTab,
-  style: {},
   activeTintColor: "red",
+  labelStyle: {
+    fontSize: 15,
+  },
+  showLabel: true,
   tabStyle: {
-    height: 40,
-    backgroundColor: "#fff",
+    height: 50,
+    marginTop: 0,
+    fontSize: 10,
+    backgroundColor: "#fff"
   },
 };
 
@@ -52,14 +57,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-  },
-  feed: {
-    flex: 1,
-    fontSize: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-  },
+  }
 });
 
 const FeedStack = createMaterialTopTabNavigator({
@@ -67,81 +65,54 @@ const FeedStack = createMaterialTopTabNavigator({
     screen: FeedScreen,
     navigationOptions: {
       tabBarVisible: true,
-      tabBarLabel: "FeedOne",
+      tabBarLabel: "Posts",
       tabBarOptions: feedStyleTab,
-      swipeEnabled: false,
-      tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        let iconName = `md-fitness`;
-        return (
-          <Ionicons
-            name={iconName}
-            size={horizontal ? 20 : 25}
-            color={tintColor}
-            style={styles.feed}
-          />
-        );
-      },
+      swipeEnabled: false
     },
   },
   FeedTwo: {
     screen: FeedTwo,
     navigationOptions: {
       tabBarVisible: true,
-      tabBarLabel: "FeedTwo",
+      tabBarLabel: "Diet Plans",
       tabBarOptions: feedStyleTab,
-      swipeEnabled: false,
-      tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        let iconName = `md-water`;
-        return (
-          <Ionicons
-            name={iconName}
-            size={horizontal ? 20 : 25}
-            color={tintColor}
-            style={styles.feed}
-          />
-        );
-      },
+      swipeEnabled: false
     },
   },
   FeedThree: {
     screen: FeedThree,
     navigationOptions: {
       tabBarVisible: true,
-      tabBarLabel: "FeedThree",
+      tabBarLabel: "Workout Plans",
       tabBarOptions: feedStyleTab,
-      swipeEnabled: false,
-      tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        let iconName = `md-hammer`;
-        return (
-          <Ionicons
-            name={iconName}
-            size={horizontal ? 20 : 25}
-            color={tintColor}
-            style={styles.feed}
-          />
-        );
-      },
+      swipeEnabled: false
     },
-  }
-})
+  },
+});
 
 const switchNavigator = createSwitchNavigator({
   loginFlow: createStackNavigator({
+    Intro: IntroScreen,
     Signup: SignupScreen,
-    Signin: SigninScreen
+    Signin: SigninScreen,
   }),
-  makePostFlow: createStackNavigator({
-    Post: PostScreen
-  }, {
-    defaultNavigationOptions: ({ navigation }) => {
-      return {
-        headerStyle: {
-          backgroundColor: 'transparent',
-        },
-        headerLeft: () => (<HeaderLeft onPress={() => navigation.navigate('Main')} />),
-      }
+  makePostFlow: createStackNavigator(
+    {
+      Post: PostScreen,
+    },
+    {
+      defaultNavigationOptions: ({ navigation }) => {
+        return {
+          headerStyle: {
+            backgroundColor: "transparent",
+          },
+          headerLeft: () => (
+            <HeaderLeft onPress={() => navigation.navigate("Main")} />
+          ),
+        };
+      },
     }
-  }),
+  ),
   mainFlow: createMaterialTopTabNavigator(
     {
       Feed: {
@@ -213,12 +184,10 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
   return (
-    <AuthProvider>
-      <App
-        ref={(navigator) => {
-          setNavigator(navigator);
-        }}
-      />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <RouteScreen />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 };
