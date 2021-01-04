@@ -1,6 +1,5 @@
 import firebase from "firebase/app";
 import "firebase/auth";
-import { proc } from "react-native-reanimated";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxt8pC5E6NeUaqLxi2Lpudf32dJu4IqdU",
