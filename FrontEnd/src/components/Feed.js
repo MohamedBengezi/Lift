@@ -9,18 +9,16 @@ import {
   Platform,
   StatusBar
 } from "react-native";
-import { Icon } from 'react-native-elements';
-import { Font } from 'expo';
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
 import serverApi from "../api/server";
+import PostDetails from "./PostDetails";
 
 const apiLink = serverApi.defaults.baseURL;
 
 const Feed = ({ navigation, img, url, title }) => {
   const [likesAndComments, setLikesAndComments] = useState({ commented: false, liked: false });
-  let profileImage = Image.resolveAssetSource(require("./icon.jpg"));
   let image = null,
     video = null,
     count = 0;
@@ -70,7 +68,7 @@ const Feed = ({ navigation, img, url, title }) => {
           <Ionicons
             name={commented ? "md-heart" : "md-heart-empty"}
             color={commented ? 'black' : null} type="ionicon" size={25}
-            onPress={() => navigation.navigate('ViewPost', { post })}
+            onPress={() => console.log('liked!')}
           />
         </TouchableOpacity>
 
@@ -78,7 +76,7 @@ const Feed = ({ navigation, img, url, title }) => {
           <Ionicons
             name={commented ? "md-chatbubbles" : "md-chatboxes"}
             color={commented ? 'black' : null} type="ionicon" size={25}
-            onPress={() => navigation.navigate('ViewPost', { post })}
+            onPress={() => console.log('commented!')}
           />
         </TouchableOpacity>
         {/* <Text style={styles.postActionText}>{!!item.likes && item.likes.length || 0}</Text> */}
@@ -88,7 +86,6 @@ const Feed = ({ navigation, img, url, title }) => {
 
   function renderPost(item) {
     const { navigate } = navigation;
-    console.log("CCC", item)
     //check if video or photo
     let media;
     if (typeof item.item === 'object' && item.item !== null) {
@@ -98,45 +95,16 @@ const Feed = ({ navigation, img, url, title }) => {
 
     }
     return (
-      <View style={styles.postContainer}>
-        <View style={styles.postHeader}>
-          <TouchableOpacity style={styles.displayImageContainer} onPress={() => console.log('Profile Image pressed')} activeOpacity={0.8}>
-            <Image style={styles.avatar}
-              source={{
-                uri: 'https://reactnative.dev/img/tiny_logo.png',
-              }} />
-          </TouchableOpacity>
+      <TouchableOpacity onPress={() => onPress(media)}>
+        <PostDetails media={media} title={title} />
 
-          <View style={styles.nameAndImageContainer} >
-            <TouchableOpacity style={styles.avatarName} onPress={() => console.log('Profile pressed')} activeOpacity={0.8} >
-              <Text style={{ fontSize: 17 }}>
-                John Doe
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.location} >
-              <Text style={{ color: 'black', fontSize: 12, fontStyle: 'italic' }}>
-                location
-              </Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.postImageCaptionContainer} >
-          <TouchableOpacity onPress={() => navigation.navigate("ViewPost", { media })} activeOpacity={1}>
-            {media}
-          </TouchableOpacity>
-          <Text>
-            {title}
-          </Text>
-        </View>
-
-        <View style={styles.postLogs} >
-          <View style={styles.postDate} >
-            <Text style={{ fontSize: 11, color: '#4C4B4B' }}>5 mins ago </Text>
-          </View>
-          <LikeAndComment />
-        </View>
-      </View>
+      </TouchableOpacity>
     )
+  }
+
+  const onPress = (media) => {
+    console.log("MEDIA", media);
+    navigation.navigate("ViewPost", { media, title })
   }
 
   const renderVid = (vid) => (
