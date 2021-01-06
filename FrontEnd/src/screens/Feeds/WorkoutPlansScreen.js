@@ -13,10 +13,10 @@ const reducer = (state, action) => {
     }
 }
 
-const FeedThree = () => {
+const WorkoutPlansScreen = () => {
     return (
         <View>
-            <Text>Feed three Screen</Text>
+            <Text>Workout Plans Screen</Text>
         </View>
     );
 };
@@ -25,4 +25,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default FeedThree; 
+export default WorkoutPlansScreen; 
