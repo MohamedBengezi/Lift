@@ -45,7 +45,7 @@ const Feed = ({ navigation, img, url, title }) => {
             </body>
             </html>`,
           }}
-          style={{ width: 300, height: 150, borderWidth: 2 }}
+          style={{ width: 300, height: 125, borderWidth: 2 }}
         />
       </View>
     );

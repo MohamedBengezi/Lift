@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     postImageCaptionContainer: {
         backgroundColor: '#ffffff',
         alignItems: 'center',
-        height: 100,
-        width: 100
+        height: "50%",
+        width: "80%"
     },
     postLogs: {
         height: 50,
