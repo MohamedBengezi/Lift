@@ -19,7 +19,6 @@ import HeaderLeft from "./src/components/HeaderLeft";
 import { SafeAreaProvider, useSafeArea } from "react-native-safe-area-context";
 import RouteScreen from "./RouteScreen";
 //const Tab = createMaterialTopTabNavigator();
-
 const styleTab = {
   activeTintColor: "red",
   showIcon: true,
@@ -46,7 +45,7 @@ const feedStyleTab = {
     height: 50,
     marginTop: 0,
     fontSize: 10,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
 };
 
@@ -57,7 +56,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-  }
+  },
 });
 
 const FeedStack = createMaterialTopTabNavigator({
@@ -67,7 +66,7 @@ const FeedStack = createMaterialTopTabNavigator({
       tabBarVisible: true,
       tabBarLabel: "Posts",
       tabBarOptions: feedStyleTab,
-      swipeEnabled: false
+      swipeEnabled: false,
     },
   },
   FeedTwo: {
@@ -76,7 +75,7 @@ const FeedStack = createMaterialTopTabNavigator({
       tabBarVisible: true,
       tabBarLabel: "Diet Plans",
       tabBarOptions: feedStyleTab,
-      swipeEnabled: false
+      swipeEnabled: false,
     },
   },
   FeedThree: {
@@ -85,7 +84,7 @@ const FeedStack = createMaterialTopTabNavigator({
       tabBarVisible: true,
       tabBarLabel: "Workout Plans",
       tabBarOptions: feedStyleTab,
-      swipeEnabled: false
+      swipeEnabled: false,
     },
   },
 });
