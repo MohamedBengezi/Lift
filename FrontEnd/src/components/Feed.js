@@ -10,19 +10,13 @@ import {
   StatusBar
 } from "react-native";
 
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { WebView } from "react-native-webview";
-import serverApi from "../api/server";
 import PostDetails from "./PostDetails";
 
-const apiLink = serverApi.defaults.baseURL;
-
 const Feed = ({ navigation, img, url, title }) => {
-  const [likesAndComments, setLikesAndComments] = useState({ commented: false, liked: false });
   let image = null,
     video = null,
     count = 0;
-  let post = renderPost(url);
   if (img != null) {
     image = [img, img, img, img];
   } else {
@@ -60,32 +54,7 @@ const Feed = ({ navigation, img, url, title }) => {
     );
   }
 
-  function LikeAndComment() {
-    const { liked, commented } = likesAndComments;
-    return (
-      <View style={styles.postActionView}>
-        <TouchableOpacity style={styles.icons}>
-          <Ionicons
-            name={commented ? "md-heart" : "md-heart-empty"}
-            color={commented ? 'black' : null} type="ionicon" size={25}
-            onPress={() => console.log('liked!')}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.icons}>
-          <Ionicons
-            name={commented ? "md-chatbubbles" : "md-chatboxes"}
-            color={commented ? 'black' : null} type="ionicon" size={25}
-            onPress={() => console.log('commented!')}
-          />
-        </TouchableOpacity>
-        {/* <Text style={styles.postActionText}>{!!item.likes && item.likes.length || 0}</Text> */}
-      </View>
-    );
-  }
-
   function renderPost(item) {
-    const { navigate } = navigation;
     //check if video or photo
     let media;
     if (typeof item.item === 'object' && item.item !== null) {
@@ -106,30 +75,6 @@ const Feed = ({ navigation, img, url, title }) => {
     console.log("MEDIA", media);
     navigation.navigate("ViewPost", { media, title })
   }
-
-  const renderVid = (vid) => (
-    <TouchableOpacity style={styles.container} onPress={() => viewVidPost(vid)}>
-      <VideoElement vid={vid} />
-    </TouchableOpacity>
-  );
-
-  const renderImage = (image) => (
-    <TouchableOpacity style={styles.container} onPress={() => viewImagePost(image)}>
-      <ImageElement image={image} />
-    </TouchableOpacity>
-
-  );
-
-  function viewVidPost(item) {
-    let post = <VideoElement vid={item} />
-    navigation.navigate("ViewPost", { post })
-  }
-
-  function viewImagePost(item) {
-    let post = <ImageElement image={item} />
-    navigation.navigate("ViewPost", { post })
-  }
-
 
   function VideoPost() {
     return (
