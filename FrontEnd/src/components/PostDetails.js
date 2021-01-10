@@ -163,8 +163,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f8f8f8',
         borderRadius: 10,
-        borderWidth: 1
-
     },
     postHeader: {
         height: 70,
