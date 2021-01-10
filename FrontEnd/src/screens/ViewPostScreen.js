@@ -7,7 +7,7 @@ const ViewPostScreen = ({ navigation }) => {
     const title = navigation.getParam('title');
 
     return (
-        <PostDetails media={media} title={title} />
+        <PostDetails media={media} title={title} showComments={true} />
     );
 };
 
