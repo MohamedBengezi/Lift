@@ -104,26 +104,7 @@ const SignupScreen = () => {
         <Button
           title="Sign Up"
           onPress={() => {
-            signup(email, password);
-
-            // --- This works
-            // firebaseApp
-            //   .auth()
-            //   .createUserWithEmailAndPassword(email, password)
-            //   .then((user) => {
-            //     console.log(user);
-            //     navigate("Main");
-            //   })
-            //   .catch((error) => {
-            //     console.log(error.message);
-            //     // dispatch({
-            //     //   type: "add_error",
-            //     //   payload:
-            //     //     "Something went wrong with sign up. Reason:" +
-            //     //     error.message,
-            //     // });
-            //   });
-            // navigate("Main");
+            signup({email, password});
           }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}

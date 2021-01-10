@@ -1,21 +1,18 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import PostDetails from '../components/PostDetails';
 
 const ViewPostScreen = ({ navigation }) => {
-    console.log("XXX", navigation)
-    let post = navigation.getParam('post');
+    const media = navigation.getParam('media');
+    const title = navigation.getParam('title');
+
     return (
-        <View style={styles.post} >
-            {post}
-        </View>
+        <PostDetails media={media} title={title} showComments={true} />
     );
 };
 
 const styles = StyleSheet.create({
-    post: {
-        flex: 1,
-        alignItems: 'center'
-    }
+
 });
 
 export default ViewPostScreen;
