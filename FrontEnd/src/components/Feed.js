@@ -39,7 +39,7 @@ const Feed = ({ navigation, img, url, title }) => {
             </body>
             </html>`,
           }}
-          style={{ width: 300, height: 125, borderWidth: 2 }}
+          style={{ width: 350, height: 125, borderWidth: 2 }}
         />
       </View>
     );
@@ -64,9 +64,8 @@ const Feed = ({ navigation, img, url, title }) => {
 
     }
     return (
-      <TouchableOpacity onPress={() => onPress(media)}>
-        <PostDetails media={media} title={title} />
-
+      <TouchableOpacity style={{ margin: 10, borderRadius: 4 }} onPress={() => onPress(media)}>
+        <PostDetails media={media} title={title} showComments={false} />
       </TouchableOpacity>
     )
   }
