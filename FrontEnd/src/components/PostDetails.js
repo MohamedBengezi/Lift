@@ -46,7 +46,7 @@ const PostDetails = ({ media, title, showComments }) => {
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name={liked ? "md-heart" : "md-heart-empty"}
-                        color={liked ? 'red' : null} type="ionicon" size={25}
+                        color={liked ? '#ff1616' : null} type="ionicon" size={25}
                         onPress={() => onPressLike()}
                     />
                 </TouchableOpacity>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f2f2f2',
+        backgroundColor: '#f8f8f8',
 
     },
     postHeader: {

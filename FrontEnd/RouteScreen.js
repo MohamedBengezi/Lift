@@ -18,7 +18,7 @@ import ViewPostScreen from "./src/screens/ViewPostScreen";
 
 export default function RouteScreen() {
   const styleTab = {
-    activeTintColor: "yellow",
+    activeTintColor: "#ffdc5b",
     labelStyle: {
       fontSize: 20,
     },
