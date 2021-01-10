@@ -18,13 +18,13 @@ import ViewPostScreen from "./src/screens/ViewPostScreen";
 
 export default function RouteScreen() {
   const styleTab = {
-    activeTintColor: "blue",
+    activeTintColor: "yellow",
     labelStyle: {
       fontSize: 20,
     },
     showIcon: true,
     showLabel: false,
-    inactiveTintColor: "#DDD",
+    inactiveTintColor: "#000",
     style: { elevation: 0 },
     tabStyle: {
       height: 50,
@@ -41,6 +41,7 @@ export default function RouteScreen() {
     activeTintColor: "black",
     labelStyle: {
       fontSize: 15,
+      fontWeight: 'bold'
     },
     showLabel: true,
     tabStyle: {
@@ -88,8 +89,11 @@ export default function RouteScreen() {
       screen: PostStack,
       navigationOptions: {
         tabBarVisible: true,
-        tabBarLabel: "Posts",
-        tabBarOptions: feedStyleTab,
+        tabBarLabel: ({ tintColor, focused, item }) => {
+          return focused
+            ? (<Text style={{ fontWeight: 'bold', }} >Posts</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Posts</Text>)
+        }, tabBarOptions: feedStyleTab,
         swipeEnabled: false
       },
     },
@@ -97,7 +101,11 @@ export default function RouteScreen() {
       screen: DietPlansScreen,
       navigationOptions: {
         tabBarVisible: true,
-        tabBarLabel: "Diet Plans",
+        tabBarLabel: ({ tintColor, focused, item }) => {
+          return focused
+            ? (<Text style={{ fontWeight: 'bold', }} >Diet Plans</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Diet Plans</Text>)
+        },
         tabBarOptions: feedStyleTab,
         swipeEnabled: false
       },
@@ -106,7 +114,11 @@ export default function RouteScreen() {
       screen: WorkoutPlansScreen,
       navigationOptions: {
         tabBarVisible: true,
-        tabBarLabel: "Workout Plans",
+        tabBarLabel: ({ tintColor, focused, item }) => {
+          return focused
+            ? (<Text style={{ fontWeight: 'bold', }} >Workout Plans</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Workout Plans</Text>)
+        },
         tabBarOptions: feedStyleTab,
         swipeEnabled: false
       },
