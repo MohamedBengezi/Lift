@@ -58,6 +58,14 @@ const PostDetails = ({ media, title, showComments }) => {
                         onPress={() => onPressComment()}
                     />
                 </TouchableOpacity>
+
+                <TouchableOpacity style={styles.icons}>
+                    <Ionicons
+                        name="md-share"
+                        type="ionicon" size={25}
+                        onPress={() => console.log('share pressed')}
+                    />
+                </TouchableOpacity>
                 {/* <Text style={styles.postActionText}>{!!item.likes && item.likes.length || 0}</Text> */}
             </View>
         );
@@ -154,6 +162,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#f8f8f8',
+        borderRadius: 10,
+        borderWidth: 1
 
     },
     postHeader: {
