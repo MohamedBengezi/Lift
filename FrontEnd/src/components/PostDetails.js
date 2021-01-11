@@ -117,6 +117,9 @@ const PostDetails = ({ media, title, showComments }) => {
                             <Text style={{ fontSize: 17 }}>
                                 John Doe
               </Text>
+                            <View style={styles.postDate} >
+                                <Text style={{ fontSize: 11, color: '#4C4B4B' }}>5 mins ago </Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -127,9 +130,6 @@ const PostDetails = ({ media, title, showComments }) => {
                 </View>
 
                 <View style={styles.postLogs} >
-                    <View style={styles.postDate} >
-                        <Text style={{ fontSize: 11, color: '#4C4B4B' }}>5 mins ago </Text>
-                    </View>
                     <LikeAndComment media={media} />
                 </View>
             </View>
@@ -143,17 +143,14 @@ const PostDetails = ({ media, title, showComments }) => {
 
 const styles = StyleSheet.create({
     icons: {
-        flex: 1,
         flexDirection: 'column',
         fontSize: 200,
         fontWeight: 'bold',
-        alignItems: 'flex-start'
+        marginRight: 10
     },
     mainContent: {
         flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#ffffff',
-
+        backgroundColor: '#f8f8f8'
     },
     postContainer: {
         flexDirection: 'column',
@@ -161,11 +158,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f8f8f8',
         borderRadius: 10,
+        marginRight: 2
     },
     postHeader: {
         height: 70,
         flexDirection: 'row',
-
     },
     postImageCaptionContainer: {
         alignItems: 'center',
@@ -208,16 +205,13 @@ const styles = StyleSheet.create({
         height: 250,
     },
     postDate: {
-        flex: 3,
         justifyContent: 'center',
-        marginLeft: 20,
     },
     postActionView: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'center',
         alignItems: 'center',
-
+        marginLeft: 30
     },
     postActionText: {
         marginLeft: 10,

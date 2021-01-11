@@ -7,7 +7,8 @@ import {
   Image,
   TouchableOpacity,
   Platform,
-  StatusBar
+  StatusBar,
+  Dimensions
 } from "react-native";
 
 import { WebView } from "react-native-webview";
@@ -39,7 +40,7 @@ const Feed = ({ navigation, img, url, title }) => {
             </body>
             </html>`,
           }}
-          style={{ width: 350, height: 125, borderWidth: 2 }}
+          style={styles.video}
         />
       </View>
     );
@@ -130,6 +131,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     width: "70%",
     height: "50%"
+  },
+  video: {
+    width: Dimensions.get('window').width,
+    height: 125,
+    resizeMode: "cover",
   },
   icons: {
     flex: 1,
