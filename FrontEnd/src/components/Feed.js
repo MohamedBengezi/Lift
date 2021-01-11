@@ -49,8 +49,8 @@ const Feed = ({ navigation, img, url, title }) => {
   function ImageElement({ image }) {
     return (
       <View style={styles.post}>
-        <Text>{title}</Text>
-        <Image source={{ uri: image.item.uri }} style={{ width: 300, height: 150, borderWidth: 2 }} />
+        <Text style={{ marginLeft: 50 }}>{title}</Text>
+        <Image source={{ uri: image.item.uri }} style={styles.video} />
       </View>
     );
   }
@@ -72,40 +72,22 @@ const Feed = ({ navigation, img, url, title }) => {
   }
 
   const onPress = (media) => {
-    console.log("MEDIA", media);
     navigation.navigate("ViewPost", { media, title })
   }
 
-  function VideoPost() {
+  function ListOfPosts() {
     return (
       <FlatList
-        data={video}
-        renderItem={(vid) => renderPost(vid)}
-        keyExtractor={(vid) => vid + count++}
+        data={(image) ? image : video}
+        renderItem={(item) => renderPost(item)}
+        keyExtractor={() => "post:" + count++}
       />
     );
   };
 
-  function ImagePost() {
-    return (
-      <FlatList
-        data={image}
-        renderItem={(photo) => renderPost(photo)}
-        keyExtractor={(photo) => photo.uri + count++}
-      />
-    );
-
-  }
-  let posts;
-  if (video) {
-    posts = <VideoPost />
-  } else {
-    posts = <ImagePost />
-  }
-
   return (
     <View style={styles.background}>
-      {posts}
+      <ListOfPosts />
     </View >
 
   );
@@ -133,7 +115,7 @@ const styles = StyleSheet.create({
     height: "50%"
   },
   video: {
-    width: Dimensions.get('window').width,
+    width: Dimensions.get('window').width - 20,
     height: 125,
     resizeMode: "cover",
   },
