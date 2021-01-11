@@ -10,10 +10,11 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
-
+import Comment from './Comment';
 
 const PostDetails = ({ media, title, showComments }) => {
-    const [likesAndComments, setLikesAndComments] = useState({ commented: false, liked: false });
+    const [likedOrCommented, setLikedOrCommented] = useState({ commented: false, liked: false });
+    const [likesAndComments, setLikesAndComments] = useState({ likes: 0, comments: 0 })
     let comment = {
         "user": {
             "id": 123,
@@ -28,19 +29,26 @@ const PostDetails = ({ media, title, showComments }) => {
 
     const onPressLike = () => {
         console.log("postdetails: liked or commented!")
-        setLikesAndComments({ liked: !likesAndComments.liked });
+        let liked = !likedOrCommented.liked
+        let likes = likesAndComments.likes
+        if (!liked) {
+            setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
+        } else {
+            setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
+        }
+        setLikedOrCommented({ liked: liked });
     }
 
     const onPressComment = () => {
         console.log("postdetails: liked or commented!")
-        setLikesAndComments({ commented: !likesAndComments.commented });
+        setLikedOrCommented({ commented: !likedOrCommented.commented });
     }
 
 
     function LikeAndComment(media) {
-        const { liked, commented } = likesAndComments;
+        const { liked, commented } = likedOrCommented;
+        const { likes, comments } = likesAndComments;
         console.log("YYY1", media)
-
         return (
             <View style={styles.postActionView}>
                 <TouchableOpacity style={styles.icons}>
@@ -49,6 +57,8 @@ const PostDetails = ({ media, title, showComments }) => {
                         color={liked ? '#ff1616' : null} type="ionicon" size={25}
                         onPress={() => onPressLike()}
                     />
+                    <Text style={styles.postActionText}>{/*!!item.likes && item.likes.length ||*/ likes}</Text>
+
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.icons}>
@@ -57,6 +67,7 @@ const PostDetails = ({ media, title, showComments }) => {
                         color={commented ? 'black' : null} type="ionicon" size={25}
                         onPress={() => onPressComment()}
                     />
+                    <Text style={styles.postActionText}>{/*!!item.likes && item.likes.length || */ comments}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.icons}>
@@ -65,8 +76,8 @@ const PostDetails = ({ media, title, showComments }) => {
                         type="ionicon" size={25}
                         onPress={() => console.log('share pressed')}
                     />
+                    <Text style={styles.postActionText}></Text>
                 </TouchableOpacity>
-                {/* <Text style={styles.postActionText}>{!!item.likes && item.likes.length || 0}</Text> */}
             </View>
         );
     }
@@ -74,21 +85,7 @@ const PostDetails = ({ media, title, showComments }) => {
     function displayComment(comment, index) {
 
         return (
-            <View style={styles.commentContainer} key={index}>
-                <TouchableOpacity activeOpacity={0.8}
-                    onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                    <Image source={{ uri: comment.user.profile_image || '' }} style={styles.commentAvatar} />
-                </TouchableOpacity>
-                <View style={styles.postUsernameLocationContainer}>
-                    <TouchableOpacity style={styles.postUsernameView}
-                        onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                        <Text style={styles.commentUsernameLabel}>{comment.user.name}</Text>
-                    </TouchableOpacity>
-                    <View style={styles.postLocationView}>
-                        <Text style={styles.commentContentLabel}>{comment.description}</Text>
-                    </View>
-                </View>
-            </View>
+            <Comment comment={comment} index={index} />
         )
     }
 
@@ -147,8 +144,9 @@ const PostDetails = ({ media, title, showComments }) => {
 const styles = StyleSheet.create({
     icons: {
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: 'column',
         fontSize: 200,
+        fontWeight: 'bold',
         alignItems: 'flex-start'
     },
     mainContent: {
@@ -225,6 +223,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         color: '#44484B',
         fontSize: 15,
+        fontWeight: 'bold'
     },
     postLocationView: {
         flex: 1,
