@@ -150,7 +150,6 @@ const styles = StyleSheet.create({
     },
     mainContent: {
         flex: 1,
-        backgroundColor: '#f8f8f8'
     },
     postContainer: {
         flexDirection: 'column',
