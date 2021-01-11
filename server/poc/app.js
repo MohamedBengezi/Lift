@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const authRoutes = require("./routes/authRoute");
 
 // Set up disk storage system. Field name is based of the field value expected from the form-data,
 // which will be myFile for now. Files are stored locally. Will move to services such as aws s3 later.
@@ -60,6 +61,7 @@ const streamVideo = (req, res, path) => {
 
 const app = express();
 
+app.use(authRoutes);
 // Generic upload route. Can uplaod images or videos through here. All files are names myFile.jpg (or .mp4).
 // We only store one file of a specific type for now (will change later)
 app.post("/upload", (req, res) => {
