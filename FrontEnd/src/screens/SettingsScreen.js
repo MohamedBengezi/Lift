@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { navigate } from '../navigationRef';
 
 const SettingsScreen = () => {
     const [image, setImage] = useState(null);
@@ -35,6 +36,13 @@ const SettingsScreen = () => {
 
     return (
         <View style={styles.background}>
+            <Ionicons
+                name="ios-arrow-round-back"
+                style={styles.cancel}
+                onPress={() => {
+                    navigate("Profile");
+                }}
+            />
             <View style={styles.usernameContainer}>
                 <Text style={{ marginBottom: 5, marginLeft: 10 }}>Username: </Text>
                 <Input style={styles.username} />
@@ -98,6 +106,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#02bcd4",
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    cancel: {
+        position: "absolute",
+        left: 20,
+        top: 40,
+        color: "#000000",
+        fontWeight: "600",
+        fontSize: 28,
     },
     usernameContainer: {
         width: "50%",
