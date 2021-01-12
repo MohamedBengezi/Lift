@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     tabBar: {
-        backgroundColor: '#EEE',
+        backgroundColor: '#d9d9d9',
     },
     tabContainer: {
         flex: 1,
@@ -144,7 +144,7 @@ class Profile extends Component {
         tabs: {
             index: 0,
             routes: [
-                { key: '1', title: 'like', count: 86 },
+                { key: '1', title: 'likes', count: 86 },
                 { key: '2', title: 'following', count: 95 },
                 { key: '3', title: 'followers', count: '1.3 K' },
             ],
