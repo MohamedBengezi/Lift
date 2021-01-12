@@ -15,6 +15,7 @@ import IntroScreen from "./src/screens/IntroScreen";
 import PostScreen from "./src/screens/PostScreen";
 import { setNavigator } from "./src/navigationRef";
 import ViewPostScreen from "./src/screens/ViewPostScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -79,10 +80,13 @@ export default function RouteScreen() {
   },
     {
       headerMode: 'none',
-      navigationOptions: {
-        header: null
-      },
+      headerShown: false,
     })
+
+  const ProfileStack = createStackNavigator({
+    Profile: ProfileScreen,
+    Settings: SettingsScreen
+  })
 
   const FeedStack = createMaterialTopTabNavigator({
     MainFeed: {
@@ -178,7 +182,7 @@ export default function RouteScreen() {
           },
         },
         Profile: {
-          screen: ProfileScreen,
+          screen: ProfileStack,
           navigationOptions: {
             tabBarVisible: true,
             tabBarLabel: "Profile",
