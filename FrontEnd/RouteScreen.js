@@ -91,7 +91,9 @@ export default function RouteScreen() {
       navigationOptions: {
         headerMode: 'none',
         headerShown: false,
-      }
+        animationEnabled: false
+
+      },
     }
   })
 
