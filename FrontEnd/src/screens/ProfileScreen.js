@@ -7,7 +7,8 @@ import {
     StyleSheet,
     Text,
     View,
-    YellowBox
+    YellowBox,
+    StatusBar
 } from 'react-native'
 import { Icon } from 'react-native-elements'
 import {
@@ -104,7 +105,8 @@ const styles = StyleSheet.create({
     settings: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        margin: 15
+        margin: 15,
+        marginTop: StatusBar.currentHeight
     }
 })
 
