@@ -155,10 +155,6 @@ class Profile extends Component {
         YellowBox.ignoreWarnings(['VirtualizedLists should never be nested']);
     }
 
-    onPressPlace = () => {
-        console.log('place')
-    }
-
     handleIndexChange = index => {
         this.setState({
             tabs: {

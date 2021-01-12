@@ -25,7 +25,6 @@ const signup = (dispatch) => {
     //  const response = await serverApi.post("/signup", { email, password });
     //  await AsyncStorage.setItem("token", response.data.token);
     //  dispatch({ type: "signup", payload: response.data.token });
-    console.log(email);
     firebaseApp
       .auth()
       .createUserWithEmailAndPassword(email, password)
