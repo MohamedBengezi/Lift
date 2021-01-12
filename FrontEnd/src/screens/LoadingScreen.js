@@ -1,7 +1,5 @@
 import React, {useContext,useEffect} from "react";
-import { View, StyleSheet, Image, SafeAreaView, StatusBar } from "react-native";
-import { Button } from "react-native-elements";
-import { navigate } from "../navigationRef";
+import {StyleSheet, Image, SafeAreaView } from "react-native";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
 
@@ -11,20 +9,6 @@ const IntroScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.logo} source={require("../../assets/icon.png")} />
-      <Button
-        title="Sign Up"
-        onPress={() => navigate("Signup")}
-        buttonStyle={styles.button}
-        titleStyle={styles.buttonText}
-        containerStyle={styles.containerStyle}
-      />
-      <Button
-        title="Login"
-        onPress={() => navigate("Signin")}
-        buttonStyle={styles.button}
-        titleStyle={styles.buttonText}
-        containerStyle={styles.containerStyle}
-      />
     </SafeAreaView>
   );
 };

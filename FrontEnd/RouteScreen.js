@@ -16,6 +16,7 @@ import PostScreen from "./src/screens/PostScreen";
 import { setNavigator } from "./src/navigationRef";
 import ViewPostScreen from "./src/screens/ViewPostScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
+import LoadingScreen from "./src/screens/LoadingScreen";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -136,6 +137,7 @@ export default function RouteScreen() {
     });
 
   const switchNavigator = createSwitchNavigator({
+    loading: LoadingScreen,
     loginFlow: createStackNavigator({
       Intro: IntroScreen,
       Signup: SignupScreen,

@@ -13,15 +13,16 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 
 const SigninScreen = () => {
-  const { state, signin } = useContext(AuthContext);
+  const { state, signin, clearErrorMessage } = useContext(AuthContext);
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   return (
     <View style={styles.container}>
       <Ionicons
         name="ios-arrow-round-back"
         style={styles.cancel}
         onPress={() => {
+          clearErrorMessage();
           navigate("Intro");
         }}
       />
@@ -33,8 +34,8 @@ const SigninScreen = () => {
         <Text style={styles.label}>Username:</Text>
         <TextInput
           label="Username:"
-          value={username}
-          onChangeText={setUsername}
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
           autoCorrect={false}
           style={styles.inputBox}
@@ -67,7 +68,7 @@ const SigninScreen = () => {
       <Spacer>
         <Button
           title="Login"
-          onPress={() => navigate("Main")}
+          onPress={() => {signin({email,password})}}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
           containerStyle={styles.containerStyle}

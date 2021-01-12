@@ -1,9 +1,8 @@
-import { AsyncStorage } from "react-native";
 import createDataContext from "./createDataContext";
 import serverApi from "../api/server";
 import { navigate } from "../navigationRef";
 import FormData from "form-data";
-import Axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firebaseApp from "../../firebase";
 
@@ -13,12 +12,30 @@ const authReducer = (state, action) => {
   switch (action.type) {
     case "add_error":
       return { ...state, errorMessage: action.payload };
-    case "signup":
+    case "signin":
       return { errorMessage: "", token: action.payload };
+    case "signOut":
+      return { errorMessage: "", token: null };
+    case "clear_err_msg":
+      return {...state, errorMessage:""};
     default:
       return state;
   }
 };
+
+const tryLocalSignin = dispatch => async() => {
+  const token = await AsyncStorage.getItem('lift-token');
+  if (token){
+    dispatch({type:'signin', payload:token});
+    navigate("Main");
+  }else{
+    navigate('loginFlow');
+  }
+}
+
+const clearErrorMessage = dispatch =>() => {
+  dispatch({type:'clear_err_msg'});
+}
 
 const signup = (dispatch) => {
   return async ({ email, password }) => {
@@ -28,8 +45,13 @@ const signup = (dispatch) => {
     firebaseApp
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then((user) => {
-        console.log(user);
+      .then((response) => {
+        let token = response.user.toJSON().stsTokenManager.accessToken;
+        let refreshToken = response.user.toJSON().stsTokenManager.refreshToken;
+        console.log(token);
+        AsyncStorage.setItem("lift-token", token);
+        AsyncStorage.setItem("lift-refreshToken",refreshToken);
+        dispatch({ type: "signup", payload: token});
         navigate("Main");
       })
       .catch((error) => {
@@ -43,15 +65,19 @@ const signup = (dispatch) => {
 };
 
 const signin = (dispatch) => {
-  return ({ email, password }) => {
+  return async ({ email, password }) => {
     // Try to signin
     // Handle success by updating state
     // Handle failure by showing error message (somehow)
+    console.log("in sigin");
+    console.log(email);
+    console.log(password);
     firebaseApp
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((user) => {
         console.log(user);
+        navigate("Main");
       })
       .catch((error) => {
         dispatch({
@@ -65,7 +91,11 @@ const signin = (dispatch) => {
 const signout = (dispatch) => {
   return () => {
     // somehow sign out!!!
+    AsyncStorage.removeItem('lift-token');
+    AsyncStorage.removeItem('lift-refreshToken');
+    dispatch({type:'signOut'});
     firebaseApp.auth().signOut();
+    navigate('loginFlow');
   };
 };
 
@@ -118,6 +148,6 @@ function sendXmlHttpRequest(data) {
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signin, signout, signup, upload },
+  { signin, signout, signup, upload, clearErrorMessage,tryLocalSignin},
   { token: null, errorMessage: "" }
 );
