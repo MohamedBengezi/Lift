@@ -86,7 +86,13 @@ export default function RouteScreen() {
 
   const ProfileStack = createStackNavigator({
     Profile: ProfileScreen,
-    Settings: SettingsScreen
+    Settings: {
+      screen: SettingsScreen,
+      navigationOptions: {
+        headerMode: 'none',
+        headerShown: false,
+      }
+    }
   })
 
   const FeedStack = createMaterialTopTabNavigator({
