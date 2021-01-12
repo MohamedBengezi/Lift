@@ -3,7 +3,7 @@ import {StyleSheet, Image, SafeAreaView } from "react-native";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
 
-const IntroScreen = () => {
+const LoadingScreen = () => {
   const { state, tryLocalSignin} = useContext(AuthContext);
   useEffect(()=> {tryLocalSignin()},[]);
   return (
@@ -13,7 +13,7 @@ const IntroScreen = () => {
   );
 };
 
-IntroScreen.navigationOptions = () => {
+LoadingScreen.navigationOptions = () => {
   return {
     header: () => false,
   };
@@ -52,4 +52,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IntroScreen;
+export default LoadingScreen;

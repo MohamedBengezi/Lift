@@ -1,13 +1,10 @@
-import React, {useContext,useEffect} from "react";
+import React from "react";
 import { View, StyleSheet, Image, SafeAreaView, StatusBar } from "react-native";
 import { Button } from "react-native-elements";
 import { navigate } from "../navigationRef";
-import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
 
 const IntroScreen = () => {
-  const { state, tryLocalSignin} = useContext(AuthContext);
-  useEffect(()=> {tryLocalSignin()},[]);
   return (
     <SafeAreaView style={styles.container}>
       <Image style={styles.logo} source={require("../../assets/icon.png")} />
