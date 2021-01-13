@@ -6,9 +6,8 @@ import { StyleSheet, StatusBar, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MainScreen from "./src/screens/MainScreen";
 import ProfileScreen from "./src/screens/ProfileIndex";
-import PostsScreen from "./src/screens/Feeds/PostsScreen";
-import DietPlansScreen from "./src/screens/Feeds/DietPlansScreen";
-import WorkoutPlansScreen from "./src/screens/Feeds/WorkoutPlansScreen";
+import FeedBackScreen from "./src/screens/Feeds/FeedBackScreen";
+import RegularPostsScreen from "./src/screens/Feeds/RegularPostsScreen";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import IntroScreen from "./src/screens/IntroScreen";
@@ -76,7 +75,7 @@ export default function RouteScreen() {
   });
 
   const PostStack = createStackNavigator({
-    Feed: PostsScreen,
+    Feed: FeedBackScreen,
     ViewPost: ViewPostScreen,
     Post: PostScreen
   },
@@ -99,39 +98,26 @@ export default function RouteScreen() {
   })
 
   const FeedStack = createMaterialTopTabNavigator({
-    MainFeed: {
+    FeedbackFeed: {
       screen: PostStack,
       navigationOptions: {
         tabBarVisible: true,
         tabBarLabel: ({ tintColor, focused, item }) => {
           return focused
-            ? (<Text style={{ fontWeight: 'bold', }} >Posts</Text>)
-            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Posts</Text>)
+            ? (<Text style={{ fontWeight: 'bold', }} >Feedback</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Feedback</Text>)
         }, tabBarOptions: feedStyleTab,
         swipeEnabled: false
       },
     },
-    DietFeed: {
-      screen: DietPlansScreen,
+    RegularFeed: {
+      screen: RegularPostsScreen,
       navigationOptions: {
         tabBarVisible: true,
         tabBarLabel: ({ tintColor, focused, item }) => {
           return focused
-            ? (<Text style={{ fontWeight: 'bold', }} >Diet Plans</Text>)
-            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Diet Plans</Text>)
-        },
-        tabBarOptions: feedStyleTab,
-        swipeEnabled: false
-      },
-    },
-    WorkoutPlanFeed: {
-      screen: WorkoutPlansScreen,
-      navigationOptions: {
-        tabBarVisible: true,
-        tabBarLabel: ({ tintColor, focused, item }) => {
-          return focused
-            ? (<Text style={{ fontWeight: 'bold', }} >Workout Plans</Text>)
-            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Workout Plans</Text>)
+            ? (<Text style={{ fontWeight: 'bold', }} >Regular</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Regular</Text>)
         },
         tabBarOptions: feedStyleTab,
         swipeEnabled: false
