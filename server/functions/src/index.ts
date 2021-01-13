@@ -11,7 +11,7 @@ export const helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-/* export const createFeedbackPost = functions.https.onRequest(
+export const createFeedbackPost = functions.https.onRequest(
   (request, response) => {
     functions.logger.info("create feedback post");
     console.log(request.body.caption);
@@ -34,7 +34,7 @@ export const helloWorld = functions.https.onRequest((request, response) => {
     response.send("done");
   }
 );
-*/
+
 
 export const addUser = functions.https.onRequest((request, response) => {
 
