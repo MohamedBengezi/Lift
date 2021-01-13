@@ -12,9 +12,11 @@ import {
 } from "react-native";
 
 import { WebView } from "react-native-webview";
+import { navigate } from "../navigationRef";
 import PostDetails from "./PostDetails";
 
-const Feed = ({ navigation, img, url, title }) => {
+
+const Feed = ({ img, url, title }) => {
   let image = null,
     video = null,
     count = 0;
@@ -72,7 +74,7 @@ const Feed = ({ navigation, img, url, title }) => {
   }
 
   const onPress = (media) => {
-    navigation.navigate("ViewPost", { media, title })
+    navigate("ViewPost", { media, title })
   }
 
   function ListOfPosts() {

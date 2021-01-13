@@ -25,10 +25,7 @@ const PostDetails = ({ media, title, showComments }) => {
         "description": "This is a sick photo man!"
     }
 
-    console.log("YYY", media, title)
-
     const onPressLike = () => {
-        console.log("postdetails: liked or commented!")
         let liked = !likedOrCommented.liked
         let likes = likesAndComments.likes
         if (!liked) {
@@ -40,7 +37,6 @@ const PostDetails = ({ media, title, showComments }) => {
     }
 
     const onPressComment = () => {
-        console.log("postdetails: liked or commented!")
         setLikedOrCommented({ commented: !likedOrCommented.commented });
     }
 
@@ -48,7 +44,6 @@ const PostDetails = ({ media, title, showComments }) => {
     function LikeAndComment(media) {
         const { liked, commented } = likedOrCommented;
         const { likes, comments } = likesAndComments;
-        console.log("YYY1", media)
         return (
             <View style={styles.postActionView}>
                 <TouchableOpacity style={styles.icons}>

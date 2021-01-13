@@ -8,7 +8,7 @@ import Profile from './ProfileScreen'
 const ProfileScreen = () => <Profile {...contactData} />
 
 ProfileScreen.navigationOptions = () => ({
-    header: null,
+    headerShown: false
 })
 
 ProfileScreen.propTypes = {

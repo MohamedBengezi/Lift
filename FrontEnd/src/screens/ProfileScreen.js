@@ -7,7 +7,8 @@ import {
     StyleSheet,
     Text,
     View,
-    YellowBox
+    YellowBox,
+    StatusBar
 } from 'react-native'
 import { Icon } from 'react-native-elements'
 import {
@@ -17,8 +18,12 @@ import {
     TabViewPagerPan,
 } from 'react-native-tab-view'
 import PropTypes from 'prop-types'
-
+import Ionicons from "react-native-vector-icons/Ionicons";
 import Posts from './helpers/Posts'
+import { navigate } from '../navigationRef'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import Feed from '../components/Feed'
+import serverApi from "../api/server";
 
 const styles = StyleSheet.create({
     cardContainer: {
@@ -31,7 +36,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#FFF',
         marginBottom: 10,
-        marginTop: 45,
+        marginTop: 15,
     },
     indicatorTab: {
         backgroundColor: 'transparent',
@@ -50,7 +55,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     tabBar: {
-        backgroundColor: '#EEE',
+        backgroundColor: '#d9d9d9',
     },
     tabContainer: {
         flex: 1,
@@ -97,6 +102,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 12,
     },
+    settings: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        margin: 15,
+        marginTop: StatusBar.currentHeight
+    }
 })
 
 class Profile extends Component {
@@ -135,20 +146,15 @@ class Profile extends Component {
         tabs: {
             index: 0,
             routes: [
-                { key: '1', title: 'active', count: 31 },
-                { key: '2', title: 'like', count: 86 },
-                { key: '3', title: 'following', count: 95 },
-                { key: '4', title: 'followers', count: '1.3 K' },
+                { key: '1', title: 'likes', count: 86 },
+                { key: '2', title: 'following', count: 95 },
+                { key: '3', title: 'followers', count: '1.3 K' },
             ],
         },
     }
 
     componentDidMount() {
         YellowBox.ignoreWarnings(['VirtualizedLists should never be nested']);
-    }
-
-    onPressPlace = () => {
-        console.log('place')
     }
 
     handleIndexChange = index => {
@@ -196,9 +202,12 @@ class Profile extends Component {
     renderScene = ({ route: { key } }) => {
         const { posts } = this.props
 
+        const apiLink = serverApi.defaults.baseURL;
+        let url = apiLink + "/sample";
+
         switch (key) {
             case '1':
-                return <Posts containerStyle={styles.sceneContainer} posts={posts} />
+                return <Feed img={this.props.avatar} url={url} title="Example post" />
             case '2':
                 return <Posts containerStyle={styles.sceneContainer} posts={posts} />
             case '3':
@@ -227,35 +236,6 @@ class Profile extends Component {
                         <Text style={styles.userBioText}>{bio}</Text>
                     </View>
                 </View>
-                <View style={styles.socialRow}>
-                    <View>
-                        <Icon
-                            size={30}
-                            type="entypo"
-                            color="#3B5A98"
-                            name="facebook-with-circle"
-                            onPress={() => console.log('facebook')}
-                        />
-                    </View>
-                    <View style={styles.socialIcon}>
-                        <Icon
-                            size={30}
-                            type="entypo"
-                            color="#56ACEE"
-                            name="twitter-with-circle"
-                            onPress={() => console.log('twitter')}
-                        />
-                    </View>
-                    <View>
-                        <Icon
-                            size={30}
-                            type="entypo"
-                            color="#DD4C39"
-                            name="google--with-circle"
-                            onPress={() => console.log('google')}
-                        />
-                    </View>
-                </View>
             </View>
         )
     }
@@ -265,6 +245,14 @@ class Profile extends Component {
             <ScrollView style={styles.scroll}>
                 <View style={[styles.container, this.props.containerStyle]}>
                     <View style={styles.cardContainer}>
+                        <TouchableOpacity style={styles.settings} onPress={() => navigate('Settings')}>
+                            <Ionicons
+                                name="md-settings"
+                                color='#505050'
+                                type="ionicon" size={35}
+                            />
+
+                        </TouchableOpacity>
                         {this.renderContactHeader()}
                         <TabView
                             style={[styles.tabContainer, this.props.tabContainerStyle]}

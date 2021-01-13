@@ -29,7 +29,6 @@ class CardComponent extends Component {
     componentDidMount() {
         if (this.props.pinterest) {
             pinthtml = '<html style="height: 100%; width: 100%;"><head><title>Pinterest render</title></head><body style="height: 100%; width: 100%;"><div style="height: 100%; width: 100%; overflow:hidden;"><a data-pin-width="large" data-pin-do="embedPin" data-pin-lang="fr" href="https://www.pinterest.com/pin/' + this.props.id_pinterest + '/"></a></div><script async defer src="//assets.pinterest.com/js/pinit.js"></script></body></html>';
-            console.log(pinthtml)
         }
     }
 

@@ -15,7 +15,7 @@ const PostsScreen = ({ navigation }) => {
 
 
   return (
-    <Feed navigation={navigation} img={img} url={url} title={title} />
+    <Feed img={img} url={url} title={title} />
   );
 };
 

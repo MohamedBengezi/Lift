@@ -99,7 +99,6 @@ const MainScreen = ({ navigation }) => {
 
   toggleFlashLight = () => {
     //Logic to turn on & turn off flashlight
-    console.log("Clicked toggle flashlight ", camera.flashMode);
     var newVal = "";
     if (camera.flashMode === "on") {
       newVal = "off";
@@ -115,7 +114,6 @@ const MainScreen = ({ navigation }) => {
 
   toggleCamera = () => {
     //Logic to toggle camera
-    console.log("Clicked toggle camera");
     setCamera((prevState) => ({
       ...prevState,
       type:

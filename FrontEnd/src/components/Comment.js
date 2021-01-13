@@ -6,11 +6,9 @@ import { navigate } from "../navigationRef";
 
 
 const Comment = ({ comment, index }) => { //pull out onPress and title properties from prop
-    console.log("LLL", comment)
     const [liked, setLiked] = useState(false);
 
     const onPressLike = () => {
-        console.log("postdetails: liked or commented!")
         setLiked(!liked);
     }
 

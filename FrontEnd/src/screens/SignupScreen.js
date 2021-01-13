@@ -15,7 +15,7 @@ import { navigate } from "../navigationRef";
 import firebaseApp from "../../firebase";
 
 const SignupScreen = () => {
-  const { state, signup } = useContext(AuthContext);
+  const { state, signup,clearErrorMessage} = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,6 +26,7 @@ const SignupScreen = () => {
         name="ios-arrow-round-back"
         style={styles.cancel}
         onPress={() => {
+          clearErrorMessage(),
           navigate("Intro");
         }}
       />
