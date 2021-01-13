@@ -15,7 +15,7 @@ import { navigate } from "../navigationRef";
 const SigninScreen = () => {
   const { state, signin } = useContext(AuthContext);
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   return (
     <View style={styles.container}>
       <Ionicons
@@ -30,11 +30,11 @@ const SigninScreen = () => {
         style={styles.input}
         contentContainerStyle={styles.keyboardView}
       >
-        <Text style={styles.label}>Username:</Text>
+        <Text style={styles.label}>Email:</Text>
         <TextInput
-          label="Username:"
-          value={username}
-          onChangeText={setUsername}
+          label="Email:"
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
           autoCorrect={false}
           style={styles.inputBox}
@@ -67,7 +67,9 @@ const SigninScreen = () => {
       <Spacer>
         <Button
           title="Login"
-          onPress={() => navigate("Main")}
+          onPress={() => {
+            signin({ email, password });
+          }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
           containerStyle={styles.containerStyle}
@@ -119,7 +121,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.black,
-    flex: 1
+    flex: 1,
   },
   cancel: {
     position: "absolute",

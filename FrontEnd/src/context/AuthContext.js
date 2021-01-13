@@ -53,8 +53,10 @@ const signin = (dispatch) => {
       .signInWithEmailAndPassword(email, password)
       .then((user) => {
         console.log(user);
+        navigate("Main");
       })
       .catch((error) => {
+        console.log("ERROR: Failed to log in");
         dispatch({
           type: "add_error",
           payload: "Something went wrong with sign in. Reason:" + error.message,

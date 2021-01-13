@@ -15,6 +15,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
+import firebaseApp from "../../firebase";
 
 const MainScreen = ({ navigation }) => {
   const { state, upload } = useContext(AuthContext);
@@ -68,7 +69,10 @@ const MainScreen = ({ navigation }) => {
   takePicture = () => {
     if (this.camera) {
       const options = { maxDuration: 60, mirror: true };
-      this.camera.takePictureAsync({ onPictureSaved: this.onPictureSaved });
+      this.camera.takePictureAsync({
+        onPictureSaved: this.onPictureSaved,
+        base64: true,
+      });
     }
   };
 
@@ -125,6 +129,11 @@ const MainScreen = ({ navigation }) => {
     }));
   };
 
+  const getRawMedia = async (mediaUri) => {
+    const media = await fetch(mediaUri);
+    return await media.blob();
+  };
+
   if (camera.hasCameraPermission === null) {
     return <View />;
   } else if (camera.hasCameraPermission === false) {
@@ -139,8 +148,25 @@ const MainScreen = ({ navigation }) => {
             style={styles.post}
             onPress={() => {
               upload({ image });
-              navigation.navigate("Post", { image, video });
-              setImage(null);
+              console.log(firebaseApp.auth().currentUser);
+              let ref = firebaseApp.storage().ref();
+              ref = ref.child(
+                "public/feedback_posts/" +
+                  firebaseApp.auth().currentUser.uid +
+                  "/myImage.jpg"
+              );
+              getRawMedia(image.uri)
+                .then((raw) => {
+                  ref.put(raw).then((snapshot) => {
+                    console.log("Successfully uploaded to firebase!");
+                    console.log(snapshot);
+                  });
+                  navigation.navigate("Post", { image, video });
+                  setImage(null);
+                })
+                .catch((err) =>
+                  console.log("Raw image extraction failed: " + err)
+                );
             }}
           />
 
@@ -175,9 +201,23 @@ const MainScreen = ({ navigation }) => {
           <TouchableHighlight
             style={styles.post}
             onPress={() => {
-              upload({ video });
-              navigation.navigate("Feed", { video });
-              setVideo(null);
+              // upload({ video });
+              let ref = firebaseApp.storage().ref();
+              ref = ref.child(
+                "public/feedback_posts/" +
+                  firebaseApp.auth().currentUser.uid +
+                  "/myVideo.mp4"
+              );
+              getRawMedia(video.uri).then((raw) => {
+                ref.put(raw).then((snapshot) => {
+                  console.log("Successfully uploaded to firebase!");
+                  console.log(snapshot);
+                });
+                navigation.navigate("Post", { image, video });
+                setVideo(null);
+              });
+              // navigation.navigate("Feed", { video });
+              // setVideo(null);
             }}
           >
             <Ionicons name="md-send" style={styles.sendIcon} />

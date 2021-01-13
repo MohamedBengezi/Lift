@@ -12,8 +12,6 @@ import colors from "../hooks/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 
-import firebaseApp from "../../firebase";
-
 const SignupScreen = () => {
   const { state, signup } = useContext(AuthContext);
   const [email, setEmail] = useState("");
@@ -104,7 +102,7 @@ const SignupScreen = () => {
         <Button
           title="Sign Up"
           onPress={() => {
-            signup({email, password});
+            signup({ email, password });
           }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
