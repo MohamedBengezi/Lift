@@ -5,7 +5,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "preinstall": "npm install -g rimraf",
+    "postinstall": "rimraf node_modules/expo/node_modules/react-native-safe-area-context"
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.10",

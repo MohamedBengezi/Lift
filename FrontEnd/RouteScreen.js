@@ -6,26 +6,25 @@ import { StyleSheet, StatusBar, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MainScreen from "./src/screens/MainScreen";
 import ProfileScreen from "./src/screens/ProfileIndex";
-import FeedScreen from "./src/screens/FeedScreen";
-import FeedTwo from "./src/screens/Feeds/FeedTwo";
-import FeedThree from "./src/screens/Feeds/FeedThree";
+import PostsScreen from "./src/screens/Feeds/PostsScreen";
+import DietPlansScreen from "./src/screens/Feeds/DietPlansScreen";
+import WorkoutPlansScreen from "./src/screens/Feeds/WorkoutPlansScreen";
 import SigninScreen from "./src/screens/SigninScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import IntroScreen from "./src/screens/IntroScreen";
 import PostScreen from "./src/screens/PostScreen";
 import { setNavigator } from "./src/navigationRef";
-import HeaderLeft from "./src/components/HeaderLeft";
 import ViewPostScreen from "./src/screens/ViewPostScreen";
 
 export default function RouteScreen() {
   const styleTab = {
-    activeTintColor: "blue",
+    activeTintColor: "#ffdc5b",
     labelStyle: {
       fontSize: 20,
     },
     showIcon: true,
     showLabel: false,
-    inactiveTintColor: "#DDD",
+    inactiveTintColor: "#000",
     style: { elevation: 0 },
     tabStyle: {
       height: 50,
@@ -42,6 +41,7 @@ export default function RouteScreen() {
     activeTintColor: "black",
     labelStyle: {
       fontSize: 15,
+      fontWeight: 'bold'
     },
     showLabel: true,
     tabStyle: {
@@ -73,7 +73,7 @@ export default function RouteScreen() {
   });
 
   const PostStack = createStackNavigator({
-    Feed: FeedScreen,
+    Feed: PostsScreen,
     ViewPost: ViewPostScreen,
     Post: PostScreen
   },
@@ -89,25 +89,36 @@ export default function RouteScreen() {
       screen: PostStack,
       navigationOptions: {
         tabBarVisible: true,
-        tabBarLabel: "Posts",
+        tabBarLabel: ({ tintColor, focused, item }) => {
+          return focused
+            ? (<Text style={{ fontWeight: 'bold', }} >Posts</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Posts</Text>)
+        }, tabBarOptions: feedStyleTab,
+        swipeEnabled: false
+      },
+    },
+    DietFeed: {
+      screen: DietPlansScreen,
+      navigationOptions: {
+        tabBarVisible: true,
+        tabBarLabel: ({ tintColor, focused, item }) => {
+          return focused
+            ? (<Text style={{ fontWeight: 'bold', }} >Diet Plans</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Diet Plans</Text>)
+        },
         tabBarOptions: feedStyleTab,
         swipeEnabled: false
       },
     },
-    FeedTwo: {
-      screen: FeedTwo,
+    WorkoutPlanFeed: {
+      screen: WorkoutPlansScreen,
       navigationOptions: {
         tabBarVisible: true,
-        tabBarLabel: "Diet Plans",
-        tabBarOptions: feedStyleTab,
-        swipeEnabled: false
-      },
-    },
-    FeedThree: {
-      screen: FeedThree,
-      navigationOptions: {
-        tabBarVisible: true,
-        tabBarLabel: "Workout Plans",
+        tabBarLabel: ({ tintColor, focused, item }) => {
+          return focused
+            ? (<Text style={{ fontWeight: 'bold', }} >Workout Plans</Text>)
+            : (<Text style={{ fontWeight: 'normal', fontSize: 15 }} >Workout Plans</Text>)
+        },
         tabBarOptions: feedStyleTab,
         swipeEnabled: false
       },
