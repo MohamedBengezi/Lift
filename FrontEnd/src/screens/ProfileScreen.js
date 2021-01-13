@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         marginRight: 40,
     },
     userBioText: {
-        color: colors.grey,
+        color: colors.darkerGrey,
         fontSize: 13.5,
         textAlign: 'center',
     },
