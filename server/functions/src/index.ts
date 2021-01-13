@@ -18,8 +18,18 @@ export const createFeedbackPost = functions.https.onRequest(
     let userID = request.body.userID;
     let caption = request.body.caption;
     let topics = request.body.topics;
+    let image = request.body.image;
 
-    // admin.firestore().doc("feedback_posts/")
+    admin.firestore().collection("posts").add({
+      userID: userID,
+      topics: topics,
+      caption: caption,
+      image: image
+    })
+    .then()
+    .catch(error =>
+      console.log(error)
+    )
 
     response.send("done");
   }
