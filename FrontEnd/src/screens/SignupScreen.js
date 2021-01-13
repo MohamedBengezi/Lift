@@ -15,7 +15,7 @@ import { navigate } from "../navigationRef";
 import firebaseApp from "../../firebase";
 
 const SignupScreen = () => {
-  const { state, signup,clearErrorMessage} = useContext(AuthContext);
+  const { state, signup, clearErrorMessage } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -27,7 +27,7 @@ const SignupScreen = () => {
         style={styles.cancel}
         onPress={() => {
           clearErrorMessage(),
-          navigate("Intro");
+            navigate("Intro");
         }}
       />
       <KeyboardAvoidingView
@@ -105,7 +105,7 @@ const SignupScreen = () => {
         <Button
           title="Sign Up"
           onPress={() => {
-            signup({email, password});
+            signup({ email, password });
           }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     top: 40,
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     fontSize: 16,
-    color: "red",
+    color: colors.red,
     marginLeft: 15,
     marginTop: 15,
   },

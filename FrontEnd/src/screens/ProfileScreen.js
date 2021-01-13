@@ -24,6 +24,7 @@ import { navigate } from '../navigationRef'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Feed from '../components/Feed'
 import serverApi from "../api/server";
+import colors from '../hooks/colors'
 
 const styles = StyleSheet.create({
     cardContainer: {
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         alignItems: 'center',
-        backgroundColor: '#FFF',
+        backgroundColor: colors.white,
         marginBottom: 10,
         marginTop: 15,
     },
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     scroll: {
-        backgroundColor: '#FFF',
+        backgroundColor: colors.white,
     },
     sceneContainer: {
         marginTop: 10,
@@ -55,19 +56,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     tabBar: {
-        backgroundColor: '#d9d9d9',
+        backgroundColor: colors.lightGrey,
     },
     tabContainer: {
         flex: 1,
         marginBottom: 12,
     },
     tabLabelNumber: {
-        color: 'gray',
+        color: colors.grey,
         fontSize: 12.5,
         textAlign: 'center',
     },
     tabLabelText: {
-        color: 'black',
+        color: colors.black,
         fontSize: 22.5,
         fontWeight: '600',
         textAlign: 'center',
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
         marginRight: 40,
     },
     userBioText: {
-        color: 'gray',
+        color: colors.grey,
         fontSize: 13.5,
         textAlign: 'center',
     },
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     userNameText: {
-        color: '#5B5A5A',
+        color: colors.reallyDarkGrey,
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',

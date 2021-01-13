@@ -2,7 +2,7 @@ import React from 'react'
 import { Dimensions, Image, View, Text, StyleSheet } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import PropTypes from 'prop-types'
-
+import colors from '../../hooks/colors'
 import { timeDifference, timeDifferenceForDate } from '../../../utils/datetime'
 
 const styles = StyleSheet.create({
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         padding: 0,
     },
     date: {
-        color: 'gray',
+        color: colors.grey,
         fontSize: 12.5,
     },
     postRow: {

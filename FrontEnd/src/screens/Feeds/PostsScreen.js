@@ -4,6 +4,7 @@ import {
 } from "react-native";
 import serverApi from "../../api/server";
 import Feed from '../../components/Feed';
+import colors from "../../hooks/colors";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -21,7 +22,7 @@ const PostsScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     flex: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 1,
     borderWidth: 2,
-    borderColor: "black",
+    borderColor: colors.black,
   },
   post: {
     flex: 1,

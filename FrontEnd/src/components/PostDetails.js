@@ -11,6 +11,7 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 import Comment from './Comment';
+import colors from '../hooks/colors';
 
 const PostDetails = ({ media, title, showComments }) => {
     const [likedOrCommented, setLikedOrCommented] = useState({ commented: false, liked: false });
@@ -49,7 +50,7 @@ const PostDetails = ({ media, title, showComments }) => {
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name={liked ? "md-heart" : "md-heart-empty"}
-                        color={liked ? '#ff1616' : null} type="ionicon" size={25}
+                        color={liked ? colors.red : null} type="ionicon" size={25}
                         onPress={() => onPressLike()}
                     />
                     <Text style={styles.postActionText}>{/*!!item.likes && item.likes.length ||*/ likes}</Text>
@@ -59,7 +60,7 @@ const PostDetails = ({ media, title, showComments }) => {
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name={commented ? "md-chatbubbles" : "md-chatboxes"}
-                        color={commented ? 'black' : null} type="ionicon" size={25}
+                        color={commented ? colors.black : null} type="ionicon" size={25}
                         onPress={() => onPressComment()}
                     />
                     <Text style={styles.postActionText}>{/*!!item.likes && item.likes.length || */ comments}</Text>
@@ -113,7 +114,7 @@ const PostDetails = ({ media, title, showComments }) => {
                                 John Doe
               </Text>
                             <View style={styles.postDate} >
-                                <Text style={{ fontSize: 11, color: '#4C4B4B' }}>5 mins ago </Text>
+                                <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>5 mins ago </Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f8f8f8',
+        backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2
     },
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
     },
     postActionText: {
         marginLeft: 10,
-        color: '#44484B',
+        color: colors.reallyDarkGrey,
         fontSize: 15,
         fontWeight: 'bold'
     },
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
     },
     sectionHeaderText: {
         fontSize: 13,
-        color: '#aaaaaa',
+        color: colors.darkGrey,
         marginVertical: 10,
         marginLeft: 10
     },
@@ -228,29 +229,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderBottomWidth: 0.5,
-        borderColor: 'rgba(244,244,244,1)',
-    },
-    commentAvatar: {
-        height: 25,
-        width: 25,
-        borderRadius: 13.5,
-        marginLeft: 10
-    },
-    commentUsernameLabel: {
-        fontSize: 14,
-        color: '#44484B',
-        marginLeft: 10,
-    },
-    commentContentLabel: {
-        flex: 1,
-        fontSize: 15,
-        color: '#656A73',
-        marginLeft: 10,
-    },
-    commentsContainer: {
-        backgroundColor: 'white'
+        borderColor: colors.grey,
     }
-
 });
 
 export default PostDetails;

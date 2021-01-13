@@ -4,6 +4,7 @@ import { Input, Button } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from '../navigationRef';
+import colors from '../hooks/colors';
 
 const SettingsScreen = () => {
     const [image, setImage] = useState(null);
@@ -54,7 +55,7 @@ const SettingsScreen = () => {
                     {image && <Image source={{ uri: image }} style={styles.profilePicture} />}
                     <Ionicons
                         name="md-add-circle"
-                        color='#000000'
+                        color={colors.black}
                         type="ionicon" size={35}
                         style={{ marginLeft: 10 }}
                         onPress={pickImage}
@@ -103,7 +104,7 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
     background: {
         flex: 1,
-        backgroundColor: "#02bcd4",
+        backgroundColor: colors.blue,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: 20,
         top: 40,
-        color: "#000000",
+        color: colors.black,
         fontWeight: "600",
         fontSize: 28,
     },
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
         width: "50%",
     },
     username: {
-        backgroundColor: "#ffffff",
+        backgroundColor: colors.white,
         borderRadius: 9
     },
     profilePicture: {
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     button: {
-        backgroundColor: "#ffdc5b",
+        backgroundColor: colors.yellow,
         width: "70%",
         borderRadius: 5,
     },
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
         flex: 0.25,
     },
     buttonText: {
-        color: "#000000",
+        color: colors.black,
         flex: 1,
     },
 

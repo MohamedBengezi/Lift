@@ -68,7 +68,7 @@ const SigninScreen = () => {
       <Spacer>
         <Button
           title="Login"
-          onPress={() => {signin({email,password})}}
+          onPress={() => { signin({ email, password }) }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
           containerStyle={styles.containerStyle}
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     top: 40,
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     fontSize: 16,
-    color: "red",
+    color: colors.red,
     marginLeft: 15,
     marginTop: 15,
   },

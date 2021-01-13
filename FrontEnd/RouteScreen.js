@@ -17,20 +17,21 @@ import { setNavigator } from "./src/navigationRef";
 import ViewPostScreen from "./src/screens/ViewPostScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import LoadingScreen from "./src/screens/LoadingScreen";
+import colors from './src/hooks/colors';
 
 export default function RouteScreen() {
   const styleTab = {
-    activeTintColor: "#ffdc5b",
+    activeTintColor: colors.yellow,
     labelStyle: {
       fontSize: 20,
     },
     showIcon: true,
     showLabel: false,
-    inactiveTintColor: "#000",
+    inactiveTintColor: colors.black,
     style: { elevation: 0 },
     tabStyle: {
       height: 50,
-      backgroundColor: "#fff",
+      backgroundColor: colors.white,
     },
     scrollEnabled: false,
     swipeEnabled: true,
@@ -40,7 +41,7 @@ export default function RouteScreen() {
 
   const feedStyleTab = {
     ...styleTab,
-    activeTintColor: "black",
+    activeTintColor: colors.black,
     labelStyle: {
       fontSize: 15,
       fontWeight: 'bold'
@@ -50,7 +51,7 @@ export default function RouteScreen() {
       height: 50,
       marginTop: StatusBar.currentHeight + 15,
       fontSize: 10,
-      backgroundColor: "#fff",
+      backgroundColor: colors.white,
       borderRightWidth: 1
     },
   };
@@ -140,7 +141,7 @@ export default function RouteScreen() {
     {
       tabBarOptions: {
         showLabel: true,
-        labelStyle: { color: "#000000", fontSize: 12 },
+        labelStyle: { color: colors.black, fontSize: 12 },
       }
     });
 

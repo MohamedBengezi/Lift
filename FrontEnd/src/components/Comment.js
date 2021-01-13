@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet, Text, View, Image, } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
+import colors from '../hooks/colors';
 
 
 const Comment = ({ comment, index }) => { //pull out onPress and title properties from prop
@@ -30,7 +31,7 @@ const Comment = ({ comment, index }) => { //pull out onPress and title propertie
             <View style={styles.like}>
                 <Ionicons
                     name={liked ? "md-heart" : "md-heart-empty"}
-                    color={liked ? '#ff1616' : null} type="ionicon" size={25}
+                    color={liked ? colors.red : null} type="ionicon" size={25}
                     onPress={() => onPressLike()}
                 />
             </View>
@@ -41,7 +42,7 @@ const Comment = ({ comment, index }) => { //pull out onPress and title propertie
 const styles = StyleSheet.create({
     sectionHeaderText: {
         fontSize: 13,
-        color: '#aaaaaa',
+        color: colors.darkGrey,
         marginVertical: 10,
         marginLeft: 10
     },
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderBottomWidth: 0.5,
-        borderColor: 'rgba(244,244,244,1)',
+        borderColor: colors.grey,
     },
     commentAvatar: {
         height: 25,
@@ -60,16 +61,16 @@ const styles = StyleSheet.create({
     },
     commentUsernameLabel: {
         fontSize: 14,
-        color: '#44484B',
+        color: colors.reallyDarkGrey,
         marginLeft: 10,
     },
     commentContentLabel: {
         fontSize: 15,
-        color: '#656A73',
+        color: colors.darkerGrey,
         marginLeft: 10,
     },
     commentsContainer: {
-        backgroundColor: '#f8f8f8'
+        backgroundColor: colors.grey
     },
     like: {
         flexDirection: 'column',
