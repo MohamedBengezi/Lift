@@ -14,4 +14,10 @@ const firebaseConfig = {
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
+
+/* Add functions for the following
+
+uploadMedia()
+downloadMedia()
+*/
 export default firebaseApp;
