@@ -15,7 +15,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
-import firebaseApp from "../../firebase";
+import { firebaseApp, uploadMedia } from "../../firebase";
 
 const MainScreen = ({ navigation }) => {
   const { state, upload } = useContext(AuthContext);
@@ -129,10 +129,10 @@ const MainScreen = ({ navigation }) => {
     }));
   };
 
-  const getRawMedia = async (mediaUri) => {
-    const media = await fetch(mediaUri);
-    return await media.blob();
-  };
+  // const getRawMedia = async (mediaUri) => {
+  //   const media = await fetch(mediaUri);
+  //   return await media.blob();
+  // };
 
   if (camera.hasCameraPermission === null) {
     return <View />;
@@ -147,26 +147,32 @@ const MainScreen = ({ navigation }) => {
             name="md-send"
             style={styles.post}
             onPress={() => {
-              upload({ image });
+              // upload({ image });
               console.log(firebaseApp.auth().currentUser);
-              let ref = firebaseApp.storage().ref();
-              ref = ref.child(
-                "public/feedback_posts/" +
-                  firebaseApp.auth().currentUser.uid +
-                  "/myImage.jpg"
+              uploadMedia(image.uri, firebaseApp.auth().currentUser.uid).then(
+                (path) => {
+                  //TODO: Create post object using API route and pass in path
+                  console.log(path);
+                }
               );
-              getRawMedia(image.uri)
-                .then((raw) => {
-                  ref.put(raw).then((snapshot) => {
-                    console.log("Successfully uploaded to firebase!");
-                    console.log(snapshot);
-                  });
-                  navigation.navigate("Post", { image, video });
-                  setImage(null);
-                })
-                .catch((err) =>
-                  console.log("Raw image extraction failed: " + err)
-                );
+              // let ref = firebaseApp.storage().ref();
+              // ref = ref.child(
+              //   "public/feedback_posts/" +
+              //     firebaseApp.auth().currentUser.uid +
+              //     "/myImage.jpg"
+              // );
+              // getRawMedia(image.uri)
+              //   .then((raw) => {
+              //     ref.put(raw).then((snapshot) => {
+              //       console.log("Successfully uploaded to firebase!");
+              //       console.log(snapshot);
+              //     });
+              //     navigation.navigate("Post", { image, video });
+              //     setImage(null);
+              //   })
+              //   .catch((err) =>
+              //     console.log("Raw image extraction failed: " + err)
+              //   );
             }}
           />
 

@@ -1,3 +1,5 @@
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/storage";
@@ -13,11 +15,42 @@ const firebaseConfig = {
   measurementId: "G-7RM09F25F7",
 };
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const firebaseApp = firebase.initializeApp(firebaseConfig);
 
-/* Add functions for the following
+/**
+ * Uploads media content the Firebase Cloud storage
+ *
+ * @param {string} mediaURI The URI of the file to upload
+ * @param {string} uid The firebase unique id from the authentication service
+ * @return {Promise<string>} The full path of the uploaded content on cloud storage. The path can be used to fetch the
+ * resource again.
+ */
+export const uploadMedia = async (mediaURI, uid) => {
+  // Fetch blob representation of media from URI
+  const media = await fetch(mediaURI);
+  const blob = await media.blob();
 
-uploadMedia()
-downloadMedia()
-*/
-export default firebaseApp;
+  //Create firebase reference
+  let ref = firebaseApp.storage().ref();
+  let path = `public/feedback_posts/${uid}/${uuidv4()}`;
+
+  ref = ref.child(path);
+  await ref.put(blob);
+
+  return path;
+};
+
+/**
+ * Downloads a media file from Firebase cloud storage
+ *
+ * @param {string} path The URI of the file to upload
+ * @return {string} The URL to the resource. This URL can be used as the source for a <image> or <video>
+ * component.
+ */
+export const downloadMedia = async (path) => {
+  // Create firebase reference
+  const ref = firebaseApp.storage().ref(path);
+  const downloadUrl = await ref.getDownloadURL();
+
+  return downloadUrl;
+};

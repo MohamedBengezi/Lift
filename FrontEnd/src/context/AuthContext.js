@@ -5,7 +5,7 @@ import { navigate } from "../navigationRef";
 import FormData from "form-data";
 import Axios from "axios";
 
-import firebaseApp from "../../firebase";
+import { firebaseApp } from "../../firebase";
 
 const apiLink = serverApi.defaults.baseURL;
 
