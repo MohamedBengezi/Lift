@@ -70,6 +70,22 @@ export const addUser = functions.https.onRequest(async (request, response) => {
   response.status(200).send({ message: "Successfully added new user" });
 });
 
+export const userNameExists = functions.https.onCall((data, context) => {
+  let username = data.username;
+  console.log('Server username '+username);
+  const usersRef = admin.firestore().collection("users");
+
+    const query =usersRef.where("username","==",username).get()
+    .then(function(res){
+      const userNameExists = res.size === 0 ? true : false;
+      console.log(userNameExists);
+      return { userNameExists: userNameExists };
+      
+    })
+    .catch (err => {throw new functions.https.HttpsError('unknown', `Something went wrong when accessing the database. Reason ${err}`);});
+  return query;
+})
+
 export const getUser = functions.https.onRequest(async (request, response) => {
   const username = request.body.username;
 

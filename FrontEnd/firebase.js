@@ -1,6 +1,7 @@
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "firebase/app";
+import firebaseFunctions from "firebase/functions";
 import "firebase/auth";
 import "firebase/storage";
 
@@ -16,7 +17,7 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
-
+export const functions = firebase.functions(firebaseApp);
 /**
  * Uploads media content the Firebase Cloud storage
  *

@@ -5,7 +5,7 @@ import { navigate } from "../navigationRef";
 import FormData from "form-data";
 import Axios from "axios";
 
-import { firebaseApp } from "../../firebase";
+import { firebaseApp,functions } from "../../firebase";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -20,25 +20,56 @@ const authReducer = (state, action) => {
   }
 };
 
+//calls firebase function to check if the userName requested by the user already exists in the database. 
+function goAuthenticate (email,password,dispatch)  {
+  firebaseApp
+  .auth()
+  .createUserWithEmailAndPassword(email, password)
+  .then((user) => {
+    navigate("Main");
+  })
+  .catch((error) => {
+    dispatch({
+      type: "add_error",
+      payload: "Something went wrong with sign up. Reason:" + error.message,
+    });
+  });
+  }
+
+
 const signup = (dispatch) => {
-  return async ({ email, password }) => {
+  return async ({ username, email, password }) => {
     //  const response = await serverApi.post("/signup", { email, password });
     //  await AsyncStorage.setItem("token", response.data.token);
     //  dispatch({ type: "signup", payload: response.data.token });
     console.log(email);
-    firebaseApp
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then((user) => {
-        console.log(user);
-        navigate("Main");
-      })
-      .catch((error) => {
+    functions.useEmulator("10.0.2.2",5001);
+    var userNameExists = functions.httpsCallable('user-userNameExists');
+    userNameExists({username:username})
+    .then((result) => {
+      var exists = result.data.userNameExists;
+      console.log(`userNameExists ${exists}`);
+      if(exists){
+        //dispatch error to let user know to enter another user name. 
         dispatch({
           type: "add_error",
-          payload: "Something went wrong with sign up. Reason:" + error.message,
+          payload: "User name already exists. Please enter another one",
         });
+      } else{
+        goAuthenticate(email,password,dispatch);
+      }
+    })
+    .catch((error) => {
+      var code = error.code;
+      var message = error.message;
+      var details = error.details;
+      console.error(`${code} \n ${message} \n ${details}`);
+      //dispatch meaningful error to user
+      dispatch({
+        type: "add_error",
+        payload: "Something went wrong. Please try again.",
       });
+    });
     console.log("in signup");
   };
 };
@@ -118,6 +149,7 @@ function sendXmlHttpRequest(data) {
     xhr.send(data);
   });
 }
+
 
 export const { Provider, Context } = createDataContext(
   authReducer,

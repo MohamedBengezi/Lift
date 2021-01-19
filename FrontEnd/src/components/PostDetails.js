@@ -24,7 +24,7 @@ const PostDetails = ({ media, title, showComments }) => {
         "description": "This is a sick photo man!"
     }
 
-    console.log("YYY", media, title)
+
 
     const onPressLike = () => {
         console.log("postdetails: liked or commented!")

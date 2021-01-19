@@ -102,7 +102,7 @@ const SignupScreen = () => {
         <Button
           title="Sign Up"
           onPress={() => {
-            signup({ email, password });
+            signup({ username,email, password });
           }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
