@@ -1,13 +1,12 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
 import PostDetails from '../components/PostDetails';
 
 const ViewPostScreen = ({ navigation }) => {
 
-    const media = navigation.getParam('media');
+    const item = navigation.getParam('item');
     const title = navigation.getParam('title');
     return (
-        <PostDetails media={media} title={title} showComments={true} />
+        <PostDetails item={item} title={title} showComments={true} />
     );
 };
 

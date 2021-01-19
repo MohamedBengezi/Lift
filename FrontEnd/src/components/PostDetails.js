@@ -11,9 +11,11 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 import Comment from './Comment';
+import VideoElement from './VideoElement';
+import ImageElement from './ImageElement';
 import colors from '../hooks/colors';
 
-const PostDetails = ({ media, title, showComments }) => {
+const PostDetails = ({ item, title, showComments }) => {
     const [likedOrCommented, setLikedOrCommented] = useState({ commented: false, liked: false });
     const [likesAndComments, setLikesAndComments] = useState({ likes: 0, comments: 0 })
     let comment = {
@@ -42,7 +44,7 @@ const PostDetails = ({ media, title, showComments }) => {
     }
 
 
-    function LikeAndComment(media) {
+    function LikeAndComment() {
         const { liked, commented } = likedOrCommented;
         const { likes, comments } = likesAndComments;
         return (
@@ -121,12 +123,13 @@ const PostDetails = ({ media, title, showComments }) => {
                 </View>
                 <View style={styles.postImageCaptionContainer} >
                     <TouchableOpacity onPress={() => console.log('Post pressed')} activeOpacity={1}>
-                        {media}
+                        {(item.item !== null && typeof item.item === 'object') ? <ImageElement image={item} title={title} />
+                            : <VideoElement video={item} title={title} />}
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.postLogs} >
-                    <LikeAndComment media={media} />
+                    <LikeAndComment />
                 </View>
             </View>
 
