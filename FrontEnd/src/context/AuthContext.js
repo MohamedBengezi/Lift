@@ -40,30 +40,24 @@ const signup = (dispatch) => {
             payload: "User name already exists. Please enter another one",
           });
         } else {
-          createUser(email, password, dispatch);
+          createUser(email, password,username, dispatch);
         }
       })
       .catch((error) => {
-        var code = error.code;
-        var message = error.message;
-        var details = error.details;
-        console.error(`${code} \n ${message} \n ${details}`);
-        //dispatch meaningful error to user
-        dispatch({
-          type: "add_error",
-          payload: "Something went wrong. Please try again.",
-        });
+        showError(error);
       });
   };
 };
 
 //calls firebase sdk to sign up a user
-function createUser(email, password, dispatch) {
+function createUser(email, password,username, dispatch) {
   firebaseApp
     .auth()
     .createUserWithEmailAndPassword(email, password)
     .then((response) => {
       storeTokenAndNavigate(response, dispatch);
+      //call addUser to creat new user in db
+      addUserToDB(username);
     })
     .catch((error) => {
       dispatch({
@@ -71,6 +65,16 @@ function createUser(email, password, dispatch) {
         payload: "Something went wrong with sign up. Reason:" + error.message,
       });
     });
+}
+
+//adds the new user to the db
+function addUserToDB(username){
+  let uid = firebaseApp.auth().currentUser.uid;
+  var addUser = functions.httpsCallable("user-addUserToDB");
+  addUser({uid:uid,username:username})
+  .catch((error) => {
+    showError(error);
+  });
 }
 
 //Stores the token in the user's device to maintain session.
@@ -93,6 +97,18 @@ const tryLocalSignin = (dispatch) => async () => {
     navigate("loginFlow");
   }
 };
+
+function showError(error){
+  var code = error.code;
+  var message = error.message;
+  var details = error.details;
+  console.error(`${code} \n ${message} \n ${details}`);
+  //dispatch meaningful error to user
+  dispatch({
+    type: "add_error",
+    payload: "Something went wrong. Please try again.",
+  });
+}
 
 //Clears the error messages from context when needed.
 const clearErrorMessage = (dispatch) => () => {

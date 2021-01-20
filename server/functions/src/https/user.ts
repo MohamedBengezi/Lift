@@ -37,38 +37,17 @@ import * as admin from "firebase-admin";
 //   }
 // });
 
-export const addUser = functions.https.onRequest(async (request, response) => {
-  let username = request.body.username;
-  let topics = request.body.topics;
-  let community_rating = request.body.community_rating;
-  let following = request.body.following;
-
-  const usersRef = admin.firestore().collection("users");
-  try {
-    const users = await usersRef.where("username", "==", username).get();
-    const newUser = users.size === 0 ? true : false;
-
-    if (newUser) {
-      await admin.firestore().collection("users").add({
-        username: username,
-        topics: topics,
-        community_rating: community_rating,
-        following: following,
-      });
-    } else {
-      // Username is already in use. Need to tell the user
-      response.status(422).send({
-        message:
-          "The inputted username is already in use. Please select a new username",
-      });
-    }
-  } catch (err) {
-    response.status(500).send({
-      message: `Something went wrong when accessing the database. Reason ${err}`,
-    });
-  }
-  response.status(200).send({ message: "Successfully added new user" });
-});
+export const addUserToDB = functions.https.onCall((data,context) => {
+  let username = data.username;
+  let uid = data.uid;
+  
+  admin.firestore().collection("users").add({
+    uid: uid,
+    username: username,
+    following: 0,
+    followers: 0
+  });
+})
 
 export const userNameExists = functions.https.onCall((data, context) => {
   let username = data.username;
