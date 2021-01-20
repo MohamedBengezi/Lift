@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, Image, } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
@@ -73,8 +73,9 @@ const styles = StyleSheet.create({
         backgroundColor: colors.grey
     },
     like: {
+        position: 'absolute',
+        right: 15,
         flexDirection: 'column',
-        marginLeft: 150
     }
 });
 

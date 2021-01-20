@@ -6,27 +6,34 @@ import {
     Image,
     TouchableOpacity,
     Platform,
-    StatusBar
+    StatusBar,
+    FlatList,
+    KeyboardAvoidingView
 } from "react-native";
+import { Input } from 'react-native-elements';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 import Comment from './Comment';
 import VideoElement from './VideoElement';
 import ImageElement from './ImageElement';
 import colors from '../hooks/colors';
+import { ScrollView } from "react-native-gesture-handler";
 
 const PostDetails = ({ item, title, showComments }) => {
     const [likedOrCommented, setLikedOrCommented] = useState({ commented: false, liked: false });
     const [likesAndComments, setLikesAndComments] = useState({ likes: 0, comments: 0 })
-    let comment = {
-        "user": {
-            "id": 123,
-            "username": "johndoe",
-            "name": "John Doe",
-            "profile_image": "https://reactnative.dev/img/tiny_logo.png"
-        },
-        "description": "This is a sick photo man!"
-    }
+    const [newComment, setNewComment] = useState('');
+    const [comments, setComments] = useState([
+        {
+            "user": {
+                "id": 123,
+                "username": "johndoe",
+                "name": "John Doe",
+                "profile_image": "https://reactnative.dev/img/tiny_logo.png"
+            },
+            "description": "This is a sick photo man!"
+        }
+    ]);
 
     const onPressLike = () => {
         let liked = !likedOrCommented.liked
@@ -46,7 +53,7 @@ const PostDetails = ({ item, title, showComments }) => {
 
     function LikeAndComment() {
         const { liked, commented } = likedOrCommented;
-        const { likes, comments } = likesAndComments;
+        const { likes } = likesAndComments;
         return (
             <View style={styles.postActionView}>
                 <TouchableOpacity style={styles.icons}>
@@ -65,7 +72,7 @@ const PostDetails = ({ item, title, showComments }) => {
                         color={commented ? colors.black : null} type="ionicon" size={25}
                         onPress={() => onPressComment()}
                     />
-                    <Text style={styles.postActionText}>{/*!!item.likes && item.likes.length || */ comments}</Text>
+                    <Text style={styles.postActionText}>{/*!!item.likes && item.likes.length || */ comments.length}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.icons}>
@@ -80,28 +87,73 @@ const PostDetails = ({ item, title, showComments }) => {
         );
     }
 
-    function displayComment(comment, index) {
-
+    function displayComment(comment) {
         return (
-            <Comment comment={comment} index={index} />
+            <Comment comment={comment.item} key={comment.index} index={comment.index} />
         )
     }
 
     function renderComments() {
+
         return (
-            <View>
-                <Text style={styles.sectionHeaderText}>{comment ? 1 : 'NO'} COMMENTS</Text>
-                <View style={styles.commentContainer}>
-                    {displayComment(comment, 0)}
-                </View>
-            </View>
+            <ScrollView>
+                <Text style={styles.sectionHeaderText}>{comments.length} COMMENTS</Text>
+                <FlatList
+                    data={comments}
+                    renderItem={(comment) => displayComment(comment)}
+                    keyExtractor={(item, index) => index.toString()}
+                    style={{ height: "37%" }}
+                />
+            </ScrollView>
 
         );
     }
 
+    function renderAddComment() {
+        return (
+            <View style={styles.addComment}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <Ionicons
+                        name="md-chatbubbles"
+                        color={colors.black} size={25}
+                        style={{ marginHorizontal: 10, position: 'absolute', left: 10 }}
+                    />
+                    <Input containerStyle={{ width: '80%' }}
+                        value={newComment}
+                        onChangeText={comment => setNewComment(comment)}
+                        placeholder="Enter a comment"
+                        placeholderTextColor="gray"
+                        inputStyle={{ color: colors.black, fontSize: 14 }}
+                        onSubmitEditing={() => {
+                            postComment()
+                        }}
+                    />
+                </View>
+            </View>
+        )
+    }
+
+    function postComment() {
+        if (newComment === '') return;
+        let cmt = {
+            "user": {
+                "id": 123,
+                "username": "johndoe",
+                "name": "John Doe",
+                "profile_image": "https://reactnative.dev/img/tiny_logo.png"
+            },
+            "description": ""
+        }
+        cmt.description = newComment;
+        setNewComment('');
+        setComments([...comments, cmt]);
+
+
+    }
+
     return (
-        <View style={styles.mainContent}>
-            <View style={styles.postContainer}>
+        <View style={{ flex: 1 }}>
+            <View style={showComments ? styles.postDetailsContainer : styles.postContainer}>
                 <View style={styles.postHeader}>
                     <TouchableOpacity style={styles.displayImageContainer} onPress={() => console.log('Profile Image pressed')} activeOpacity={0.8}>
                         <Image style={styles.avatar}
@@ -132,8 +184,8 @@ const PostDetails = ({ item, title, showComments }) => {
                     <LikeAndComment />
                 </View>
             </View>
-
             {showComments ? renderComments() : null}
+            {showComments && !likedOrCommented.commented ? renderAddComment() : null}
 
         </View>
 
@@ -148,7 +200,7 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     mainContent: {
-        flex: 1,
+        flex: 1
     },
     postContainer: {
         flexDirection: 'column',
@@ -157,6 +209,15 @@ const styles = StyleSheet.create({
         backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2
+    },
+    postDetailsContainer: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.grey,
+        borderRadius: 10,
+        marginRight: 2,
+        height: 300,
     },
     postHeader: {
         height: 70,
@@ -227,12 +288,12 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         marginLeft: 10
     },
-    commentContainer: {
+    addComment: {
         height: 50,
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderBottomWidth: 0.5,
-        borderColor: colors.grey,
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor: colors.lightGrey,
+        width: '100%'
     }
 });
 
