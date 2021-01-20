@@ -31,9 +31,9 @@ const SigninScreen = () => {
         style={styles.input}
         contentContainerStyle={styles.keyboardView}
       >
-        <Text style={styles.label}>Username:</Text>
+        <Text style={styles.label}>Email:</Text>
         <TextInput
-          label="Username:"
+          label="Email:"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -68,7 +68,9 @@ const SigninScreen = () => {
       <Spacer>
         <Button
           title="Login"
-          onPress={() => { signin({ email, password }) }}
+          onPress={() => {
+            signin({ email, password });
+          }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
           containerStyle={styles.containerStyle}
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.black,
-    flex: 1
+    flex: 1,
   },
   cancel: {
     position: "absolute",

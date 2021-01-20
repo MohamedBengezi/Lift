@@ -1,0 +1,24 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // All folders in the public are readable by default;
+    match /public {
+      allow read: if request.auth!=null;
+
+      // Only the respective users can write to their own post media/ profile media
+      match /feedback_posts/{uid}/{allFiles=**} {
+        allow read, write: if request.auth.uid == uid;
+        allow read: if request.auth != null;
+      }
+
+      match /profiles/{uid}/{allFiles=**} {
+        allow read, write: if request.auth.uid == uid;
+        allow read: if request.auth != null;
+      }
+    }
+    // Each user has there own private folder defined by their uid where only they can read/write
+    match /private/{uid}/{allFiles=**} {
+      allow read, write: if request.auth.uid == uid;
+    }
+  }
+}

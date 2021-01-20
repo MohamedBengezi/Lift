@@ -5,14 +5,12 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { Text, Input, Button } from "react-native-elements";
+import { Text, Button } from "react-native-elements";
 import Spacer from "../components/Spacer";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
-
-import firebaseApp from "../../firebase";
 
 const SignupScreen = () => {
   const { state, signup, clearErrorMessage } = useContext(AuthContext);
@@ -26,8 +24,7 @@ const SignupScreen = () => {
         name="ios-arrow-round-back"
         style={styles.cancel}
         onPress={() => {
-          clearErrorMessage(),
-            navigate("Intro");
+          clearErrorMessage(), navigate("Intro");
         }}
       />
       <KeyboardAvoidingView
@@ -105,7 +102,7 @@ const SignupScreen = () => {
         <Button
           title="Sign Up"
           onPress={() => {
-            signup({ email, password });
+            signup({ username, email, password });
           }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}

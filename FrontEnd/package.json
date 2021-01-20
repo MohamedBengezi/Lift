@@ -16,7 +16,7 @@
     "@react-navigation/material-top-tabs": "^5.3.9",
     "@react-navigation/native": "^5.8.9",
     "axios": "^0.21.0",
-    "expo": "~38.0.8",
+    "expo": "~39.0.0",
     "expo-av": "^8.6.0",
     "expo-camera": "^8.3.1",
     "expo-constants": "~9.1.1",
@@ -31,11 +31,12 @@
     "native-base": "^2.13.14",
     "react": "~16.11.0",
     "react-dom": "~16.11.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.0.tar.gz",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.0.tar.gz",
     "react-native-appearance": "^0.3.4",
     "react-native-camera": "^3.40.0",
     "react-native-elements": "^3.0.0-alpha.1",
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-get-random-values": "^1.5.1",
     "react-native-gifted-chat": "^0.16.3",
     "react-native-reanimated": "~1.9.0",
     "react-native-safe-area-context": "^3.0.2",
@@ -47,7 +48,8 @@
     "react-navigation-bottom-tabs": "^1.0.2",
     "react-navigation-native": "0.0.0",
     "react-navigation-stack": "^2.8.2",
-    "react-navigation-tabs": "^2.10.1"
+    "react-navigation-tabs": "^2.10.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
