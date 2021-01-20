@@ -1,11 +1,10 @@
-import { AsyncStorage } from "react-native";
 import createDataContext from "./createDataContext";
 import serverApi from "../api/server";
 import { navigate } from "../navigationRef";
 import FormData from "form-data";
-import Axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { firebaseApp,functions } from "../../firebase";
+import { firebaseApp, functions } from "../../firebase";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -13,81 +12,103 @@ const authReducer = (state, action) => {
   switch (action.type) {
     case "add_error":
       return { ...state, errorMessage: action.payload };
-    case "signup":
+    case "signin":
       return { errorMessage: "", token: action.payload };
+    case "signOut":
+      return { errorMessage: "", token: null };
+    case "clear_err_msg":
+      return { ...state, errorMessage: "" };
     default:
       return state;
   }
 };
 
-//calls firebase function to check if the userName requested by the user already exists in the database. 
-function goAuthenticate (email,password,dispatch)  {
-  firebaseApp
-  .auth()
-  .createUserWithEmailAndPassword(email, password)
-  .then((user) => {
-    navigate("Main");
-  })
-  .catch((error) => {
-    dispatch({
-      type: "add_error",
-      payload: "Something went wrong with sign up. Reason:" + error.message,
-    });
-  });
-  }
-
-
+//Checks if the username is unique & calls firebase sdk to sign up.
 const signup = (dispatch) => {
   return async ({ username, email, password }) => {
-    //  const response = await serverApi.post("/signup", { email, password });
-    //  await AsyncStorage.setItem("token", response.data.token);
-    //  dispatch({ type: "signup", payload: response.data.token });
-    console.log(email);
-    functions.useEmulator("10.0.2.2",5001);
-    var userNameExists = functions.httpsCallable('user-userNameExists');
-    userNameExists({username:username})
-    .then((result) => {
-      var exists = result.data.userNameExists;
-      console.log(`userNameExists ${exists}`);
-      if(exists){
-        //dispatch error to let user know to enter another user name. 
+    if (__DEV__) {
+      functions.useEmulator("10.0.2.2", 5001);
+    }
+    var userNameExists = functions.httpsCallable("user-userNameExists");
+    userNameExists({ username: username })
+      .then((result) => {
+        var exists = result.data.userNameExists;
+        if (exists) {
+          //dispatch error to let user know to enter another user name.
+          dispatch({
+            type: "add_error",
+            payload: "User name already exists. Please enter another one",
+          });
+        } else {
+          createUser(email, password, dispatch);
+        }
+      })
+      .catch((error) => {
+        var code = error.code;
+        var message = error.message;
+        var details = error.details;
+        console.error(`${code} \n ${message} \n ${details}`);
+        //dispatch meaningful error to user
         dispatch({
           type: "add_error",
-          payload: "User name already exists. Please enter another one",
+          payload: "Something went wrong. Please try again.",
         });
-      } else{
-        goAuthenticate(email,password,dispatch);
-      }
-    })
-    .catch((error) => {
-      var code = error.code;
-      var message = error.message;
-      var details = error.details;
-      console.error(`${code} \n ${message} \n ${details}`);
-      //dispatch meaningful error to user
-      dispatch({
-        type: "add_error",
-        payload: "Something went wrong. Please try again.",
       });
-    });
-    console.log("in signup");
   };
 };
 
+//calls firebase sdk to sign up a user
+function createUser(email, password, dispatch) {
+  firebaseApp
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then((response) => {
+      storeTokenAndNavigate(response);
+    })
+    .catch((error) => {
+      dispatch({
+        type: "add_error",
+        payload: "Something went wrong with sign up. Reason:" + error.message,
+      });
+    });
+}
+
+//Stores the token in the user's device to maintain session.
+function storeTokenAndNavigate(response) {
+  let token = response.user.toJSON().stsTokenManager.accessToken;
+  let refreshToken = response.user.toJSON().stsTokenManager.refreshToken;
+  AsyncStorage.setItem("lift-token", token);
+  AsyncStorage.setItem("lift-refreshToken", refreshToken);
+  dispatch({ type: "signin", payload: token });
+  navigate("Main");
+}
+
+//Automatically logs the user in if the token exists in the user's phone.
+const tryLocalSignin = (dispatch) => async () => {
+  const token = await AsyncStorage.getItem("lift-token");
+  if (token) {
+    dispatch({ type: "signin", payload: token });
+    navigate("Main");
+  } else {
+    navigate("loginFlow");
+  }
+};
+
+//Clears the error messages from context when needed.
+const clearErrorMessage = (dispatch) => () => {
+  dispatch({ type: "clear_err_msg" });
+};
+
+//Uses Firebase sdk to sign in a user
 const signin = (dispatch) => {
-  return ({ email, password }) => {
-    // Try to signin
-    // Handle success by updating state
-    // Handle failure by showing error message (somehow)
+  return async ({ email, password }) => {
     firebaseApp
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then((user) => {
-        console.log(user);
-        navigate("Main");
+      .then((response) => {
+        storeTokenAndNavigate(response);
       })
       .catch((error) => {
-        console.log("ERROR: Failed to log in");
         dispatch({
           type: "add_error",
           payload: "Something went wrong with sign in. Reason:" + error.message,
@@ -96,13 +117,19 @@ const signin = (dispatch) => {
   };
 };
 
+//Removes the token from the user's phone & logs out using firebase sdk
 const signout = (dispatch) => {
   return () => {
     // somehow sign out!!!
+    AsyncStorage.removeItem("lift-token");
+    AsyncStorage.removeItem("lift-refreshToken");
+    dispatch({ type: "signOut" });
     firebaseApp.auth().signOut();
+    navigate("loginFlow");
   };
 };
 
+//Uploads the media submitted by the user to the database
 const upload = (dispatch) => async ({ image, video }) => {
   try {
     const body = new FormData();
@@ -150,9 +177,8 @@ function sendXmlHttpRequest(data) {
   });
 }
 
-
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signin, signout, signup, upload },
+  { signin, signout, signup, upload, clearErrorMessage, tryLocalSignin },
   { token: null, errorMessage: "" }
 );

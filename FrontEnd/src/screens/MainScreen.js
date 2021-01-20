@@ -103,7 +103,6 @@ const MainScreen = ({ navigation }) => {
 
   toggleFlashLight = () => {
     //Logic to turn on & turn off flashlight
-    console.log("Clicked toggle flashlight ", camera.flashMode);
     var newVal = "";
     if (camera.flashMode === "on") {
       newVal = "off";
@@ -119,7 +118,6 @@ const MainScreen = ({ navigation }) => {
 
   toggleCamera = () => {
     //Logic to toggle camera
-    console.log("Clicked toggle camera");
     setCamera((prevState) => ({
       ...prevState,
       type:
@@ -300,7 +298,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
   },
   preview: {
     alignItems: "center",
@@ -313,7 +311,7 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     borderWidth: 5,
-    borderColor: "#FFF",
+    borderColor: colors.white,
     marginBottom: 50,
     alignSelf: "center",
   },
@@ -321,12 +319,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     top: 40,
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
   sendIcon: {
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
@@ -337,7 +335,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     fontSize: 28,
-    color: "white",
+    color: colors.white,
   },
   button: {
     fontSize: 32,

@@ -5,7 +5,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { Text, Input, Button } from "react-native-elements";
+import { Text, Button } from "react-native-elements";
 import Spacer from "../components/Spacer";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
@@ -13,7 +13,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 
 const SignupScreen = () => {
-  const { state, signup } = useContext(AuthContext);
+  const { state, signup, clearErrorMessage } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,7 +24,7 @@ const SignupScreen = () => {
         name="ios-arrow-round-back"
         style={styles.cancel}
         onPress={() => {
-          navigate("Intro");
+          clearErrorMessage(), navigate("Intro");
         }}
       />
       <KeyboardAvoidingView
@@ -102,7 +102,7 @@ const SignupScreen = () => {
         <Button
           title="Sign Up"
           onPress={() => {
-            signup({ username,email, password });
+            signup({ username, email, password });
           }}
           buttonStyle={styles.button}
           titleStyle={styles.buttonText}
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     top: 40,
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     fontSize: 16,
-    color: "red",
+    color: colors.red,
     marginLeft: 15,
     marginTop: 15,
   },
