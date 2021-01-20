@@ -63,7 +63,7 @@ function createUser(email, password, dispatch) {
     .auth()
     .createUserWithEmailAndPassword(email, password)
     .then((response) => {
-      storeTokenAndNavigate(response);
+      storeTokenAndNavigate(response, dispatch);
     })
     .catch((error) => {
       dispatch({
@@ -74,7 +74,7 @@ function createUser(email, password, dispatch) {
 }
 
 //Stores the token in the user's device to maintain session.
-function storeTokenAndNavigate(response) {
+function storeTokenAndNavigate(response, dispatch) {
   let token = response.user.toJSON().stsTokenManager.accessToken;
   let refreshToken = response.user.toJSON().stsTokenManager.refreshToken;
   AsyncStorage.setItem("lift-token", token);
@@ -106,7 +106,7 @@ const signin = (dispatch) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
-        storeTokenAndNavigate(response);
+        storeTokenAndNavigate(response, dispatch);
       })
       .catch((error) => {
         dispatch({
