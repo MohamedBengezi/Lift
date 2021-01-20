@@ -208,22 +208,28 @@ const MainScreen = ({ navigation }) => {
             style={styles.post}
             onPress={() => {
               // upload({ video });
-              let ref = firebaseApp.storage().ref();
-              ref = ref.child(
-                "public/feedback_posts/" +
-                  firebaseApp.auth().currentUser.uid +
-                  "/myVideo.mp4"
+              uploadMedia(video.uri, firebaseApp.auth().currentUser.uid).then(
+                (path) => {
+                  //TODO: Create post object using API route and pass in path
+                  console.log(path);
+                }
               );
-              getRawMedia(video.uri).then((raw) => {
-                ref.put(raw).then((snapshot) => {
-                  console.log("Successfully uploaded to firebase!");
-                  console.log(snapshot);
-                });
-                navigation.navigate("Post", { image, video });
-                setVideo(null);
-              });
+              // let ref = firebaseApp.storage().ref();
+              // ref = ref.child(
+              //   "public/feedback_posts/" +
+              //     firebaseApp.auth().currentUser.uid +
+              //     "/myVideo.mp4"
+              // );
+              // getRawMedia(video.uri).then((raw) => {
+              //   ref.put(raw).then((snapshot) => {
+              //     console.log("Successfully uploaded to firebase!");
+              //     console.log(snapshot);
+              //   });
+              //   navigation.navigate("Post", { image, video });
+              //   setVideo(null);
+              // });
               // navigation.navigate("Feed", { video });
-              // setVideo(null);
+              setVideo(null);
             }}
           >
             <Ionicons name="md-send" style={styles.sendIcon} />
