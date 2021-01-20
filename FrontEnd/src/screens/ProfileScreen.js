@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component,useContext } from 'react'
 import {
     Animated,
     Image,
@@ -25,6 +25,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import Feed from '../components/Feed'
 import serverApi from "../api/server";
 import colors from '../hooks/colors'
+import { Context as AuthContext } from "../context/AuthContext";
 
 const styles = StyleSheet.create({
     cardContainer: {
@@ -109,9 +110,10 @@ const styles = StyleSheet.create({
         margin: 15,
         marginTop: StatusBar.currentHeight
     }
-})
+});
 
 class Profile extends Component {
+    
     static propTypes = {
         avatar: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
@@ -221,8 +223,7 @@ class Profile extends Component {
     }
 
     renderContactHeader = () => {
-        const { avatar, name, bio } = this.props
-
+        const { avatar,name, bio } = this.props;
         return (
             <View style={styles.headerContainer}>
                 <View style={styles.userRow}>
