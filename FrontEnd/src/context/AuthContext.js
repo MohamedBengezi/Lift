@@ -28,9 +28,9 @@ const authReducer = (state, action) => {
 //Checks if the username is unique & calls firebase sdk to sign up.
 const signup = (dispatch) => {
   return async ({ username, email, password }) => {
-    if (__DEV__) {
-      functions.useEmulator("10.0.2.2", 5001);
-    }
+    
+    functions.useEmulator("10.0.2.2", 5001);
+    
     var userNameExists = functions.httpsCallable("user-userNameExists");
     userNameExists({ username: username })
       .then((result) => {
@@ -222,9 +222,9 @@ function sendXmlHttpRequest(data) {
 function uploadPost() {}
 
 function getUserName(dispatch) {
-  if (__DEV__) {
-    functions.useEmulator("10.0.2.2", 5001);
-  }
+  
+  functions.useEmulator("10.0.2.2", 5001);
+  
   let uid = firebaseApp.auth().currentUser.uid;
   console.log("in get username " + uid);
   var getUserName = functions.httpsCallable("user-getUserName");
