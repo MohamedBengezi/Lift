@@ -1,18 +1,24 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useContext } from "react";
+import PropTypes from "prop-types";
 
-import contactData from '../../mocks/contact.json';
+import contactData from "../../mocks/contact.json";
 
-import Profile from './ProfileScreen'
+import Profile from "./ProfileScreen";
+import { Context as AuthContext } from "../context/AuthContext";
 
-const ProfileScreen = () => <Profile {...contactData} />
+const ProfileScreen = () => {
+  const { state } = useContext(AuthContext);
+  console.log("Profile screen" + state.username);
+  contactData.name = state.username;
+  return <Profile {...contactData} />;
+};
 
 ProfileScreen.navigationOptions = () => ({
-    headerShown: false
-})
+  headerShown: false,
+});
 
 ProfileScreen.propTypes = {
-    navigation: PropTypes.object.isRequired,
-}
+  navigation: PropTypes.object.isRequired,
+};
 
-export default ProfileScreen
+export default ProfileScreen;
