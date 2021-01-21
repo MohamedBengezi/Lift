@@ -4,7 +4,7 @@ import { navigate } from "../navigationRef";
 import FormData from "form-data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firebase from "firebase/app";
-import { firebaseApp, functions } from "../../firebase";
+import { firebaseApp, functions, uploadMedia } from "../../firebase";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -28,9 +28,6 @@ const authReducer = (state, action) => {
 //Checks if the username is unique & calls firebase sdk to sign up.
 const signup = (dispatch) => {
   return async ({ username, email, password }) => {
-    
-    functions.useEmulator("10.0.2.2", 5001);
-    
     var userNameExists = functions.httpsCallable("user-userNameExists");
     userNameExists({ username: username })
       .then((result) => {
@@ -46,7 +43,7 @@ const signup = (dispatch) => {
         }
       })
       .catch((error) => {
-        showError(error);
+        showError(error,dispatch);
       });
   };
 };
@@ -61,7 +58,7 @@ function createUser(email, password, username, dispatch) {
       //save user name to the state
       dispatch({ type: "saveUsername", username: username });
       //call addUser to creat new user in db
-      addUserToDB(username);
+      addUserToDB(username,dispatch);
     })
     .catch((error) => {
       dispatch({
@@ -72,12 +69,17 @@ function createUser(email, password, username, dispatch) {
 }
 
 //adds the new user to the db
-function addUserToDB(username) {
+function addUserToDB(username,dispatch) {
   let uid = firebaseApp.auth().currentUser.uid;
   var addUser = functions.httpsCallable("user-addUserToDB");
-  addUser({ uid: uid, username: username }).catch((error) => {
-    showError(error);
-  });
+  addUser({ uid: uid, username: username })
+    .then(() => {
+      navigate("Main");
+    })
+    .catch((error) => {
+      //TODO: add logic to delete the user from firebase authentication if database connection failed.
+      showError(error,dispatch);
+    });
 }
 
 //Stores the token in the user's device to maintain session.
@@ -85,12 +87,10 @@ function storeTokenAndNavigate(response, dispatch) {
   let token = response.user.toJSON().stsTokenManager.accessToken;
   let refreshToken = response.user.toJSON().stsTokenManager.refreshToken;
   let user = JSON.stringify(response.user.toJSON());
-  console.log(user);
   AsyncStorage.setItem("lift-token", token);
   AsyncStorage.setItem("lift-refreshToken", refreshToken);
   AsyncStorage.setItem("lift-user", user);
   dispatch({ type: "signin", payload: token });
-  navigate("Main");
 }
 
 //Automatically logs the user in if the token exists in the user's phone.
@@ -109,17 +109,16 @@ const tryLocalSignin = (dispatch) => async () => {
     firebaseApp
       .auth()
       .updateCurrentUser(firebaseUser)
-      .then((res) => {
+      .then(() => {
         getUserName(dispatch);
+        return "success";
       });
-
-    navigate("Main");
   } else {
     navigate("loginFlow");
   }
 };
 
-function showError(error) {
+function showError(error,dispatch) {
   var code = error.code;
   var message = error.message;
   var details = error.details;
@@ -148,6 +147,7 @@ const signin = (dispatch) => {
           .signInWithEmailAndPassword(email, password)
           .then((response) => {
             storeTokenAndNavigate(response, dispatch);
+            getUserName(dispatch);
           });
       })
       .catch((error) => {
@@ -219,21 +219,58 @@ function sendXmlHttpRequest(data) {
   });
 }
 
-function uploadPost() {}
+const uploadPost = (dispatch) => async ({
+  username,
+  caption,
+  time,
+  type,
+  media,
+}) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
+    
+    const data = {
+      username: username,
+      caption: caption,
+      time: time,
+      mediaPath:path,
+      uid: firebaseApp.auth().currentUser.uid,
+    };
+    let uploadPost;
+    if(type==="feedback"){
+      uploadPost = functions.httpsCallable("posts-createFeedbackPost")
+    } else if(type==="regular"){
+      //route for regular posts. 
+    }
+    
+    uploadPost(data)
+    .then(() => {
+      console.log("Uploaded post details to db");
+    })
+    .catch((error) => {
+      showError(error,dispatch);
+    });
+  });
+};
 
 function getUserName(dispatch) {
-  
-  functions.useEmulator("10.0.2.2", 5001);
-  
   let uid = firebaseApp.auth().currentUser.uid;
-  console.log("in get username " + uid);
   var getUserName = functions.httpsCallable("user-getUserName");
   getUserName({ uid: uid }).then((res) => {
     dispatch({ type: "saveUsername", username: res.data.username });
+    navigate("Main");
+    return "success";
   });
 }
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signin, signout, signup, upload, clearErrorMessage, tryLocalSignin },
+  {
+    signin,
+    signout,
+    signup,
+    upload,
+    clearErrorMessage,
+    tryLocalSignin,
+    uploadPost,
+  },
   { token: null, errorMessage: "" }
 );

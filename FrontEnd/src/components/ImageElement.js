@@ -4,7 +4,6 @@ import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 
 
 const ImageElement = ({ title, image }) => {
-    console.log("IMAGEDETAIL", image)
     return (
         <View style={styles.post}>
             <Text style={{ marginLeft: 50 }}>{title}</Text>
