@@ -25,7 +25,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import Feed from '../components/Feed'
 import serverApi from "../api/server";
 import colors from '../hooks/colors'
-import { Context as AuthContext } from "../context/AuthContext";
+
 
 const styles = StyleSheet.create({
     cardContainer: {
