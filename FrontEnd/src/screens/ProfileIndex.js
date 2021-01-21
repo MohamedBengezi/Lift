@@ -8,7 +8,6 @@ import { Context as AuthContext } from "../context/AuthContext";
 
 const ProfileScreen = () => {
   const { state } = useContext(AuthContext);
-  console.log("Profile screen" + state.username);
   contactData.name = state.username;
   return <Profile {...contactData} />;
 };

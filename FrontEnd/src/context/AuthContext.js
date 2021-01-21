@@ -4,7 +4,7 @@ import { navigate } from "../navigationRef";
 import FormData from "form-data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firebase from "firebase/app";
-import { firebaseApp, functions } from "../../firebase";
+import { firebaseApp, functions, uploadMedia } from "../../firebase";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -43,7 +43,7 @@ const signup = (dispatch) => {
         }
       })
       .catch((error) => {
-        showError(error);
+        showError(error,dispatch);
       });
   };
 };
@@ -58,7 +58,7 @@ function createUser(email, password, username, dispatch) {
       //save user name to the state
       dispatch({ type: "saveUsername", username: username });
       //call addUser to creat new user in db
-      addUserToDB(username);
+      addUserToDB(username,dispatch);
     })
     .catch((error) => {
       dispatch({
@@ -69,7 +69,7 @@ function createUser(email, password, username, dispatch) {
 }
 
 //adds the new user to the db
-function addUserToDB(username) {
+function addUserToDB(username,dispatch) {
   let uid = firebaseApp.auth().currentUser.uid;
   var addUser = functions.httpsCallable("user-addUserToDB");
   addUser({ uid: uid, username: username })
@@ -77,7 +77,8 @@ function addUserToDB(username) {
       navigate("Main");
     })
     .catch((error) => {
-      showError(error);
+      //TODO: add logic to delete the user from firebase authentication if database connection failed.
+      showError(error,dispatch);
     });
 }
 
@@ -86,7 +87,6 @@ function storeTokenAndNavigate(response, dispatch) {
   let token = response.user.toJSON().stsTokenManager.accessToken;
   let refreshToken = response.user.toJSON().stsTokenManager.refreshToken;
   let user = JSON.stringify(response.user.toJSON());
-  console.log(user);
   AsyncStorage.setItem("lift-token", token);
   AsyncStorage.setItem("lift-refreshToken", refreshToken);
   AsyncStorage.setItem("lift-user", user);
@@ -118,7 +118,7 @@ const tryLocalSignin = (dispatch) => async () => {
   }
 };
 
-function showError(error) {
+function showError(error,dispatch) {
   var code = error.code;
   var message = error.message;
   var details = error.details;
@@ -219,11 +219,41 @@ function sendXmlHttpRequest(data) {
   });
 }
 
-function uploadPost() {}
+const uploadPost = (dispatch) => async ({
+  username,
+  caption,
+  time,
+  type,
+  media,
+}) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
+    
+    const data = {
+      username: username,
+      caption: caption,
+      time: time,
+      mediaPath:path,
+      uid: firebaseApp.auth().currentUser.uid,
+    };
+    let uploadPost;
+    if(type==="feedback"){
+      uploadPost = functions.httpsCallable("posts-createFeedbackPost")
+    } else if(type==="regular"){
+      //route for regular posts. 
+    }
+    
+    uploadPost(data)
+    .then(() => {
+      console.log("Uploaded post details to db");
+    })
+    .catch((error) => {
+      showError(error,dispatch);
+    });
+  });
+};
 
 function getUserName(dispatch) {
   let uid = firebaseApp.auth().currentUser.uid;
-  console.log("in get username " + uid);
   var getUserName = functions.httpsCallable("user-getUserName");
   getUserName({ uid: uid }).then((res) => {
     dispatch({ type: "saveUsername", username: res.data.username });
@@ -233,6 +263,14 @@ function getUserName(dispatch) {
 }
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signin, signout, signup, upload, clearErrorMessage, tryLocalSignin },
+  {
+    signin,
+    signout,
+    signup,
+    upload,
+    clearErrorMessage,
+    tryLocalSignin,
+    uploadPost,
+  },
   { token: null, errorMessage: "" }
 );

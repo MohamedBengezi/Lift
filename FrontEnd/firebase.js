@@ -4,7 +4,7 @@ import firebase from "firebase/app";
 import firebaseFunctions from "firebase/functions";
 import "firebase/auth";
 import "firebase/storage";
-const property = require("./src/property.json");
+import property from "./src/property.json";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxt8pC5E6NeUaqLxi2Lpudf32dJu4IqdU",
