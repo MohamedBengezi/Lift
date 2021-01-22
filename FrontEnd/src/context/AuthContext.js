@@ -20,6 +20,8 @@ const authReducer = (state, action) => {
       return { ...state, errorMessage: "" };
     case "saveUsername":
       return { ...state, username: action.username };
+    case "getUserPosts":
+      return { ...state, posts: action.posts };
     default:
       return state;
   }
@@ -268,6 +270,26 @@ function getUserName(dispatch) {
     return "success";
   });
 }
+
+function getPosts(dispatch) {
+  let uid = firebaseApp.auth().currentUser.uid;
+  var getUserPosts = functions.httpsCallable("posts-getUserPosts");
+  getUserPosts({ uid: uid }).then((data) => {
+    console.log('getPosts: ', data);
+    dispatch({ type: "getUserPosts", posts: data });
+    return data;
+  }).catch((error) => {
+    showError(error, dispatch)
+  });
+}
+
+const getUserPost = (dispatch) => {
+  return () => {
+    let posts = getPosts(dispatch);
+    console.log('getUserPosts: ', posts);
+  }
+}
+
 export const { Provider, Context } = createDataContext(
   authReducer,
   {
@@ -278,6 +300,7 @@ export const { Provider, Context } = createDataContext(
     clearErrorMessage,
     tryLocalSignin,
     uploadPost,
+    getUserPost
   },
   { token: null, errorMessage: "" }
 );

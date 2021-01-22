@@ -1,4 +1,4 @@
-import React, { Component,useContext } from 'react'
+import React, { Component, useContext } from 'react'
 import {
     Animated,
     Image,
@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Text,
     View,
-    YellowBox,
+    LogBox,
     StatusBar
 } from 'react-native'
 import { Icon } from 'react-native-elements'
@@ -25,7 +25,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import Feed from '../components/Feed'
 import serverApi from "../api/server";
 import colors from '../hooks/colors'
-
+import { Context as PostsContext } from '../context/AuthContext';
 
 const styles = StyleSheet.create({
     cardContainer: {
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
 });
 
 class Profile extends Component {
-    
+
     static propTypes = {
         avatar: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
@@ -140,6 +140,8 @@ class Profile extends Component {
         ).isRequired,
     }
 
+    userPosts = [];
+
     static defaultProps = {
         containerStyle: {},
         tabContainerStyle: {},
@@ -157,7 +159,11 @@ class Profile extends Component {
     }
 
     componentDidMount() {
-        YellowBox.ignoreWarnings(['VirtualizedLists should never be nested']);
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
+        LogBox.ignoreLogs(['Setting a timer'])
+        let { state, getUserPost } = this.context;
+        getUserPost();
+        this.userPosts = state.posts
     }
 
     handleIndexChange = index => {
@@ -223,7 +229,7 @@ class Profile extends Component {
     }
 
     renderContactHeader = () => {
-        const { avatar,name, bio } = this.props;
+        const { avatar, name, bio } = this.props;
         return (
             <View style={styles.headerContainer}>
                 <View style={styles.userRow}>
@@ -243,6 +249,8 @@ class Profile extends Component {
     }
 
     render() {
+        console.log('List of user posts: ', this.userPosts);
+
         return (
             <ScrollView style={styles.scroll}>
                 <View style={[styles.container, this.props.containerStyle]}>
@@ -270,4 +278,5 @@ class Profile extends Component {
     }
 }
 
+Profile.contextType = PostsContext;
 export default Profile
