@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,12 +13,9 @@ import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
-import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
-import { firebaseApp, uploadMedia } from "../../firebase";
 
 const MainScreen = ({ navigation }) => {
-  const { state, upload } = useContext(AuthContext);
   const [camera, setCamera] = useState({
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
@@ -103,7 +100,6 @@ const MainScreen = ({ navigation }) => {
 
   toggleFlashLight = () => {
     //Logic to turn on & turn off flashlight
-    console.log("Clicked toggle flashlight ", camera.flashMode);
     var newVal = "";
     if (camera.flashMode === "on") {
       newVal = "off";
@@ -119,7 +115,6 @@ const MainScreen = ({ navigation }) => {
 
   toggleCamera = () => {
     //Logic to toggle camera
-    console.log("Clicked toggle camera");
     setCamera((prevState) => ({
       ...prevState,
       type:
@@ -147,32 +142,8 @@ const MainScreen = ({ navigation }) => {
             name="md-send"
             style={styles.post}
             onPress={() => {
-              // upload({ image });
-              console.log(firebaseApp.auth().currentUser);
-              uploadMedia(image.uri, firebaseApp.auth().currentUser.uid).then(
-                (path) => {
-                  //TODO: Create post object using API route and pass in path
-                  console.log(path);
-                }
-              );
-              // let ref = firebaseApp.storage().ref();
-              // ref = ref.child(
-              //   "public/feedback_posts/" +
-              //     firebaseApp.auth().currentUser.uid +
-              //     "/myImage.jpg"
-              // );
-              // getRawMedia(image.uri)
-              //   .then((raw) => {
-              //     ref.put(raw).then((snapshot) => {
-              //       console.log("Successfully uploaded to firebase!");
-              //       console.log(snapshot);
-              //     });
-              //     navigation.navigate("Post", { image, video });
-              //     setImage(null);
-              //   })
-              //   .catch((err) =>
-              //     console.log("Raw image extraction failed: " + err)
-              //   );
+              navigation.navigate("Post", { image, video });
+              setImage(null);
             }}
           />
 
@@ -207,27 +178,8 @@ const MainScreen = ({ navigation }) => {
           <TouchableHighlight
             style={styles.post}
             onPress={() => {
-              // upload({ video });
-              uploadMedia(video.uri, firebaseApp.auth().currentUser.uid).then(
-                (path) => {
-                  //TODO: Create post object using API route and pass in path
-                  console.log(path);
-                }
-              );
-              // let ref = firebaseApp.storage().ref();
-              // ref = ref.child(
-              //   "public/feedback_posts/" +
-              //     firebaseApp.auth().currentUser.uid +
-              //     "/myVideo.mp4"
-              // );
-              // getRawMedia(video.uri).then((raw) => {
-              //   ref.put(raw).then((snapshot) => {
-              //     console.log("Successfully uploaded to firebase!");
-              //     console.log(snapshot);
-              //   });
-              //   navigation.navigate("Post", { image, video });
-              //   setVideo(null);
-              // });
+              navigation.navigate("Post", { image, video });
+              setVideo(null);
               // navigation.navigate("Feed", { video });
               setVideo(null);
             }}
@@ -306,7 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
   },
   preview: {
     alignItems: "center",
@@ -319,7 +271,7 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     borderWidth: 5,
-    borderColor: "#FFF",
+    borderColor: colors.white,
     marginBottom: 50,
     alignSelf: "center",
   },
@@ -327,12 +279,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     top: 40,
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
   sendIcon: {
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
@@ -343,7 +295,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     fontSize: 28,
-    color: "white",
+    color: colors.white,
   },
   button: {
     fontSize: 32,

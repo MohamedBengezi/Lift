@@ -13,7 +13,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 
 const SigninScreen = () => {
-  const { state, signin } = useContext(AuthContext);
+  const { state, signin, clearErrorMessage } = useContext(AuthContext);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   return (
@@ -22,6 +22,7 @@ const SigninScreen = () => {
         name="ios-arrow-round-back"
         style={styles.cancel}
         onPress={() => {
+          clearErrorMessage();
           navigate("Intro");
         }}
       />
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     top: 40,
-    color: "#ffffff",
+    color: colors.white,
     fontWeight: "600",
     fontSize: 28,
   },
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     fontSize: 16,
-    color: "red",
+    color: colors.red,
     marginLeft: 15,
     marginTop: 15,
   },

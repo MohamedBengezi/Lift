@@ -5,186 +5,274 @@ import {
     View,
     Image,
     TouchableOpacity,
-    Platform,
-    StatusBar
+    FlatList,
 } from "react-native";
+import { Input } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { navigate } from "../navigationRef";
+import Comment from "./Comment";
+import VideoElement from "./VideoElement";
+import ImageElement from "./ImageElement";
+import colors from "../hooks/colors";
+import { ScrollView } from "react-native-gesture-handler";
 
-
-const PostDetails = ({ media, title, showComments }) => {
-    const [likesAndComments, setLikesAndComments] = useState({ commented: false, liked: false });
-    let comment = {
-        "user": {
-            "id": 123,
-            "username": "johndoe",
-            "name": "John Doe",
-            "profile_image": "https://reactnative.dev/img/tiny_logo.png"
+const PostDetails = ({ item, title, showComments }) => {
+    const [likedOrCommented, setLikedOrCommented] = useState({
+        commented: false,
+        liked: false,
+    });
+    const [likesAndComments, setLikesAndComments] = useState({
+        likes: 0,
+        comments: 0,
+    });
+    const [newComment, setNewComment] = useState("");
+    const [comments, setComments] = useState([
+        {
+            user: {
+                id: 123,
+                username: "johndoe",
+                name: "John Doe",
+                profile_image: "https://reactnative.dev/img/tiny_logo.png",
+            },
+            description: "This is a sick photo man!",
         },
-        "description": "This is a sick photo man!"
-    }
-
-
+    ]);
 
     const onPressLike = () => {
-        console.log("postdetails: liked or commented!")
-        setLikesAndComments({ liked: !likesAndComments.liked });
-    }
+        let liked = !likedOrCommented.liked;
+        let likes = likesAndComments.likes;
+        if (!liked) {
+            setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
+        } else {
+            setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
+        }
+        setLikedOrCommented({ liked: liked });
+    };
 
     const onPressComment = () => {
-        console.log("postdetails: liked or commented!")
-        setLikesAndComments({ commented: !likesAndComments.commented });
-    }
+        setLikedOrCommented({ commented: !likedOrCommented.commented });
+    };
 
-
-    function LikeAndComment(media) {
-        const { liked, commented } = likesAndComments;
-        console.log("YYY1", media)
-
+    function LikeAndComment() {
+        const { liked, commented } = likedOrCommented;
+        const { likes } = likesAndComments;
         return (
             <View style={styles.postActionView}>
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name={liked ? "md-heart" : "md-heart-empty"}
-                        color={liked ? '#ff1616' : null} type="ionicon" size={25}
+                        color={liked ? colors.red : null}
+                        type="ionicon"
+                        size={25}
                         onPress={() => onPressLike()}
                     />
+                    <Text style={styles.postActionText}>
+                        {/*!!item.likes && item.likes.length ||*/ likes}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name={commented ? "md-chatbubbles" : "md-chatboxes"}
-                        color={commented ? 'black' : null} type="ionicon" size={25}
+                        color={commented ? colors.black : null}
+                        type="ionicon"
+                        size={25}
                         onPress={() => onPressComment()}
                     />
+                    <Text style={styles.postActionText}>
+                        {/*!!item.likes && item.likes.length || */ comments.length}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name="md-share"
-                        type="ionicon" size={25}
-                        onPress={() => console.log('share pressed')}
+                        type="ionicon"
+                        size={25}
+                        onPress={() => console.log("share pressed")}
                     />
+                    <Text style={styles.postActionText}></Text>
                 </TouchableOpacity>
-                {/* <Text style={styles.postActionText}>{!!item.likes && item.likes.length || 0}</Text> */}
             </View>
         );
     }
 
-    function displayComment(comment, index) {
-
+    function displayComment(comment) {
         return (
-            <View style={styles.commentContainer} key={index}>
-                <TouchableOpacity activeOpacity={0.8}
-                    onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                    <Image source={{ uri: comment.user.profile_image || '' }} style={styles.commentAvatar} />
-                </TouchableOpacity>
-                <View style={styles.postUsernameLocationContainer}>
-                    <TouchableOpacity style={styles.postUsernameView}
-                        onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                        <Text style={styles.commentUsernameLabel}>{comment.user.name}</Text>
-                    </TouchableOpacity>
-                    <View style={styles.postLocationView}>
-                        <Text style={styles.commentContentLabel}>{comment.description}</Text>
-                    </View>
-                </View>
-            </View>
-        )
+            <Comment
+                comment={comment.item}
+                key={comment.index}
+                index={comment.index}
+            />
+        );
     }
 
     function renderComments() {
         return (
-            <View>
-                <Text style={styles.sectionHeaderText}>{comment ? 1 : 'NO'} COMMENTS</Text>
-                <View style={styles.commentContainer}>
-                    {displayComment(comment, 0)}
-                </View>
-            </View>
-
+            <ScrollView>
+                <Text style={styles.sectionHeaderText}>{comments.length} COMMENTS</Text>
+                <FlatList
+                    data={comments}
+                    renderItem={(comment) => displayComment(comment)}
+                    keyExtractor={(item, index) => index.toString()}
+                    style={{ height: "37%" }}
+                />
+            </ScrollView>
         );
     }
 
+    function renderAddComment() {
+        return (
+            <View style={styles.addComment}>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <Ionicons
+                        name="md-chatbubbles"
+                        color={colors.black}
+                        size={25}
+                        style={{ marginHorizontal: 10, position: "absolute", left: 10 }}
+                    />
+                    <Input
+                        containerStyle={{ width: "80%" }}
+                        value={newComment}
+                        onChangeText={(comment) => setNewComment(comment)}
+                        placeholder="Enter a comment"
+                        placeholderTextColor="gray"
+                        inputStyle={{ color: colors.black, fontSize: 14 }}
+                        onSubmitEditing={() => {
+                            setLikedOrCommented({ commented: true })
+                            postComment();
+                        }}
+                    />
+                </View>
+            </View>
+        );
+    }
+
+    function postComment() {
+        if (newComment === "") return;
+        let cmt = {
+            user: {
+                id: 123,
+                username: "johndoe",
+                name: "John Doe",
+                profile_image: "https://reactnative.dev/img/tiny_logo.png",
+            },
+            description: "",
+        };
+        cmt.description = newComment;
+        setNewComment("");
+        setComments([...comments, cmt]);
+    }
+
     return (
-        <View style={styles.mainContent}>
-            <View style={styles.postContainer}>
+        <View style={{ flex: 1 }}>
+            <View
+                style={
+                    showComments ? styles.postDetailsContainer : styles.postContainer
+                }
+            >
                 <View style={styles.postHeader}>
-                    <TouchableOpacity style={styles.displayImageContainer} onPress={() => console.log('Profile Image pressed')} activeOpacity={0.8}>
-                        <Image style={styles.avatar}
+                    <TouchableOpacity
+                        style={styles.displayImageContainer}
+                        onPress={() => console.log("Profile Image pressed")}
+                        activeOpacity={0.8}
+                    >
+                        <Image
+                            style={styles.avatar}
                             source={{
-                                uri: 'https://reactnative.dev/img/tiny_logo.png',
-                            }} />
+                                uri: "https://reactnative.dev/img/tiny_logo.png",
+                            }}
+                        />
                     </TouchableOpacity>
 
-                    <View style={styles.nameAndImageContainer} >
-                        <TouchableOpacity style={styles.avatarName} onPress={() => console.log('Profile pressed')} activeOpacity={0.8} >
-                            <Text style={{ fontSize: 17 }}>
-                                John Doe
-              </Text>
+                    <View style={styles.nameAndImageContainer}>
+                        <TouchableOpacity
+                            style={styles.avatarName}
+                            onPress={() => console.log("Profile pressed")}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={{ fontSize: 17 }}>John Doe</Text>
+                            <View style={styles.postDate}>
+                                <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
+                                    5 mins ago{" "}
+                                </Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={styles.postImageCaptionContainer} >
-                    <TouchableOpacity onPress={() => console.log('Post pressed')} activeOpacity={1}>
-                        {media}
+                <View style={styles.postImageCaptionContainer}>
+                    <TouchableOpacity
+                        onPress={() => console.log("Post pressed")}
+                        activeOpacity={1}
+                    >
+                        {item.item !== null && typeof item.item === "object" ? (
+                            <ImageElement image={item} title={title} />
+                        ) : (
+                                <VideoElement video={item} title={title} />
+                            )}
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.postLogs} >
-                    <View style={styles.postDate} >
-                        <Text style={{ fontSize: 11, color: '#4C4B4B' }}>5 mins ago </Text>
-                    </View>
-                    <LikeAndComment media={media} />
+                <View style={styles.postLogs}>
+                    <LikeAndComment />
                 </View>
             </View>
-
             {showComments ? renderComments() : null}
-
+            {showComments && !likedOrCommented.commented ? renderAddComment() : null}
         </View>
-
     );
 };
 
 const styles = StyleSheet.create({
     icons: {
-        flex: 1,
-        flexDirection: 'row',
+        flexDirection: "column",
         fontSize: 200,
-        alignItems: 'flex-start'
+        fontWeight: "bold",
+        marginRight: 10,
     },
     mainContent: {
         flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#ffffff',
-
     },
     postContainer: {
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f8f8f8',
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.grey,
         borderRadius: 10,
+        marginRight: 2,
+    },
+    postDetailsContainer: {
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.grey,
+        borderRadius: 10,
+        marginRight: 2,
+        height: 300,
     },
     postHeader: {
         height: 70,
-        flexDirection: 'row',
-
+        flexDirection: "row",
     },
     postImageCaptionContainer: {
-        alignItems: 'center',
+        alignItems: "center",
         height: "50%",
-        width: "80%"
+        width: "80%",
     },
     postLogs: {
         height: 50,
-        flexDirection: 'row',
-        marginTop: 15
-
+        flexDirection: "row",
+        marginTop: 15,
     },
     displayImageContainer: {
         flex: 2,
-        alignItems: 'center',
-        justifyContent: 'center',
-
+        alignItems: "center",
+        justifyContent: "center",
     },
     nameAndImageContainer: {
         flex: 9,
@@ -193,77 +281,54 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 25,
-        marginLeft: 10
+        marginLeft: 10,
     },
     avatarName: {
         flex: 2,
-        justifyContent: 'center',
-        marginLeft: 5
+        justifyContent: "center",
+        marginLeft: 5,
     },
     location: {
         flex: 1,
-        justifyContent: 'center',
-        marginLeft: 5
+        justifyContent: "center",
+        marginLeft: 5,
     },
     postImage: {
-        width: '100%',
+        width: "100%",
         height: 250,
     },
     postDate: {
-        flex: 3,
-        justifyContent: 'center',
-        marginLeft: 20,
+        justifyContent: "center",
     },
     postActionView: {
         flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-
+        flexDirection: "row",
+        alignItems: "center",
+        marginLeft: 30,
     },
     postActionText: {
         marginLeft: 10,
-        color: '#44484B',
+        color: colors.reallyDarkGrey,
         fontSize: 15,
+        fontWeight: "bold",
     },
     postLocationView: {
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: "center",
     },
     sectionHeaderText: {
         fontSize: 13,
-        color: '#aaaaaa',
+        color: colors.darkGrey,
         marginVertical: 10,
-        marginLeft: 10
+        marginLeft: 10,
     },
-    commentContainer: {
+    addComment: {
         height: 50,
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderBottomWidth: 0.5,
-        borderColor: 'rgba(244,244,244,1)',
+        position: "absolute",
+        bottom: 0,
+        backgroundColor: colors.lightGrey,
+        width: "100%",
     },
-    commentAvatar: {
-        height: 25,
-        width: 25,
-        borderRadius: 13.5,
-        marginLeft: 10
-    },
-    commentUsernameLabel: {
-        fontSize: 14,
-        color: '#44484B',
-        marginLeft: 10,
-    },
-    commentContentLabel: {
-        flex: 1,
-        fontSize: 15,
-        color: '#656A73',
-        marginLeft: 10,
-    },
-    commentsContainer: {
-        backgroundColor: 'white'
-    }
-
 });
 
 export default PostDetails;

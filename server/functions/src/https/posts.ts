@@ -2,33 +2,37 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as storageUtils from "../util/storage";
 
-export const createFeedbackPost = functions.https.onRequest(
-  async (request, response) => {
-    functions.logger.info("create feedback post");
-    console.log(request.body.caption);
-    const userID = request.body.userID;
-    const caption = request.body.caption;
-    const topics = request.body.topics;
-    const content = request.body.content;
+export const createFeedbackPost = functions.https.onCall((data, context) => {
+  const username = data.username;
+  const uid = data.uid;
+  const caption = data.caption;
+  const time = data.time;
+  const mediaPath = data.mediaPath;
+  const regularPostsRef = admin.firestore().collection("feedback_posts");
+  const query = regularPostsRef
+    .add({
+      uid: uid,
+      username: username,
+      caption: caption,
+      likes: 0,
+      comments_number: 0,
+      timeSubmitted: time,
+      mediaPath: mediaPath,
+      archived: false,
+      answered: true,
+    })
+    .then(() => {
+      return "success";
+    })
+    .catch((err) => {
+      throw new functions.https.HttpsError(
+        "unknown",
+        `Something went wrong when accessing the database. Reason ${err}`
+      );
+    });
 
-    try {
-      const document = await admin
-        .firestore()
-        .collection("feedback_posts")
-        .add({
-          userID,
-          topics,
-          caption,
-          content,
-        });
-      response.send("Added docuemnt with id: " + document.id);
-    } catch (err) {
-      response
-        .status(400)
-        .send({ message: `Something went wrong. Reason ${err}` });
-    }
-  }
-);
+  return query;
+});
 
 export const archiveFeedbackPost = functions.https.onCall(
   async (data, context) => {
