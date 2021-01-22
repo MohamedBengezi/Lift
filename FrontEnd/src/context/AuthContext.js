@@ -233,16 +233,15 @@ function sendXmlHttpRequest(data) {
 const uploadPost = (dispatch) => async ({
   username,
   caption,
-  time,
   type,
   media,
 }) => {
   uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
+    
     const data = {
       username: username,
       caption: caption,
-      time: time,
-      mediaPath: path,
+      mediaPath:path,
       uid: firebaseApp.auth().currentUser.uid,
     };
     let uploadPost;

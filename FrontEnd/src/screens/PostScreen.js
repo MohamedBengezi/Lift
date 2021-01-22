@@ -43,20 +43,10 @@ const PostScreen = ({ navigation }) => {
   };
 
   const onSubmit = () => {
-    const date = new Date();
-    const time = {
-      date: date.getUTCDate(),
-      month: date.getMonth(),
-      year: date.getUTCFullYear(),
-      hour: date.getUTCHours(),
-      minutes: date.getUTCMinutes(),
-      seconds: date.getUTCSeconds(),
-    };
     const type = "feedback"; //needs to be changed so user picks whether it is feedback or regular
     const data = {
       username: state.username,
       caption: title,
-      time: time,
       type: type,
     };
 
