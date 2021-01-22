@@ -2,35 +2,136 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as storageUtils from "../util/storage";
 
-export const createFeedbackPost = functions.https.onCall((data, context) => {
-  const username = data.username;
-  const uid = data.uid;
-  const caption = data.caption;
-  const mediaPath = data.mediaPath;
-  const feedBackPostsRef = admin.firestore().collection("feedback_posts");
-  const query = feedBackPostsRef
-    .add({
-      uid: uid,
-      username: username,
-      caption: caption,
-      likes: 0,
-      comments_number: 0,
-      timeSubmitted: admin.firestore.Timestamp.now(),
-      mediaPath: mediaPath,
-      archived: false,
-      answered: true,
-    })
-    .then(() => {
-      return "success";
-    })
-    .catch((err) => {
-      throw new functions.https.HttpsError(
-        "unknown",
-        `Something went wrong when accessing the database. Reason ${err}`
-      );
-    });
+export const createFeedbackPost = functions.https.onCall(
+  async (data, context) => {
 
-  return query;
+    const uid = context.auth!.uid;
+    const caption = data.caption;
+    const mediaPath = data.mediaPath;
+    const feedBackPostsRef = admin.firestore().collection("feedback_posts");
+
+    let username = "";
+    const userRef = admin.firestore().collection("users").doc(uid);
+
+    try {
+
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "Document does not exist. Please check the document id again"
+        );
+      } else {
+        const docData = userDoc.data()!;
+        username = docData.username;
+      }
+
+    } catch (err) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Something unexpected happened."
+      );
+    }
+
+    const query = feedBackPostsRef
+      .add({
+        uid: uid,
+        username: username,
+        caption: caption,
+        likes: 0,
+        comments_number: 0,
+        timeSubmitted: admin.firestore.Timestamp.now(),
+        mediaPath: mediaPath,
+        archived: false,
+        answered: true,
+      })
+      .then(() => {
+        return "success";
+      })
+      .catch((err) => {
+        throw new functions.https.HttpsError(
+          "unknown",
+          `Something went wrong when accessing the database. Reason ${err}`
+        );
+      });
+
+    return query;
+});
+
+export const createGeneralPost = functions.https.onCall(
+  async (data, context) => {
+    const uid = context.auth!.uid;
+    const caption = data.caption;
+    const mediaPath = data.mediaPath;
+    const generalPostsRef = admin.firestore().collection("feedback_posts");
+
+    let username = "";
+
+    const userRef = admin.firestore().collection("users").doc(uid);
+
+    try {
+
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "Document does not exist. Please check the document id again"
+        );
+      } else {
+        const docData = userDoc.data()!;
+        username = docData.username;
+      }
+
+    } catch (err) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Something unexpected happened."
+      );
+    }
+
+    const query = generalPostsRef
+      .add({
+        uid: uid,
+        username: username,
+        caption: caption,
+        likes: 0,
+        comments_number: 0,
+        timeSubmitted: admin.firestore.Timestamp.now(),
+        mediaPath: mediaPath,
+      })
+      .then(() => {
+        return "success";
+      })
+      .catch((err) => {
+        throw new functions.https.HttpsError(
+          "unknown",
+          `Something went wrong when accessing the database. Reason ${err}`
+        );
+      });
+
+    return query;
+});
+
+
+export const deleteFeedbackPost = functions.https.onCall(
+  async (data, context) => {
+
+  const docID = data.docID;
+
+    try {
+
+      const postRef = admin.firestore().collection("feedback_posts").doc(docID);
+      await postRef.delete()    
+
+    } catch (err) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Something unexpected happened."
+      );
+    }
+
 });
 
 
