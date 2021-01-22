@@ -95,7 +95,9 @@ export const getUserPosts = functions.https.onCall(async (data, context) => {
       return {
         id: doc.id,
         ...doc.data(),
-        mediaPath: await storageUtils.getDownloadURL(doc.data().mediaPath),
+        mediaPath: (
+          await storageUtils.getDownloadURL(doc.data().mediaPath)
+        )?.[0],
       };
     })
   );
