@@ -33,6 +33,7 @@ export const createFeedbackPost = functions.https.onCall((data, context) => {
   return query;
 });
 
+
 export const archiveFeedbackPost = functions.https.onCall(
   async (data, context) => {
     const user = context.auth!.uid;
@@ -48,8 +49,8 @@ export const archiveFeedbackPost = functions.https.onCall(
           "Document does not exist. Please check the document id again"
         );
       } else {
-        const data = doc.data()!;
-        if (data.uid === user) {
+        const docData = doc.data()!;
+        if (docData.uid === user) {
           // Move file to private folder
           const srcPath: string = doc.data()?.mediaPath;
           const destPath =
