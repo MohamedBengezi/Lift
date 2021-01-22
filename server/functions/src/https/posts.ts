@@ -6,17 +6,16 @@ export const createFeedbackPost = functions.https.onCall((data, context) => {
   const username = data.username;
   const uid = data.uid;
   const caption = data.caption;
-  const time = data.time;
   const mediaPath = data.mediaPath;
-  const regularPostsRef = admin.firestore().collection("feedback_posts");
-  const query = regularPostsRef
+  const feedBackPostsRef = admin.firestore().collection("feedback_posts");
+  const query = feedBackPostsRef
     .add({
       uid: uid,
       username: username,
       caption: caption,
       likes: 0,
       comments_number: 0,
-      timeSubmitted: time,
+      timeSubmitted: admin.firestore.Timestamp.now(),
       mediaPath: mediaPath,
       archived: false,
       answered: true,
