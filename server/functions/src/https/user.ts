@@ -38,10 +38,10 @@ import * as admin from "firebase-admin";
 // });
 
 export const addUser = functions.https.onRequest(async (request, response) => {
-  let username = request.body.username;
-  let topics = request.body.topics;
-  let community_rating = request.body.community_rating;
-  let following = request.body.following;
+  const username = request.body.username;
+  const topics = request.body.topics;
+  const community_rating = request.body.community_rating;
+  const following = request.body.following;
 
   const usersRef = admin.firestore().collection("users");
   try {
@@ -71,20 +71,26 @@ export const addUser = functions.https.onRequest(async (request, response) => {
 });
 
 export const userNameExists = functions.https.onCall((data, context) => {
-  let username = data.username;
-  console.log('Server username '+username);
+  const username = data.username;
+  console.log("Server username " + username);
   const usersRef = admin.firestore().collection("users");
 
-    const query =usersRef.where("username","==",username).get()
-    .then(function(res){
-      const userNameExists = res.size === 0 ? true : false;
-      console.log(userNameExists);
-      return { userNameExists: userNameExists };
-      
+  const query = usersRef
+    .where("username", "==", username)
+    .get()
+    .then(function (res) {
+      const usernameExists = res.size === 0 ? true : false;
+      console.log(usernameExists);
+      return { usernameExists: usernameExists };
     })
-    .catch (err => {throw new functions.https.HttpsError('unknown', `Something went wrong when accessing the database. Reason ${err}`);});
+    .catch((err) => {
+      throw new functions.https.HttpsError(
+        "unknown",
+        `Something went wrong when accessing the database. Reason ${err}`
+      );
+    });
   return query;
-})
+});
 
 export const getUser = functions.https.onRequest(async (request, response) => {
   const username = request.body.username;
