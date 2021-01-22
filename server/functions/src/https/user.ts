@@ -1,19 +1,21 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
-
-
 export const addUserToDB = functions.https.onCall((data, context) => {
   const username = data.username;
   const uid = data.uid;
   const usersRef = admin.firestore().collection("users");
-  const query=usersRef.add({
-    uid: uid,
-    username: username,
-    bio: "",
-    following: 0,
-    followers: 0,
-  }).then(() => {return "success"});
+  const query = usersRef
+    .add({
+      uid: uid,
+      username: username,
+      bio: "",
+      following: 0,
+      followers: 0,
+    })
+    .then(() => {
+      return "success";
+    });
   return query;
 });
 
@@ -53,4 +55,3 @@ export const getUserName = functions.https.onCall((data, context) => {
 
   return query;
 });
-

@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,7 +16,6 @@ import * as SplashScreen from "expo-splash-screen";
 import colors from "../hooks/colors";
 
 const MainScreen = ({ navigation }) => {
-  
   const [camera, setCamera] = useState({
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
@@ -182,7 +181,7 @@ const MainScreen = ({ navigation }) => {
               navigation.navigate("Post", { image, video });
               setVideo(null);
               // navigation.navigate("Feed", { video });
-              // setVideo(null);
+              setVideo(null);
             }}
           >
             <Ionicons name="md-send" style={styles.sendIcon} />

@@ -4,7 +4,11 @@ import * as admin from "firebase-admin";
 import * as posts from "./https/posts";
 import * as user from "./https/user";
 
-admin.initializeApp();
+const serviceAccount = require("../uplift-e96ab-firebase-adminsdk-fxouf-8b4d87f004.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript

@@ -43,7 +43,7 @@ const signup = (dispatch) => {
         }
       })
       .catch((error) => {
-        showError(error,dispatch);
+        showError(error, dispatch);
       });
   };
 };
@@ -58,7 +58,7 @@ function createUser(email, password, username, dispatch) {
       //save user name to the state
       dispatch({ type: "saveUsername", username: username });
       //call addUser to creat new user in db
-      addUserToDB(username,dispatch);
+      addUserToDB(username, dispatch);
     })
     .catch((error) => {
       dispatch({
@@ -69,7 +69,7 @@ function createUser(email, password, username, dispatch) {
 }
 
 //adds the new user to the db
-function addUserToDB(username,dispatch) {
+function addUserToDB(username, dispatch) {
   let uid = firebaseApp.auth().currentUser.uid;
   var addUser = functions.httpsCallable("user-addUserToDB");
   addUser({ uid: uid, username: username })
@@ -77,8 +77,17 @@ function addUserToDB(username,dispatch) {
       navigate("Main");
     })
     .catch((error) => {
-      //TODO: add logic to delete the user from firebase authentication if database connection failed.
-      showError(error,dispatch);
+      //logic to delete the user from firebase authentication if database connection failed.
+      var user = firebaseApp.auth().currentUser;
+      user
+        .delete()
+        .then(function () {
+          signout();
+        })
+        .catch((error) => {
+          showError(error, dispatch);
+        });
+      showError(error, dispatch);
     });
 }
 
@@ -118,7 +127,7 @@ const tryLocalSignin = (dispatch) => async () => {
   }
 };
 
-function showError(error,dispatch) {
+function showError(error, dispatch) {
   var code = error.code;
   var message = error.message;
   var details = error.details;
@@ -227,28 +236,27 @@ const uploadPost = (dispatch) => async ({
   media,
 }) => {
   uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
-    
     const data = {
       username: username,
       caption: caption,
       time: time,
-      mediaPath:path,
+      mediaPath: path,
       uid: firebaseApp.auth().currentUser.uid,
     };
     let uploadPost;
-    if(type==="feedback"){
-      uploadPost = functions.httpsCallable("posts-createFeedbackPost")
-    } else if(type==="regular"){
-      //route for regular posts. 
+    if (type === "feedback") {
+      uploadPost = functions.httpsCallable("posts-createFeedbackPost");
+    } else if (type === "regular") {
+      //route for regular posts.
     }
-    
+
     uploadPost(data)
-    .then(() => {
-      console.log("Uploaded post details to db");
-    })
-    .catch((error) => {
-      showError(error,dispatch);
-    });
+      .then(() => {
+        console.log("Uploaded post details to db");
+      })
+      .catch((error) => {
+        showError(error, dispatch);
+      });
   });
 };
 
