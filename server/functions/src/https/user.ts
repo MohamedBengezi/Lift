@@ -56,14 +56,13 @@ export const getUserName = functions.https.onCall((data, context) => {
   return query;
 });
 
-export const modifyUser = functions.https.onRequest(async (request, response) => {
-  console.log("here");
-  let uid = request.body.uid;
-  let updatedUsername = request.body.updatedUsername;
-  console.log(uid, updatedUsername);
+export const modifyUser = functions.https.onCall(async (data, context) => {
+  let uid = data.uid;
+  let updatedUsername = data.updatedUsername;
 
   await admin.firestore().collection("users").doc(uid).update({
     username: updatedUsername
   })
+
 
 });
