@@ -66,3 +66,8 @@ export const modifyUser = functions.https.onCall(async (data, context) => {
 
 
 });
+
+export const deleteAccount = functions.https.onCall(async (data, context) =>  {
+  let uid = data.uid;
+  await admin.firestore().collection("users").doc(uid).delete();
+});
