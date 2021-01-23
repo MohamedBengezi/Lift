@@ -55,3 +55,19 @@ export const getUserName = functions.https.onCall((data, context) => {
 
   return query;
 });
+
+export const modifyUser = functions.https.onCall(async (data, context) => {
+  let uid = data.uid;
+  let updatedUsername = data.updatedUsername;
+
+  await admin.firestore().collection("users").doc(uid).update({
+    username: updatedUsername
+  })
+
+
+});
+
+export const deleteAccount = functions.https.onCall(async (data, context) =>  {
+  let uid = data.uid;
+  await admin.firestore().collection("users").doc(uid).delete();
+});
