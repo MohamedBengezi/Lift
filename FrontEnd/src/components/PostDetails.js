@@ -6,6 +6,7 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
+    StatusBar
 } from "react-native";
 import { Input } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -77,7 +78,7 @@ const PostDetails = ({ item, title, showComments }) => {
                         <TouchableOpacity style={styles.icons}>
                             <Ionicons
                                 name="md-thumbs-up"
-                                color={liked ? colors.blue : null}
+                                color={liked ? colors.blue : colors.black}
                                 type="ionicon"
                                 size={25}
                                 onPress={() => onPressLike(liked)}
@@ -86,7 +87,7 @@ const PostDetails = ({ item, title, showComments }) => {
                         <TouchableOpacity style={styles.icons}>
                             <Ionicons
                                 name="md-thumbs-down"
-                                color={unliked ? colors.yellow : null}
+                                color={unliked ? colors.yellow : colors.black}
                                 type="ionicon"
                                 size={25}
                                 onPress={() => onPressUnlike(unliked)}
@@ -103,7 +104,7 @@ const PostDetails = ({ item, title, showComments }) => {
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name={commented ? "md-chatbubbles" : "md-chatboxes"}
-                        color={commented ? colors.black : null}
+                        color={commented ? colors.black : colors.black}
                         type="ionicon"
                         size={25}
                         style={{ marginRight: 5 }}
@@ -201,7 +202,9 @@ const PostDetails = ({ item, title, showComments }) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={
+            showComments ? { flex: 1, marginTop: StatusBar.currentHeight + 40 } : { flex: 1 }
+        }>
             <View
                 style={
                     showComments ? styles.postDetailsContainer : styles.postContainer
