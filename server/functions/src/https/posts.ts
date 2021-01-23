@@ -293,8 +293,7 @@ export const addReply = functions.https.onCall(
       username: username,
       comment: comment,
       mediaPath: mediaPath,
-      upvotes: 0,
-      downvotes: 0,
+      likes: 0,
     }
 
     const replyRef = admin.firestore().collection("feedback_posts").doc(docID).collection("replies");
@@ -352,6 +351,108 @@ export const deleteReply = functions.https.onCall(
     }
 
 });
+
+export const addComment = functions.https.onCall(
+  async (data, context) => {
+
+    const comment = data.comment;
+    const docID = data.docID;
+
+    const uid = context.auth!.uid;
+
+    if (docID === null || docID === undefined) {
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "Failed operation. Please pass in a document id. Expected body param: 'docID'"
+      );
+    }
+
+    let username = "";
+
+    const userRef = admin.firestore().collection("users").doc(uid);
+
+    try {
+
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "Document does not exist. Please check the document id again"
+        );
+      } else {
+        const docData = userDoc.data()!;
+        username = docData.username;
+      }
+
+    } catch (err) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Something unexpected happened."
+      );
+    }
+
+
+    const commentData = {
+      username: username,
+      comment: comment,
+      likes: 0,
+    }
+
+    const commentRef = admin.firestore().collection("general_posts").doc(docID).collection("comments");
+    await commentRef.add(commentData);
+
+});
+
+export const getComments= functions.https.onCall(async (data, context) => {
+  const postID = data.postid;
+
+  if (postID === null || postID === undefined) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Failed to fetch replies. Please pass in a postID. Expected body param: 'postid'"
+    );
+  }
+
+  const ref = await admin
+    .firestore()
+    .collection("general_posts")
+    .doc(postID)
+    .collection("comments")
+    .get();
+
+  const docs = await Promise.all(
+    ref.docs.map(async (doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    })
+  );
+  return { message: "success", count: docs.length, replies: docs };
+});
+
+export const deleteComment = functions.https.onCall(
+  async (data, context) => {
+
+  const postID = data.postID;
+  const commentID = data.commentID;
+
+    try {
+
+      const commentRef = admin.firestore().collection("general_posts").doc(postID).collection("comments").doc(commentID);
+      await commentRef.delete()    
+
+    } catch (err) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Something unexpected happened."
+      );
+    }
+
+});
+
+
 export const managePostLikes = functions.https.onCall(async (data, context) => {
   const postID: string = data.postID;
   const uid: string = context.auth!.uid;
