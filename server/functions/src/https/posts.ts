@@ -4,7 +4,6 @@ import * as storageUtils from "../util/storage";
 
 export const createFeedbackPost = functions.https.onCall(
   async (data, context) => {
-
     const uid = context.auth!.uid;
     const caption = data.caption;
     const mediaPath = data.mediaPath;
@@ -14,7 +13,6 @@ export const createFeedbackPost = functions.https.onCall(
     const userRef = admin.firestore().collection("users").doc(uid);
 
     try {
-
       const userDoc = await userRef.get();
 
       if (!userDoc.exists) {
@@ -26,7 +24,6 @@ export const createFeedbackPost = functions.https.onCall(
         const docData = userDoc.data()!;
         username = docData.username;
       }
-
     } catch (err) {
       throw new functions.https.HttpsError(
         "internal",
@@ -45,6 +42,8 @@ export const createFeedbackPost = functions.https.onCall(
         mediaPath: mediaPath,
         archived: false,
         answered: true,
+        liked_by: [],
+        disliked_by: [],
       })
       .then(() => {
         return "success";
@@ -57,21 +56,21 @@ export const createFeedbackPost = functions.https.onCall(
       });
 
     return query;
-});
+  }
+);
 
 export const createGeneralPost = functions.https.onCall(
   async (data, context) => {
     const uid = context.auth!.uid;
     const caption = data.caption;
     const mediaPath = data.mediaPath;
-    const generalPostsRef = admin.firestore().collection("feedback_posts");
+    const generalPostsRef = admin.firestore().collection("general_posts");
 
     let username = "";
 
     const userRef = admin.firestore().collection("users").doc(uid);
 
     try {
-
       const userDoc = await userRef.get();
 
       if (!userDoc.exists) {
@@ -83,7 +82,6 @@ export const createGeneralPost = functions.https.onCall(
         const docData = userDoc.data()!;
         username = docData.username;
       }
-
     } catch (err) {
       throw new functions.https.HttpsError(
         "internal",
@@ -100,6 +98,8 @@ export const createGeneralPost = functions.https.onCall(
         comments_number: 0,
         timeSubmitted: admin.firestore.Timestamp.now(),
         mediaPath: mediaPath,
+        liked_by: [],
+        disliked_by: [],
       })
       .then(() => {
         return "success";
@@ -112,28 +112,24 @@ export const createGeneralPost = functions.https.onCall(
       });
 
     return query;
-});
-
+  }
+);
 
 export const deleteFeedbackPost = functions.https.onCall(
   async (data, context) => {
-
-  const docID = data.docID;
+    const docID = data.docID;
 
     try {
-
       const postRef = admin.firestore().collection("feedback_posts").doc(docID);
-      await postRef.delete()    
-
+      await postRef.delete();
     } catch (err) {
       throw new functions.https.HttpsError(
         "internal",
         "Something unexpected happened."
       );
     }
-
-});
-
+  }
+);
 
 export const archiveFeedbackPost = functions.https.onCall(
   async (data, context) => {
@@ -248,4 +244,67 @@ export const markPostAsAnswered = functions.https.onCall((data, context) => {
         `Something unexpected occurred during document update ${err}`
       );
     });
+});
+
+export const managePostLikes = functions.https.onCall(async (data, context) => {
+  const postID: string = data.postID;
+  const uid: string = context.auth!.uid;
+  const like: boolean = data.like;
+  const collection: string = data.collection; // should be either "feedback_posts" or "general_posts"
+
+  const postRef = admin.firestore().collection(collection).doc(postID);
+  const snapshot = await postRef.get();
+  if (snapshot.exists) {
+    let liked_by: Array<string> = snapshot.data()?.liked_by || [];
+    let disliked_by: Array<string> = snapshot.data()?.disliked_by || [];
+    let likes = snapshot.data()!.likes;
+    let message = "";
+    if (like) {
+      if (liked_by.includes(uid)) {
+        throw new functions.https.HttpsError(
+          "already-exists",
+          "The current user has already liked this post"
+        );
+      } else if (disliked_by.includes(uid)) {
+        // This means the user wants to undo their dislike. Remove them from the dislike list and increase the total like count by one
+        disliked_by = disliked_by.filter((e) => e !== uid);
+        likes++;
+        await snapshot.ref.update({ likes: likes, disliked_by: disliked_by });
+        message = "Successfully removed dislike";
+      } else {
+        // This means the user wants to like the post
+        liked_by.push(uid);
+        likes++;
+
+        await snapshot.ref.update({ likes: likes, liked_by: liked_by });
+        message = "Successfully added like";
+      }
+    } else {
+      if (disliked_by.includes(uid)) {
+        throw new functions.https.HttpsError(
+          "already-exists",
+          "The current user has already disliked this post"
+        );
+      } else if (liked_by.includes(uid)) {
+        //User wants to undo their like
+        liked_by = liked_by.filter((e) => e !== uid);
+        likes--;
+        await snapshot.ref.update({ likes: likes, liked_by: liked_by });
+        message = "Successfully removed like";
+      } else {
+        // User disliked the post
+        disliked_by.push(uid);
+        likes--;
+
+        await snapshot.ref.update({ likes: likes, disliked_by: disliked_by });
+        message = "successfully added dislike";
+      }
+    }
+    return { message: message };
+  } else {
+    throw new functions.https.HttpsError(
+      "not-found",
+      "The specified postID does not exist"
+    );
+  }
 });
