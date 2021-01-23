@@ -1,6 +1,6 @@
 import React from "react";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import { createStackNavigator, useHeaderHeight } from "react-navigation-stack";
+import { CardStyleInterpolators, createStackNavigator, useHeaderHeight } from "react-navigation-stack";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import { StyleSheet, StatusBar, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -197,7 +197,8 @@ export default function RouteScreen() {
           navigationOptions: {
             headerMode: 'none',
             headerShown: false,
-            animationEnabled: false
+            animationEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forRevealFromBottomAndroid
           }
         },
         Settings: {
@@ -205,7 +206,9 @@ export default function RouteScreen() {
           navigationOptions: {
             headerMode: 'none',
             headerShown: false,
-            animationEnabled: false
+            animationEnabled: true,
+            gestureDirection: 'vertical-inverted',
+            cardStyleInterpolator: CardStyleInterpolators.forRevealFromBottomAndroid
 
           },
         },
