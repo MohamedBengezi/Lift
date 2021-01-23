@@ -64,7 +64,7 @@ export const createGeneralPost = functions.https.onCall(
     const uid = context.auth!.uid;
     const caption = data.caption;
     const mediaPath = data.mediaPath;
-    const generalPostsRef = admin.firestore().collection("feedback_posts");
+    const generalPostsRef = admin.firestore().collection("general_posts");
 
     let username = "";
 
@@ -98,6 +98,8 @@ export const createGeneralPost = functions.https.onCall(
         comments_number: 0,
         timeSubmitted: admin.firestore.Timestamp.now(),
         mediaPath: mediaPath,
+        liked_by: [],
+        disliked_by: [],
       })
       .then(() => {
         return "success";
@@ -248,8 +250,9 @@ export const managePostLikes = functions.https.onCall(async (data, context) => {
   const postID: string = data.postID;
   const uid: string = context.auth!.uid;
   const like: boolean = data.like;
+  const collection: string = data.collection; // should be either "feedback_posts" or "general_posts"
 
-  const postRef = admin.firestore().collection("feedback_posts").doc(postID);
+  const postRef = admin.firestore().collection(collection).doc(postID);
   const snapshot = await postRef.get();
   if (snapshot.exists) {
     let liked_by: Array<string> = snapshot.data()?.liked_by || [];
