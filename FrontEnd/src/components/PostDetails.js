@@ -19,6 +19,7 @@ const PostDetails = ({ item, title, showComments }) => {
     const [likedOrCommented, setLikedOrCommented] = useState({
         commented: false,
         liked: false,
+        unliked: false
     });
     const [likesAndComments, setLikesAndComments] = useState({
         likes: 0,
@@ -38,14 +39,28 @@ const PostDetails = ({ item, title, showComments }) => {
     ]);
 
     const onPressLike = () => {
-        let liked = !likedOrCommented.liked;
+        let { liked } = likedOrCommented;
         let likes = likesAndComments.likes;
+
         if (!liked) {
+            setLikedOrCommented({ liked: true, unliked: false });
+            setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
+        } else {
+            setLikedOrCommented({ liked: false });
+            setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
+        }
+    };
+    const onPressUnlike = () => {
+        let { unliked } = likedOrCommented;
+        let likes = likesAndComments.likes;
+
+        if (!unliked) {
+            setLikedOrCommented({ liked: false, unliked: true });
             setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
         } else {
+            setLikedOrCommented({ unliked: false });
             setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
         }
-        setLikedOrCommented({ liked: liked });
     };
 
     const onPressComment = () => {
@@ -53,22 +68,37 @@ const PostDetails = ({ item, title, showComments }) => {
     };
 
     function LikeAndComment() {
-        const { liked, commented } = likedOrCommented;
+        const { liked, unliked, commented } = likedOrCommented;
         const { likes } = likesAndComments;
         return (
             <View style={styles.postActionView}>
-                <TouchableOpacity style={styles.icons}>
-                    <Ionicons
-                        name={liked ? "md-heart" : "md-heart-empty"}
-                        color={liked ? colors.red : null}
-                        type="ionicon"
-                        size={25}
-                        onPress={() => onPressLike()}
-                    />
-                    <Text style={styles.postActionText}>
+                <View style={{ flexDirection: 'column', alignItems: 'center', marginRight: 5 }}>
+                    <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                        <TouchableOpacity style={styles.icons}>
+                            <Ionicons
+                                name="md-thumbs-up"
+                                color={liked ? colors.blue : null}
+                                type="ionicon"
+                                size={25}
+                                onPress={() => onPressLike(liked)}
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.icons}>
+                            <Ionicons
+                                name="md-thumbs-down"
+                                color={unliked ? colors.yellow : null}
+                                type="ionicon"
+                                size={25}
+                                onPress={() => onPressUnlike(unliked)}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={{ color: colors.reallyDarkGrey, fontSize: 15, fontWeight: "bold" }}>
                         {/*!!item.likes && item.likes.length ||*/ likes}
                     </Text>
-                </TouchableOpacity>
+                </View>
+
+
 
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
@@ -76,6 +106,7 @@ const PostDetails = ({ item, title, showComments }) => {
                         color={commented ? colors.black : null}
                         type="ionicon"
                         size={25}
+                        style={{ marginRight: 5 }}
                         onPress={() => onPressComment()}
                     />
                     <Text style={styles.postActionText}>
