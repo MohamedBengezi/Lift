@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableHighlight,
 } from "react-native";
+import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import { Video } from "expo-av";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
@@ -129,6 +130,11 @@ const MainScreen = ({ navigation }) => {
   //   return await media.blob();
   // };
 
+  const onSwipeUp = (gestureState) => {
+    navigation.navigate('WorkoutPlans');
+  }
+
+
   if (camera.hasCameraPermission === null) {
     return <View />;
   } else if (camera.hasCameraPermission === false) {
@@ -196,53 +202,59 @@ const MainScreen = ({ navigation }) => {
       );
     } else {
       return (
-        <View style={{ flex: 1 }}>
-          <Camera
-            style={{ flex: 1 }}
-            type={camera.type}
-            flashMode={camera.flashMode}
-            ref={(ref) => {
-              this.camera = ref;
-            }}
-          >
-            <View style={styles.menu}>
-              <View style={styles.subMenu}>
-                <TouchableOpacity onPress={() => toggleCamera()}>
-                  <Text style={styles.button}>
-                    <Ionicons name="md-reverse-camera" style={styles.button} />
-                  </Text>
-                </TouchableOpacity>
+        <GestureRecognizer
+          onSwipeUp={() => onSwipeUp()}
+          style={{ flex: 1 }}
+        >
+          <View style={{ flex: 1 }}>
+            <Camera
+              style={{ flex: 1 }}
+              type={camera.type}
+              flashMode={camera.flashMode}
+              ref={(ref) => {
+                this.camera = ref;
+              }}
+            >
+              <View style={styles.menu}>
+                <View style={styles.subMenu}>
+                  <TouchableOpacity onPress={() => toggleCamera()}>
+                    <Text style={styles.button}>
+                      <Ionicons name="md-reverse-camera" style={styles.button} />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.subMenu}>
+                  <TouchableOpacity onPress={() => toggleFlashLight()}>
+                    <Text style={styles.button}>
+                      <Ionicons
+                        name="md-flash"
+                        style={{
+                          ...styles.button,
+                          color:
+                            camera.flashMode === "on"
+                              ? colors.white
+                              : colors.black,
+                        }}
+                      />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={styles.subMenu}>
-                <TouchableOpacity onPress={() => toggleFlashLight()}>
-                  <Text style={styles.button}>
-                    <Ionicons
-                      name="md-flash"
-                      style={{
-                        ...styles.button,
-                        color:
-                          camera.flashMode === "on"
-                            ? colors.white
-                            : colors.black,
-                      }}
-                    />
-                  </Text>
-                </TouchableOpacity>
+              <View style={styles.cameraButton}>
+                <TouchableHighlight
+                  style={styles.capture}
+                  onPress={takePicture}
+                  onLongPress={takeVideo}
+                  onPressOut={stopRecording}
+                  underlayColor="rgba(255, 255, 255, 0.5)"
+                >
+                  <View />
+                </TouchableHighlight>
               </View>
-            </View>
-            <View style={styles.cameraButton}>
-              <TouchableHighlight
-                style={styles.capture}
-                onPress={takePicture}
-                onLongPress={takeVideo}
-                onPressOut={stopRecording}
-                underlayColor="rgba(255, 255, 255, 0.5)"
-              >
-                <View />
-              </TouchableHighlight>
-            </View>
-          </Camera>
-        </View>
+            </Camera>
+          </View>
+        </GestureRecognizer>
+
       );
     }
   }
