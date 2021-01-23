@@ -249,3 +249,102 @@ export const markPostAsAnswered = functions.https.onCall((data, context) => {
       );
     });
 });
+
+
+export const addReply = functions.https.onCall(
+  async (data, context) => {
+
+    const comment = data.comment;
+    const mediaPath = data.mediaPath;
+    const docID = data.docID;
+
+    const uid = context.auth!.uid;
+
+    if (docID === null || docID === undefined) {
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "Failed operation. Please pass in a document id. Expected body param: 'docID'"
+      );
+    }
+
+    let username = "";
+
+    const userRef = admin.firestore().collection("users").doc(uid);
+
+    try {
+
+      const userDoc = await userRef.get();
+
+      if (!userDoc.exists) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "Document does not exist. Please check the document id again"
+        );
+      } else {
+        const docData = userDoc.data()!;
+        username = docData.username;
+      }
+
+    } catch (err) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Something unexpected happened."
+      );
+    }
+
+
+    const replyData = {
+      username: username,
+      comment: comment,
+      mediaPath: mediaPath,
+      upvotes: 0,
+      downvotes: 0,
+    }
+
+    const replyRef = admin.firestore().collection("feedback_posts").doc(docID).collection("replies");
+    await replyRef.add(replyData);
+
+});
+
+
+export const getReplies = functions.https.onRequest(
+  async (request, response) => {
+
+    const docID = request.body.docID;
+
+    const repliesRef = admin.firestore().collection("feedback_posts").doc(docID).collection("replies");
+    const result = await repliesRef.get();
+
+
+    //let numReplies = result.size
+
+    var replies:Object[] = new Array();
+
+    result.forEach(function (reply) {
+      replies.push(reply.data());
+    });
+
+    console.log(replies);
+
+});
+
+
+export const deleteReply = functions.https.onCall(
+  async (data, context) => {
+
+  const postID = data.postID;
+  const replyID = data.replyID;
+
+    try {
+
+      const replyRef = admin.firestore().collection("feedback_posts").doc(postID).collection("replies").doc(replyID);
+      await replyRef.delete()    
+
+    } catch (err) {
+      throw new functions.https.HttpsError(
+        "internal",
+        "Something unexpected happened."
+      );
+    }
+
+});
