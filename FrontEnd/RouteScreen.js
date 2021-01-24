@@ -18,6 +18,7 @@ import SettingsScreen from "./src/screens/SettingsScreen";
 import LoadingScreen from "./src/screens/LoadingScreen";
 import colors from './src/hooks/colors';
 import WorkoutPlansScreen from "./src/screens/Plans/WorkoutPlansScreen";
+import ViewPlanScreen from "./src/screens/Plans/ViewPlanScreen";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -221,13 +222,8 @@ export default function RouteScreen() {
 
           },
         },
-
-        Post: PostScreen
-      },
-      {
-        initialRouteName: "Main",
-        tabBarPosition: "bottom",
-        headerShown: false
+        Post: PostScreen,
+        ViewPlan: ViewPlanScreen
       }
     ),
   });
