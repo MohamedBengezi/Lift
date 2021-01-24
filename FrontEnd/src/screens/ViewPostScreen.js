@@ -13,7 +13,6 @@ import navigate from '../navigationRef';
 const ViewPostScreen = ({ navigation }) => {
 
     const item = navigation.getParam('item');
-    const title = navigation.getParam('title');
     return (
         <View style={{ flex: 1 }}>
             <TouchableOpacity
@@ -29,7 +28,7 @@ const ViewPostScreen = ({ navigation }) => {
                 />
             </TouchableOpacity>
 
-            <PostDetails item={item} title={title} showComments={true} />
+            <PostDetails item={item} showComments={true} />
 
         </View>
     );
