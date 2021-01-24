@@ -7,7 +7,7 @@ const ImageElement = ({ title, image }) => {
     return (
         <View style={styles.post}>
             <Text style={{ marginLeft: 50 }}>{title}</Text>
-            <Image source={{ uri: image.item.uri }} style={styles.image} />
+            <Image source={{ uri: image }} style={styles.image} />
         </View>
     );
 };

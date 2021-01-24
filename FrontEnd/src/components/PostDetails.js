@@ -15,16 +15,30 @@ import VideoElement from "./VideoElement";
 import ImageElement from "./ImageElement";
 import colors from "../hooks/colors";
 import { ScrollView } from "react-native-gesture-handler";
+import { navigate } from "../navigationRef";
 
-const PostDetails = ({ item, title, showComments }) => {
+const PostDetails = ({ item, showComments }) => {
+    console.log('PostDetails', item);
+
+    let title, mediaPath, name;
+    if (item) {
+        name = item.item.username;
+        title = item.item.caption;
+        mediaPath = item.item.mediaPath
+    } else {
+        title = "title";
+        mediaPath = "https://reactnative.dev/img/tiny_logo.png";
+
+    }
+
     const [likedOrCommented, setLikedOrCommented] = useState({
         commented: false,
         liked: false,
         unliked: false
     });
     const [likesAndComments, setLikesAndComments] = useState({
-        likes: 0,
-        comments: 0,
+        likes: item.item.likes,
+        comments: item.item.comments_number,
     });
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState([
@@ -230,7 +244,7 @@ const PostDetails = ({ item, title, showComments }) => {
                             onPress={() => console.log("Profile pressed")}
                             activeOpacity={0.8}
                         >
-                            <Text style={{ fontSize: 17 }}>John Doe</Text>
+                            <Text style={{ fontSize: 17 }}>{name}</Text>
                             <View style={styles.postDate}>
                                 <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
                                     5 mins ago{" "}
@@ -241,11 +255,11 @@ const PostDetails = ({ item, title, showComments }) => {
                 </View>
                 <View style={styles.postImageCaptionContainer}>
                     <TouchableOpacity
-                        onPress={() => console.log("Post pressed")}
+                        onPress={() => navigate("ViewPost", { item })}
                         activeOpacity={1}
                     >
-                        {item.item !== null && typeof item.item === "object" ? (
-                            <ImageElement image={item} title={title} />
+                        {mediaPath ? (
+                            <ImageElement image={mediaPath} title={title} />
                         ) : (
                                 <VideoElement video={item} title={title} />
                             )}
