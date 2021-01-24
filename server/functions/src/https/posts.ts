@@ -246,6 +246,211 @@ export const markPostAsAnswered = functions.https.onCall((data, context) => {
     });
 });
 
+export const addReply = functions.https.onCall(async (data, context) => {
+  const comment = data.comment;
+  const mediaPath = data.mediaPath;
+  const docID = data.docID;
+
+  const uid = context.auth!.uid;
+
+  if (docID === null || docID === undefined) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Failed operation. Please pass in a document id. Expected body param: 'docID'"
+    );
+  }
+
+  let username = "";
+
+  const userRef = admin.firestore().collection("users").doc(uid);
+
+  try {
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      throw new functions.https.HttpsError(
+        "not-found",
+        "Document does not exist. Please check the document id again"
+      );
+    } else {
+      const docData = userDoc.data()!;
+      username = docData.username;
+    }
+  } catch (err) {
+    throw new functions.https.HttpsError(
+      "internal",
+      "Something unexpected happened."
+    );
+  }
+
+  const replyData = {
+    username: username,
+    comment: comment,
+    mediaPath: mediaPath,
+    likes: 0,
+    liked_by: [],
+    disliked_by: [],
+  };
+
+  const replyRef = admin
+    .firestore()
+    .collection("feedback_posts")
+    .doc(docID)
+    .collection("replies");
+  await replyRef.add(replyData);
+});
+
+export const getReplies = functions.https.onCall(async (data, context) => {
+  const postID = data.postid;
+
+  if (postID === null || postID === undefined) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Failed to fetch replies. Please pass in a postID. Expected body param: 'postid'"
+    );
+  }
+
+  const ref = await admin
+    .firestore()
+    .collection("feedback_posts")
+    .doc(postID)
+    .collection("replies")
+    .get();
+
+  const docs = await Promise.all(
+    ref.docs.map(async (doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+        mediaPath: (
+          await storageUtils.getDownloadURL(doc.data().mediaPath)
+        )?.[0],
+      };
+    })
+  );
+  return { message: "success", count: docs.length, replies: docs };
+});
+
+export const deleteReply = functions.https.onCall(async (data, context) => {
+  const postID = data.postID;
+  const replyID = data.replyID;
+
+  try {
+    const replyRef = admin
+      .firestore()
+      .collection("feedback_posts")
+      .doc(postID)
+      .collection("replies")
+      .doc(replyID);
+    await replyRef.delete();
+  } catch (err) {
+    throw new functions.https.HttpsError(
+      "internal",
+      "Something unexpected happened."
+    );
+  }
+});
+
+export const addComment = functions.https.onCall(async (data, context) => {
+  const comment = data.comment;
+  const docID = data.docID;
+
+  const uid = context.auth!.uid;
+
+  if (docID === null || docID === undefined) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Failed operation. Please pass in a document id. Expected body param: 'docID'"
+    );
+  }
+
+  let username = "";
+
+  const userRef = admin.firestore().collection("users").doc(uid);
+
+  try {
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      throw new functions.https.HttpsError(
+        "not-found",
+        "Document does not exist. Please check the document id again"
+      );
+    } else {
+      const docData = userDoc.data()!;
+      username = docData.username;
+    }
+  } catch (err) {
+    throw new functions.https.HttpsError(
+      "internal",
+      "Something unexpected happened."
+    );
+  }
+
+  const commentData = {
+    username: username,
+    comment: comment,
+    likes: 0,
+    liked_by: [],
+    disliked_by: [],
+  };
+
+  const commentRef = admin
+    .firestore()
+    .collection("general_posts")
+    .doc(docID)
+    .collection("comments");
+  await commentRef.add(commentData);
+});
+
+export const getComments = functions.https.onCall(async (data, context) => {
+  const postID = data.postid;
+
+  if (postID === null || postID === undefined) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Failed to fetch replies. Please pass in a postID. Expected body param: 'postid'"
+    );
+  }
+
+  const ref = await admin
+    .firestore()
+    .collection("general_posts")
+    .doc(postID)
+    .collection("comments")
+    .get();
+
+  const docs = await Promise.all(
+    ref.docs.map(async (doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    })
+  );
+  return { message: "success", count: docs.length, replies: docs };
+});
+
+export const deleteComment = functions.https.onCall(async (data, context) => {
+  const postID = data.postID;
+  const commentID = data.commentID;
+
+  try {
+    const commentRef = admin
+      .firestore()
+      .collection("general_posts")
+      .doc(postID)
+      .collection("comments")
+      .doc(commentID);
+    await commentRef.delete();
+  } catch (err) {
+    throw new functions.https.HttpsError(
+      "internal",
+      "Something unexpected happened."
+    );
+  }
+});
+
 export const managePostLikes = functions.https.onCall(async (data, context) => {
   const postID: string = data.postID;
   const uid: string = context.auth!.uid;
@@ -308,3 +513,77 @@ export const managePostLikes = functions.https.onCall(async (data, context) => {
     );
   }
 });
+
+export const manageReplyLikes = functions.https.onCall(
+  async (data, context) => {
+    const postID: string = data.postID;
+    const replyID: string = data.replyID;
+    const uid: string = context.auth!.uid;
+    const like: boolean = data.like;
+    const type: string = data.type; // should be either 'reply' or 'comment'
+
+    const collection = type === "reply" ? "feedback_posts" : "general_posts";
+    const replyCollection = type === "reply" ? "replies" : "comments";
+
+    const replyRef = admin
+      .firestore()
+      .collection(collection)
+      .doc(postID)
+      .collection(replyCollection)
+      .doc(replyID);
+    const snapshot = await replyRef.get();
+    if (snapshot.exists) {
+      let liked_by: Array<string> = snapshot.data()?.liked_by || [];
+      let disliked_by: Array<string> = snapshot.data()?.disliked_by || [];
+      let likes = snapshot.data()!.likes;
+      let message = "";
+      if (like) {
+        if (liked_by.includes(uid)) {
+          throw new functions.https.HttpsError(
+            "already-exists",
+            "The current user has already liked this reply"
+          );
+        } else if (disliked_by.includes(uid)) {
+          // This means the user wants to undo their dislike. Remove them from the dislike list and increase the total like count by one
+          disliked_by = disliked_by.filter((e) => e !== uid);
+          likes++;
+          await snapshot.ref.update({ likes: likes, disliked_by: disliked_by });
+          message = "Successfully removed dislike";
+        } else {
+          // This means the user wants to like the post
+          liked_by.push(uid);
+          likes++;
+
+          await snapshot.ref.update({ likes: likes, liked_by: liked_by });
+          message = "Successfully added like";
+        }
+      } else {
+        if (disliked_by.includes(uid)) {
+          throw new functions.https.HttpsError(
+            "already-exists",
+            "The current user has already disliked this post"
+          );
+        } else if (liked_by.includes(uid)) {
+          //User wants to undo their like
+          liked_by = liked_by.filter((e) => e !== uid);
+          likes--;
+          await snapshot.ref.update({ likes: likes, liked_by: liked_by });
+          message = "Successfully removed like";
+        } else {
+          // User disliked the post
+          disliked_by.push(uid);
+          likes--;
+
+          await snapshot.ref.update({ likes: likes, disliked_by: disliked_by });
+          message = "successfully added dislike";
+        }
+      }
+      return { message: message };
+    } else {
+      throw new functions.https.HttpsError(
+        "not-found",
+        "The specified replyID does not exist"
+      );
+    }
+  }
+);
