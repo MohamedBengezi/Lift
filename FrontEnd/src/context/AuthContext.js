@@ -237,11 +237,11 @@ const uploadPost = (dispatch) => async ({
   media,
 }) => {
   uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
-    
+
     const data = {
       username: username,
       caption: caption,
-      mediaPath:path,
+      mediaPath: path,
       uid: firebaseApp.auth().currentUser.uid,
     };
     let uploadPost;
@@ -271,22 +271,16 @@ function getUserName(dispatch) {
   });
 }
 
-function getPosts(dispatch) {
-  let uid = firebaseApp.auth().currentUser.uid;
-  var getUserPosts = functions.httpsCallable("posts-getUserPosts");
-  getUserPosts({ uid: uid }).then((data) => {
-    console.log('getPosts: ', data);
-    dispatch({ type: "getUserPosts", posts: data });
-    return data;
-  }).catch((error) => {
-    showError(error, dispatch)
-  });
-}
 
-const getUserPost = (dispatch) => {
-  return () => {
-    let posts = getPosts(dispatch);
-    console.log('getUserPosts: ', posts);
+const getUserPost = () => {
+  return async (setPosts) => {
+    let uid = firebaseApp.auth().currentUser.uid;
+    var getUserPosts = functions.httpsCallable("posts-getUserPosts");
+    getUserPosts({ uid: uid }).then((data) => {
+      setPosts(data.data.posts.slice(0, 5));
+    }).catch((error) => {
+      console.error(error);
+    });
   }
 }
 
@@ -302,5 +296,5 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserPost
   },
-  { token: null, errorMessage: "" }
+  { token: null, errorMessage: "", posts: {} }
 );
