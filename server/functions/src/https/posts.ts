@@ -203,7 +203,7 @@ export const getUserPosts = functions.https.onCall(async (data, context) => {
 
 export const getFeedbackPosts = functions.https.onCall(
   async (data, context) => {
-    const userID = data.uid; // Converto to context later
+    const userID = context.auth!.uid;
 
     if (userID === null || userID === undefined) {
       throw new functions.https.HttpsError(
@@ -229,7 +229,7 @@ export const getFeedbackPosts = functions.https.onCall(
 );
 
 export const getGeneralPosts = functions.https.onCall(async (data, context) => {
-  const userID = data.uid; // Converto to context later
+  const userID = context.auth!.uid;
 
   if (userID === null || userID === undefined) {
     throw new functions.https.HttpsError(
