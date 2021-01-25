@@ -13,7 +13,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.capstone.lift",
@@ -21,7 +23,8 @@
     },
     "android": {
       "package": "com.capstone.lift",
-      "versionCode": 1
+      "versionCode": 1,
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./assets/favicon.png"
