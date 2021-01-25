@@ -195,6 +195,8 @@ export const getUserPosts = functions.https.onCall(async (data, context) => {
         mediaPath: (
           await storageUtils.getDownloadURL(doc.data().mediaPath)
         )?.[0],
+        isLikedByUser: doc.data().liked_by.includes(userID),
+        isDislikedByUser: doc.data().disliked_by.includes(userID),
       };
     })
   );
@@ -204,6 +206,7 @@ export const getUserPosts = functions.https.onCall(async (data, context) => {
 export const getFeedbackPosts = functions.https.onCall(
   async (data, context) => {
     const userID = context.auth!.uid;
+    // const userID = data.body.uid;
 
     if (userID === null || userID === undefined) {
       throw new functions.https.HttpsError(
@@ -221,6 +224,8 @@ export const getFeedbackPosts = functions.https.onCall(
           mediaPath: (
             await storageUtils.getDownloadURL(doc.data().mediaPath)
           )?.[0],
+          isLikedByUser: doc.data().liked_by.includes(userID),
+          isDislikedByUser: doc.data().disliked_by.includes(userID),
         };
       })
     );
@@ -247,6 +252,8 @@ export const getGeneralPosts = functions.https.onCall(async (data, context) => {
         mediaPath: (
           await storageUtils.getDownloadURL(doc.data().mediaPath)
         )?.[0],
+        isLikedByUser: doc.data().liked_by.includes(userID),
+        isDislikedByUser: doc.data().disliked_by.includes(userID),
       };
     })
   );

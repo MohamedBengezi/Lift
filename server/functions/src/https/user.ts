@@ -95,7 +95,7 @@ export const getUserInfo = functions.https.onCall(async (data, contxt) => {
         result = doc.data();
         dId = doc.id;
       });
-      return { dId: result };
+      return { dId, result };
     })
     .catch((err) => {
       throw new functions.https.HttpsError(
