@@ -19,7 +19,7 @@ import { navigate } from "../navigationRef";
 import { KeyboardAvoidingView } from "react-native";
 
 const PostDetails = ({ item, showComments }) => {
-    console.log('PostDetails', item);
+    // console.log('PostDetails', item);
 
     let title, mediaPath, name;
     if (item) {

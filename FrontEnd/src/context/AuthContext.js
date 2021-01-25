@@ -284,6 +284,29 @@ const getUserPost = () => {
   }
 }
 
+const getFeedbackPosts = () => {
+  return async (setPosts) => {
+    var getFeedbackPosts = functions.httpsCallable("posts-getFeedbackPosts");
+    getFeedbackPosts().then((data) => {
+      setPosts(data.data.posts.slice(0, 5));
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+}
+
+
+const manageLikes = () => {
+  return async (data) => {
+    var managePostLikes = functions.httpsCallable("posts-managePostLikes");
+    managePostLikes(data).then((res) => {
+      console.log('manageLikes', res);
+    }).catch((error) => {
+      console.error('XXX', error);
+    });
+  }
+}
+
 export const { Provider, Context } = createDataContext(
   authReducer,
   {
@@ -294,7 +317,9 @@ export const { Provider, Context } = createDataContext(
     clearErrorMessage,
     tryLocalSignin,
     uploadPost,
-    getUserPost
+    getUserPost,
+    getFeedbackPosts,
+    manageLikes
   },
   { token: null, errorMessage: "", posts: {} }
 );

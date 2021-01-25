@@ -9,7 +9,7 @@ import PostDetail from '../../components/PostDetails';
 const apiLink = serverApi.defaults.baseURL;
 
 const FeedBackScreen = ({ navigation }) => {
-  const { state, getUserPost } = useContext(PostsContext);
+  const { state, getUserPost, getFeedbackPosts } = useContext(PostsContext);
   const [posts, setPosts] = useState(null);
 
   url = apiLink + "/sample";
@@ -18,7 +18,8 @@ const FeedBackScreen = ({ navigation }) => {
   let title = (navigation.getParam('title')) ? navigation.getParam('title') : "this is a post";
 
   useEffect(() => {
-    getUserPost(setPosts)
+    //    getUserPost(setPosts);
+    getFeedbackPosts(setPosts);
   }, []);
 
   let dummyInfo = {
