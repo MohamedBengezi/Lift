@@ -6,6 +6,7 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
+    StatusBar
 } from "react-native";
 import { Input } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -14,16 +15,31 @@ import VideoElement from "./VideoElement";
 import ImageElement from "./ImageElement";
 import colors from "../hooks/colors";
 import { ScrollView } from "react-native-gesture-handler";
+import { navigate } from "../navigationRef";
+import { KeyboardAvoidingView } from "react-native";
 
-const PostDetails = ({ item, title, showComments }) => {
+const PostDetails = ({ item, showComments }) => {
+    console.log('PostDetails', item);
+
+    let title, mediaPath, name;
+    if (item) {
+        name = item.item.username;
+        title = item.item.caption;
+        mediaPath = item.item.mediaPath
+    } else {
+        title = "title";
+        mediaPath = "https://reactnative.dev/img/tiny_logo.png";
+
+    }
+
     const [likedOrCommented, setLikedOrCommented] = useState({
         commented: false,
         liked: false,
         unliked: false
     });
     const [likesAndComments, setLikesAndComments] = useState({
-        likes: 0,
-        comments: 0,
+        likes: item.item.likes,
+        comments: item.item.comments_number,
     });
     const [newComment, setNewComment] = useState("");
     const [comments, setComments] = useState([
@@ -77,7 +93,7 @@ const PostDetails = ({ item, title, showComments }) => {
                         <TouchableOpacity style={styles.icons}>
                             <Ionicons
                                 name="md-thumbs-up"
-                                color={liked ? colors.blue : null}
+                                color={liked ? colors.blue : colors.black}
                                 type="ionicon"
                                 size={25}
                                 onPress={() => onPressLike(liked)}
@@ -86,7 +102,7 @@ const PostDetails = ({ item, title, showComments }) => {
                         <TouchableOpacity style={styles.icons}>
                             <Ionicons
                                 name="md-thumbs-down"
-                                color={unliked ? colors.yellow : null}
+                                color={unliked ? colors.yellow : colors.black}
                                 type="ionicon"
                                 size={25}
                                 onPress={() => onPressUnlike(unliked)}
@@ -103,7 +119,7 @@ const PostDetails = ({ item, title, showComments }) => {
                 <TouchableOpacity style={styles.icons}>
                     <Ionicons
                         name={commented ? "md-chatbubbles" : "md-chatboxes"}
-                        color={commented ? colors.black : null}
+                        color={commented ? colors.black : colors.black}
                         type="ionicon"
                         size={25}
                         style={{ marginRight: 5 }}
@@ -153,7 +169,12 @@ const PostDetails = ({ item, title, showComments }) => {
 
     function renderAddComment() {
         return (
-            <View style={styles.addComment}>
+            <KeyboardAvoidingView
+                style={styles.addComment}
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={Platform.OS == "ios" ? 10 : 20}
+                enabled={true}
+            >
                 <View
                     style={{
                         flexDirection: "row",
@@ -180,7 +201,7 @@ const PostDetails = ({ item, title, showComments }) => {
                         }}
                     />
                 </View>
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 
@@ -199,62 +220,68 @@ const PostDetails = ({ item, title, showComments }) => {
         setNewComment("");
         setComments([...comments, cmt]);
     }
-
+    const likes = (
+        <View style={styles.postLogs}>
+            <LikeAndComment />
+        </View>
+    );
     return (
         <View style={{ flex: 1 }}>
-            <View
-                style={
-                    showComments ? styles.postDetailsContainer : styles.postContainer
-                }
-            >
-                <View style={styles.postHeader}>
-                    <TouchableOpacity
-                        style={styles.displayImageContainer}
-                        onPress={() => console.log("Profile Image pressed")}
-                        activeOpacity={0.8}
-                    >
-                        <Image
-                            style={styles.avatar}
-                            source={{
-                                uri: "https://reactnative.dev/img/tiny_logo.png",
-                            }}
-                        />
-                    </TouchableOpacity>
-
-                    <View style={styles.nameAndImageContainer}>
+            <View style={
+                showComments ? { flex: 1, marginTop: StatusBar.currentHeight + 40 } : { flex: 1, height: 400 }
+            }>
+                <View
+                    style={
+                        showComments ? styles.postDetailsContainer : styles.postContainer
+                    }
+                >
+                    <View style={showComments ? styles.postDetailsHeader : styles.postHeader}>
                         <TouchableOpacity
-                            style={styles.avatarName}
-                            onPress={() => console.log("Profile pressed")}
+                            style={styles.displayImageContainer}
+                            onPress={() => console.log("Profile Image pressed")}
                             activeOpacity={0.8}
                         >
-                            <Text style={{ fontSize: 17 }}>John Doe</Text>
-                            <View style={styles.postDate}>
-                                <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
-                                    5 mins ago{" "}
-                                </Text>
-                            </View>
+                            <Image
+                                style={styles.avatar}
+                                source={{
+                                    uri: "https://reactnative.dev/img/tiny_logo.png",
+                                }}
+                            />
+                        </TouchableOpacity>
+
+                        <View style={styles.nameAndImageContainer}>
+                            <TouchableOpacity
+                                style={styles.avatarName}
+                                onPress={() => console.log("Profile pressed")}
+                                activeOpacity={0.8}
+                            >
+                                <Text style={{ fontSize: 17 }}>{name}</Text>
+                                <View style={styles.postDate}>
+                                    <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
+                                        5 mins ago{" "}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={showComments ? styles.postDetailsImageCaptionContainer : styles.postImageCaptionContainer}>
+                        <TouchableOpacity
+                            onPress={() => navigate("ViewPost", { item })}
+                            activeOpacity={1}
+                        >
+                            {mediaPath ? (
+                                <ImageElement image={mediaPath} title={title} />
+                            ) : (
+                                    <VideoElement video={item} title={title} />
+                                )}
                         </TouchableOpacity>
                     </View>
-                </View>
-                <View style={styles.postImageCaptionContainer}>
-                    <TouchableOpacity
-                        onPress={() => console.log("Post pressed")}
-                        activeOpacity={1}
-                    >
-                        {item.item !== null && typeof item.item === "object" ? (
-                            <ImageElement image={item} title={title} />
-                        ) : (
-                                <VideoElement video={item} title={title} />
-                            )}
-                    </TouchableOpacity>
+                    {likes}
                 </View>
 
-                <View style={styles.postLogs}>
-                    <LikeAndComment />
-                </View>
+                {showComments ? renderComments() : null}
             </View>
-            {showComments ? renderComments() : null}
-            {showComments && !likedOrCommented.commented ? renderAddComment() : null}
+            {showComments ? renderAddComment() : null}
         </View>
     );
 };
@@ -271,7 +298,7 @@ const styles = StyleSheet.create({
     },
     postContainer: {
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: colors.grey,
         borderRadius: 10,
@@ -279,12 +306,17 @@ const styles = StyleSheet.create({
     },
     postDetailsContainer: {
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2,
-        height: 300,
+        height: "56%"
+    },
+    postDetailsHeader: {
+        height: 70,
+        flexDirection: "row",
+        marginBottom: -40
     },
     postHeader: {
         height: 70,
@@ -295,10 +327,15 @@ const styles = StyleSheet.create({
         height: "50%",
         width: "80%",
     },
+    postDetailsImageCaptionContainer: {
+        alignItems: "center",
+        height: "40%",
+        width: "80%",
+    },
     postLogs: {
         height: 50,
         flexDirection: "row",
-        marginTop: 15,
+        marginTop: 80,
     },
     displayImageContainer: {
         flex: 2,
@@ -357,7 +394,6 @@ const styles = StyleSheet.create({
         height: 50,
         position: "absolute",
         bottom: 0,
-        backgroundColor: colors.lightGrey,
         width: "100%",
     },
 });
