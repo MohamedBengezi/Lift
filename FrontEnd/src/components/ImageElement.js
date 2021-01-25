@@ -14,16 +14,11 @@ const ImageElement = ({ title, image }) => {
 
 const styles = StyleSheet.create({
     post: {
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        width: "70%",
-        height: "50%"
+        flex: 1
     },
     image: {
         width: Dimensions.get('window').width - 20,
-        height: 125,
-        resizeMode: "cover",
+        height: 250,
     }
 });
 
