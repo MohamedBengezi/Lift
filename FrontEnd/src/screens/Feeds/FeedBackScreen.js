@@ -33,7 +33,7 @@ const FeedBackScreen = ({ navigation }) => {
   }
   return (
     posts ? (
-      <Feed posts={posts} />
+      <Feed posts={posts} isFeedback={true} />
     ) : <PostDetail item={dummyInfo} showComments={false} />
   );
 };

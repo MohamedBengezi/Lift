@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
     StyleSheet,
     Text,
@@ -17,12 +17,15 @@ import colors from "../hooks/colors";
 import { ScrollView } from "react-native-gesture-handler";
 import { navigate } from "../navigationRef";
 import { KeyboardAvoidingView } from "react-native";
+import { Context as PostsContext } from '../context/AuthContext';
 
-const PostDetails = ({ item, showComments }) => {
-    // console.log('PostDetails', item);
+const PostDetails = ({ item, showComments, isFeedback }) => {
+    const { state, manageLikes } = useContext(PostsContext);
 
-    let title, mediaPath, name;
+
+    let title, mediaPath, name, postID;
     if (item) {
+        postID = item.item.id;
         name = item.item.username;
         title = item.item.caption;
         mediaPath = item.item.mediaPath
@@ -31,6 +34,8 @@ const PostDetails = ({ item, showComments }) => {
         mediaPath = "https://reactnative.dev/img/tiny_logo.png";
 
     }
+
+    let collection = (isFeedback) ? "feedback_posts" : "general_posts";
 
     const [likedOrCommented, setLikedOrCommented] = useState({
         commented: false,
@@ -61,9 +66,13 @@ const PostDetails = ({ item, showComments }) => {
         if (!liked) {
             setLikedOrCommented({ liked: true, unliked: false });
             setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
+            manageLikes({ postID: postID, like: true, collection: collection });
+
         } else {
             setLikedOrCommented({ liked: false });
             setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
+            manageLikes({ postID: postID, like: false, collection: collection });
+
         }
     };
     const onPressUnlike = () => {
@@ -73,9 +82,13 @@ const PostDetails = ({ item, showComments }) => {
         if (!unliked) {
             setLikedOrCommented({ liked: false, unliked: true });
             setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
+            manageLikes({ postID: postID, like: false, collection: collection });
+
         } else {
             setLikedOrCommented({ unliked: false });
             setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
+            manageLikes({ postID: postID, like: true, collection: collection });
+
         }
     };
 

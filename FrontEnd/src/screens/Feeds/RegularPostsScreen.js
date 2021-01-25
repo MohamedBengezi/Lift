@@ -29,7 +29,7 @@ const RegularPostsScreen = ({ navigation }) => {
     }
     return (
         posts ? (
-            <Feed posts={posts} />
+            <Feed posts={posts} isFeedback={false} />
         ) : <PostDetail item={dummyInfo} showComments={false} />
     );
 };

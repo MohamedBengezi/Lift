@@ -9,10 +9,11 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import colors from '../hooks/colors'
-import navigate from '../navigationRef';
 const ViewPostScreen = ({ navigation }) => {
 
     const item = navigation.getParam('item');
+    const isFeedback = navigation.getParam('isFeedback');
+
     return (
         <View style={{ flex: 1 }}>
             <TouchableOpacity
@@ -28,7 +29,7 @@ const ViewPostScreen = ({ navigation }) => {
                 />
             </TouchableOpacity>
 
-            <PostDetails item={item} showComments={true} />
+            <PostDetails item={item} showComments={true} isFeedback={isFeedback} />
 
         </View>
     );
