@@ -70,34 +70,38 @@ export const deleteAccount = functions.https.onCall(async (data, context) => {
   await admin.firestore().collection("users").doc(uid).delete();
 });
 
-export const modifyFollowing = functions.https.onRequest(async (request, response) => {
-  let following = request.body.following;
-  let uid = request.body.uid;
+export const modifyFollowing = functions.https.onRequest(
+  async (request, response) => {
+    let following = request.body.following;
+    let uid = request.body.uid;
 
-  await admin.firestore().collection("users").doc(uid).update({
-    following: following
-  })
-
-})
+    await admin.firestore().collection("users").doc(uid).update({
+      following: following,
+    });
+  }
+);
 
 export const getUserInfo = functions.https.onCall(async (data, contxt) => {
   let username = data.username;
-  const query = await admin.firestore().collection("users").where("username", "==", username)
-  .get()
-  .then((querySnapShot) => {
-    let result;
-    let dId;
-    querySnapShot.forEach(function (doc) {
-      result = doc.data();
-      dId = doc.id;
+  const query = await admin
+    .firestore()
+    .collection("users")
+    .where("username", "==", username)
+    .get()
+    .then((querySnapShot) => {
+      let result;
+      let dId;
+      querySnapShot.forEach(function (doc) {
+        result = doc.data();
+        dId = doc.id;
+      });
+      return { dId: result };
     })
-    return {dId: result}
-  })
-  .catch((err) => {
-    throw new functions.https.HttpsError(
-      "unknown",
-      `Something went wrong when accessing the database. Reason ${err}`
-    );
-  });
+    .catch((err) => {
+      throw new functions.https.HttpsError(
+        "unknown",
+        `Something went wrong when accessing the database. Reason ${err}`
+      );
+    });
   return query;
-})
+});

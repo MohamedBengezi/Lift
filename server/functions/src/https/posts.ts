@@ -201,6 +201,58 @@ export const getUserPosts = functions.https.onCall(async (data, context) => {
   return { message: "success", count: docs.length, posts: docs };
 });
 
+export const getFeedbackPosts = functions.https.onCall(
+  async (data, context) => {
+    const userID = data.uid; // Converto to context later
+
+    if (userID === null || userID === undefined) {
+      throw new functions.https.HttpsError(
+        "invalid-argument",
+        "Failed to fetch posts. Please pass in a userID. Expected body param: 'uid'"
+      );
+    }
+    const ref = await admin.firestore().collection("feedback_posts").get();
+
+    const docs = await Promise.all(
+      ref.docs.map(async (doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+          mediaPath: (
+            await storageUtils.getDownloadURL(doc.data().mediaPath)
+          )?.[0],
+        };
+      })
+    );
+    return { message: "success", count: docs.length, posts: docs };
+  }
+);
+
+export const getGeneralPosts = functions.https.onCall(async (data, context) => {
+  const userID = data.uid; // Converto to context later
+
+  if (userID === null || userID === undefined) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Failed to fetch posts. Please pass in a userID. Expected body param: 'uid'"
+    );
+  }
+  const ref = await admin.firestore().collection("general_posts").get();
+
+  const docs = await Promise.all(
+    ref.docs.map(async (doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+        mediaPath: (
+          await storageUtils.getDownloadURL(doc.data().mediaPath)
+        )?.[0],
+      };
+    })
+  );
+  return { message: "success", count: docs.length, posts: docs };
+});
+
 export const markPostAsAnswered = functions.https.onCall((data, context) => {
   const docID = data.docID;
   const user = context.auth?.uid;
