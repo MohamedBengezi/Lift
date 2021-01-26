@@ -18,7 +18,7 @@ const ViewPostScreen = ({ navigation }) => {
         <View style={{ flex: 1 }}>
             <TouchableOpacity
                 onPress={() => {
-                    navigation.navigate("Feed");
+                    navigation.goBack();
                 }}
                 style={styles.cancel}
 
