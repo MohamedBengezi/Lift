@@ -1,7 +1,6 @@
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "firebase/app";
-import firebaseFunctions from "firebase/functions";
 import "firebase/auth";
 import "firebase/storage";
 import property from "./src/property.json";
@@ -19,8 +18,15 @@ const firebaseConfig = {
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 let f1 = firebase.functions(firebaseApp);
-if(property.useEmulator){
-  f1.useEmulator("10.0.2.2", 5001);
+if (property.useEmulator) {
+  const property = require("../emulator_link.json");
+  var link = property.tunnels[0].public_url;
+  if ("failed" === link) {
+    console.error(
+      "Getting NGROK URL failed.\n 1) Please make sure you have NGROK installed \n 2) Please check if you are running 'startFirebaseEmulator.bat'. If this was not running, please run it and reload the application"
+    );
+  }
+  f1.useEmulator(link, 5001);
 }
 export const functions = f1;
 /**
@@ -63,10 +69,10 @@ export const downloadMedia = async (path) => {
 
 /**
  * Upload the profile picture to the Firebase Cloud
- * @param {*} mediaURI 
- * @param {*} uid 
+ * @param {*} mediaURI
+ * @param {*} uid
  */
-export const uploadProfilePict = async(mediaURI, uid) => {
+export const uploadProfilePict = async (mediaURI, uid) => {
   const media = await fetch(mediaURI);
   const blob = await media.blob();
 
@@ -78,5 +84,4 @@ export const uploadProfilePict = async(mediaURI, uid) => {
   await ref.put(blob);
 
   return path;
-}
-
+};
