@@ -39,8 +39,8 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     const [likedOrCommented, setLikedOrCommented] = useState({
         commented: false,
-        liked: false,
-        unliked: false
+        liked: item.item.isLikedByUser,
+        unliked: item.item.isDislikedByUser
     });
     const [likesAndComments, setLikesAndComments] = useState({
         likes: item.item.likes,
