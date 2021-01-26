@@ -1,4 +1,2 @@
-start startServer.bat
-start startNGROK.bat
-timeout 3
+start startFirebaseEmulator.bat
 call startApp.bat
