@@ -4,6 +4,8 @@ import {
     Image,
     Platform,
     ScrollView,
+    SafeAreaView,
+    RefreshControl,
     StyleSheet,
     Text,
     View,
@@ -28,6 +30,11 @@ import colors from '../hooks/colors'
 import { Context as PostsContext } from '../context/AuthContext';
 import { firebaseApp, functions } from "../../firebase";
 
+const wait = timeout => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
 
 const Profile = (props) => {
     const { state, getUserPost } = useContext(PostsContext);
@@ -41,6 +48,15 @@ const Profile = (props) => {
             { key: '3', title: 'followers', count: '1.3 K' },
         ],
     })
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getUserPost(setPosts);
+        wait(2000).then(() => {
+            setRefreshing(false);
+        });
+    }, []);
 
     useEffect(() => {
         getUserPost(setPosts)
@@ -125,28 +141,31 @@ const Profile = (props) => {
         )
     }
     return (
-        <ScrollView style={styles.scroll}>
-            <View style={[styles.container]}>
-                <View style={styles.cardContainer}>
-                    <TouchableOpacity style={styles.settings} onPress={() => navigate('Settings')}>
-                        <Ionicons
-                            name="md-settings"
-                            color='#505050'
-                            type="ionicon" size={35}
-                        />
+        <SafeAreaView>
+            <ScrollView style={styles.scroll}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+                <View style={[styles.container]}>
+                    <View style={styles.cardContainer}>
+                        <TouchableOpacity style={styles.settings} onPress={() => navigate('Settings')}>
+                            <Ionicons
+                                name="md-settings"
+                                color='#505050'
+                                type="ionicon" size={35}
+                            />
 
-                    </TouchableOpacity>
-                    {renderContactHeader()}
-                    <TabView
-                        style={[styles.tabContainer]}
-                        navigationState={tabs}
-                        renderScene={renderScene}
-                        renderTabBar={renderTabBar}
-                        onIndexChange={handleIndexChange}
-                    />
+                        </TouchableOpacity>
+                        {renderContactHeader()}
+                        <TabView
+                            style={[styles.tabContainer]}
+                            navigationState={tabs}
+                            renderScene={renderScene}
+                            renderTabBar={renderTabBar}
+                            onIndexChange={handleIndexChange}
+                        />
+                    </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 

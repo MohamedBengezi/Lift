@@ -277,6 +277,7 @@ const getUserPost = () => {
     let uid = firebaseApp.auth().currentUser.uid;
     var getUserPosts = functions.httpsCallable("posts-getUserPosts");
     getUserPosts({ uid: uid }).then((data) => {
+      setPosts(null);
       setPosts(data.data.posts.slice(0, 5));
     }).catch((error) => {
       console.error(error);
@@ -288,7 +289,8 @@ const getFeedbackPosts = () => {
   return async (setPosts) => {
     var getFeedbackPosts = functions.httpsCallable("posts-getFeedbackPosts");
     getFeedbackPosts().then((data) => {
-      setPosts(data.data.posts.slice(0, 5));
+      setPosts(null)
+      setPosts(data.data.posts.slice(0, 15));
     }).catch((error) => {
       console.error(error);
     });

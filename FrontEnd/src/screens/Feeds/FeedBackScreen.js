@@ -1,6 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
+  SafeAreaView,
+  RefreshControl,
+  ScrollView
 } from "react-native";
 import serverApi from "../../api/server";
 import Feed from '../../components/Feed';
@@ -8,9 +11,24 @@ import { Context as PostsContext } from '../../context/AuthContext';
 import PostDetail from '../../components/PostDetails';
 const apiLink = serverApi.defaults.baseURL;
 
+const wait = timeout => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+};
+
 const FeedBackScreen = ({ navigation }) => {
   const { state, getUserPost, getFeedbackPosts } = useContext(PostsContext);
   const [posts, setPosts] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getFeedbackPosts(setPosts);
+    wait(2000).then(() => {
+      setRefreshing(false);
+    });
+  }, []);
 
   url = apiLink + "/sample";
 
@@ -31,10 +49,18 @@ const FeedBackScreen = ({ navigation }) => {
       comments_numer: 1
     }
   }
+  console.log('Feedback', posts);
+
   return (
-    posts ? (
-      <Feed posts={posts} isFeedback={true} />
-    ) : <PostDetail item={dummyInfo} showComments={false} />
+    <SafeAreaView style={styles.background}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        {posts ? (
+          <Feed posts={posts} isFeedback={true} />
+        ) : <PostDetail item={dummyInfo} showComments={false} />}
+      </ScrollView>
+    </SafeAreaView>
+
   );
 };
 
