@@ -40,19 +40,13 @@ export const userNameExists = functions.https.onCall((data, context) => {
 });
 
 export const getUserName = functions.https.onCall((data, context) => {
-  const uid = data.uid;
+  const uid = context.auth!.uid;
   const usersRef = admin.firestore().collection("users");
   const query = usersRef
-    .where("uid", "==", uid)
+    .doc(uid)
     .get()
-    .then((querySnapshot) => {
-      let result = "";
-      querySnapshot.forEach(function (doc) {
-        result = doc.data().username;
-      });
-      return { username: result };
-    });
-
+    .then((doc)=>{return { username: doc.get("username") }})
+    
   return query;
 });
 
