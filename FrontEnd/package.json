@@ -44,6 +44,7 @@
     "react-native-screens": "~2.9.0",
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-tab-view": "^2.15.2",
+    "react-native-table-component": "^1.2.1",
     "react-native-web": "~0.11.7",
     "react-native-webview": "^10.10.2",
     "react-navigation": "^4.4.0",
