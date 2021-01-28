@@ -46,14 +46,19 @@ export const functions = f1;
  * @return {Promise<string>} The full path of the uploaded content on cloud storage. The path can be used to fetch the
  * resource again.
  */
-export const uploadMedia = async (mediaURI, uid) => {
+export const uploadMedia = async (mediaURI, uid, postType) => {
   // Fetch blob representation of media from URI
   const media = await fetch(mediaURI);
   const blob = await media.blob();
 
   //Create firebase reference
   let ref = firebaseApp.storage().ref();
-  let path = `public/feedback_posts/${uid}/${uuidv4()}`;
+  let path = ``;
+  if(postType==="feedback"){
+    path=`public/feedback_posts/${uid}/${uuidv4()}`;
+  } else{
+    path=`public/general_posts/${uid}/${uuidv4()}`;
+  }
 
   ref = ref.child(path);
   await ref.put(blob);

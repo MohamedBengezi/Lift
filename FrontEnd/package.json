@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/masked-view": "0.1.10",
+    "@react-native-picker/picker": "^1.9.10",
     "@react-navigation/bottom-tabs": "^5.11.1",
     "@react-navigation/material-top-tabs": "^5.3.9",
     "@react-navigation/native": "^5.8.9",
@@ -44,6 +45,7 @@
     "react-native-screens": "~2.9.0",
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-tab-view": "^2.15.2",
+    "react-native-table-component": "^1.2.1",
     "react-native-web": "~0.11.7",
     "react-native-webview": "^10.10.2",
     "react-navigation": "^4.4.0",

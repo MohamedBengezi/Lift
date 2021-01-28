@@ -223,7 +223,16 @@ export default function RouteScreen() {
           },
         },
         Post: PostScreen,
-        ViewPlan: ViewPlanScreen
+        ViewPlan: {
+          screen: ViewPlanScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: true,
+            animationEnabled: true
+
+          },
+        },
       }
     ),
   });
