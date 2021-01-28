@@ -8,6 +8,9 @@ import colors from '../hooks/colors';
 
 const Comment = ({ comment, index }) => { //pull out onPress and title properties from prop
     const [liked, setLiked] = useState(false);
+    let profile_image = "https://reactnative.dev/img/tiny_logo.png";
+    let username = comment.username;
+    let cmt = comment.comment;
 
     const onPressLike = () => {
         setLiked(!liked);
@@ -16,16 +19,16 @@ const Comment = ({ comment, index }) => { //pull out onPress and title propertie
     return (
         <View style={styles.commentContainer} key={index}>
             <TouchableOpacity activeOpacity={0.8}
-                onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                <Image source={{ uri: comment.user.profile_image || '' }} style={styles.commentAvatar} />
+                onPress={() => navigate('Profile', { isHeaderShow: true, username: username })}>
+                <Image source={{ uri: profile_image || '' }} style={styles.commentAvatar} />
             </TouchableOpacity>
             <View style={styles.postUsernameLocationContainer}>
                 <TouchableOpacity style={styles.postUsernameView}
                     onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                    <Text style={styles.commentUsernameLabel}>{comment.user.name}</Text>
+                    <Text style={styles.commentUsernameLabel}>{username}</Text>
                 </TouchableOpacity>
                 <View style={styles.postLocationView}>
-                    <Text style={styles.commentContentLabel}>{comment.description}</Text>
+                    <Text style={styles.commentContentLabel}>{cmt}</Text>
                 </View>
             </View>
             <View style={styles.like}>
