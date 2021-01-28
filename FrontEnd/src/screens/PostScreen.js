@@ -1,11 +1,14 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, Image } from "react-native";
-import Button from "../components/common/Button";
+import { Picker } from "@react-native-picker/picker";
+import { Button } from "react-native-elements";
 import { Video } from "expo-av";
 import { Context as AuthContext } from "../context/AuthContext";
+import colors from "../hooks/colors";
 
 const PostScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
+  const [postType, setPostType] = useState("feedback");
   const { state, uploadPost } = useContext(AuthContext);
   let image = Image.resolveAssetSource(require("../../assets/icon.png")),
     video = null;
@@ -35,7 +38,7 @@ const PostScreen = ({ navigation }) => {
       );
     } else {
       return (
-        <View>
+        <View style={styles.previewContainer}>
           <Image source={{ uri: image.uri }} style={styles.preview} />
         </View>
       );
@@ -43,11 +46,9 @@ const PostScreen = ({ navigation }) => {
   };
 
   const onSubmit = () => {
-    const type = "feedback"; //needs to be changed so user picks whether it is feedback or regular
     const data = {
-      username: state.username,
       caption: title,
-      type: type,
+      type: postType,
     };
 
     if (video != null) {
@@ -62,35 +63,82 @@ const PostScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, alignItems: "center", flexDirection: "column" }}>
       {renderCapture()}
-      <Text style={styles.titleStyle}>Enter Caption</Text>
       <TextInput
         style={styles.titleInput}
         value={title}
         onChangeText={(text) => setTitle(text)}
         placeholder="Caption"
       />
+      <View style={styles.labelAndDropView}>
+        <Text style={styles.label}>POST TYPE:</Text>
+        <Picker
+          selectedValue={postType}
+          style={{ height: 50, width: "40%", borderWidth: 1 }}
+          onValueChange={(itemValue, itemIndex) => setPostType(itemValue)}
+        >
+          <Picker.Item label="Feedback" value="feedback" />
+          <Picker.Item label="Regular" value="regular" />
+        </Picker>
+      </View>
 
-      <Button title="Save" onPress={() => onSubmit()} />
+      <Button
+        title="POST"
+        onPress={() => {
+          onSubmit();
+        }}
+        buttonStyle={styles.button}
+        titleStyle={styles.buttonText}
+        containerStyle={styles.containerStyle}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  titleStyle: {
-    marginTop: 15,
-    paddingLeft: 15,
-  },
   titleInput: {
-    borderWidth: 1,
-    width: 300,
-    height: 75,
-    marginBottom: 15,
+    borderBottomWidth: 1,
+    width: "80%",
+    fontSize: 15,
+    marginTop: "5%",
   },
   preview: {
     alignItems: "center",
-    height: 200,
-    width: 200,
+    height: "100%",
+    width: 250,
     resizeMode: "cover",
+  },
+  button: {
+    backgroundColor: colors.blue,
+    width: "50%",
+    borderRadius: 5,
+  },
+  containerStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 0.15,
+  },
+  buttonText: {
+    color: colors.black,
+    flex: 1,
+    fontSize: 20,
+  },
+  previewContainer: {
+    borderWidth: 1,
+    flex: 0.5,
+    marginTop: "5%",
+  },
+  labelAndDropView: {
+    flexDirection:"row",
+    flex: 0.2,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "10%",
+    width: "100%",
+  },
+  label: {
+    fontSize: 20,
+    textDecorationColor: colors.black,
+    fontWeight:"bold"
   },
 });
 
