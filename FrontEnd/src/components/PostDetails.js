@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
     StyleSheet,
     Text,
@@ -20,8 +20,9 @@ import { KeyboardAvoidingView } from "react-native";
 import { Context as PostsContext } from '../context/AuthContext';
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
-    const { state, manageLikes } = useContext(PostsContext);
+    const { state, manageLikes, getReplies, addReply } = useContext(PostsContext);
 
+    const [comments, setComments] = useState(null);
 
     let title, mediaPath, name, postID;
     if (item) {
@@ -29,9 +30,10 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         name = item.item.username;
         title = item.item.caption;
         mediaPath = item.item.mediaPath
+        if (!comments && postID !== undefined) getReplies({ postid: postID }, setComments);
     } else {
         title = "title";
-        mediaPath = "https://reactnative.dev/img/tiny_logo.png";
+        mediaPath = "https://i.imgur.com/GfkNpVG.jpg";
 
     }
 
@@ -42,22 +44,10 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         liked: item.item.isLikedByUser,
         unliked: item.item.isDislikedByUser
     });
-    const [likesAndComments, setLikesAndComments] = useState({
+    const [likesAndComments, setLikes] = useState({
         likes: item.item.likes,
-        comments: item.item.comments_number,
     });
     const [newComment, setNewComment] = useState("");
-    const [comments, setComments] = useState([
-        {
-            user: {
-                id: 123,
-                username: "johndoe",
-                name: "John Doe",
-                profile_image: "https://reactnative.dev/img/tiny_logo.png",
-            },
-            description: "This is a sick photo man!",
-        },
-    ]);
 
     const onPressLike = () => {
         let { liked } = likedOrCommented;
@@ -65,12 +55,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
         if (!liked) {
             setLikedOrCommented({ liked: true, unliked: false });
-            setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
+            setLikes({ ...likesAndComments, likes: likes + 1 });
             manageLikes({ postID: postID, like: true, collection: collection });
 
         } else {
             setLikedOrCommented({ liked: false });
-            setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
+            setLikes({ ...likesAndComments, likes: likes - 1 });
             manageLikes({ postID: postID, like: false, collection: collection });
 
         }
@@ -81,12 +71,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
         if (!unliked) {
             setLikedOrCommented({ liked: false, unliked: true });
-            setLikesAndComments({ ...likesAndComments, likes: likes - 1 });
+            setLikes({ ...likesAndComments, likes: likes - 1 });
             manageLikes({ postID: postID, like: false, collection: collection });
 
         } else {
             setLikedOrCommented({ unliked: false });
-            setLikesAndComments({ ...likesAndComments, likes: likes + 1 });
+            setLikes({ ...likesAndComments, likes: likes + 1 });
             manageLikes({ postID: postID, like: true, collection: collection });
 
         }
@@ -139,7 +129,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                         onPress={() => onPressComment()}
                     />
                     <Text style={styles.postActionText}>
-                        {/*!!item.likes && item.likes.length || */ comments.length}
+                        {comments ? comments.data.count : 0}
                     </Text>
                 </TouchableOpacity>
 
@@ -169,9 +159,9 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     function renderComments() {
         return (
             <ScrollView>
-                <Text style={styles.sectionHeaderText}>{comments.length} COMMENTS</Text>
+                <Text style={styles.sectionHeaderText}>{comments ? comments.data.count : 0} COMMENTS</Text>
                 <FlatList
-                    data={comments}
+                    data={comments ? comments.data.replies : null}
                     renderItem={(comment) => displayComment(comment)}
                     keyExtractor={(item, index) => index.toString()}
                     style={{ height: "37%" }}
@@ -220,24 +210,16 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function postComment() {
         if (newComment === "") return;
-        let cmt = {
-            user: {
-                id: 123,
-                username: "johndoe",
-                name: "John Doe",
-                profile_image: "https://reactnative.dev/img/tiny_logo.png",
-            },
-            description: "",
-        };
-        cmt.description = newComment;
+        addReply({ docID: postID, comment: newComment, mediaPath: "https://reactnative.dev/img/tiny_logo.png" });
         setNewComment("");
-        setComments([...comments, cmt]);
     }
+
     const likes = (
         <View style={styles.postLogs}>
             <LikeAndComment />
         </View>
     );
+
     return (
         <View style={{ flex: 1 }}>
             <View style={

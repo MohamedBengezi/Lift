@@ -9,7 +9,6 @@ import serverApi from "../../api/server";
 import Feed from '../../components/Feed';
 import { Context as PostsContext } from '../../context/AuthContext';
 import PostDetail from '../../components/PostDetails';
-const apiLink = serverApi.defaults.baseURL;
 
 const wait = timeout => {
   return new Promise(resolve => {
@@ -30,13 +29,7 @@ const FeedBackScreen = ({ navigation }) => {
     });
   }, []);
 
-  url = apiLink + "/sample";
-
-  let img = (navigation.getParam('image')) ? navigation.getParam('image') : null;
-  let title = (navigation.getParam('title')) ? navigation.getParam('title') : "this is a post";
-
   useEffect(() => {
-    //    getUserPost(setPosts);
     getFeedbackPosts(setPosts);
   }, []);
 

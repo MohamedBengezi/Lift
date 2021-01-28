@@ -302,7 +302,30 @@ const manageLikes = () => {
     managePostLikes(data).then((res) => {
       console.log('manageLikes', res);
     }).catch((error) => {
-      console.error('XXX', error);
+      console.error(error);
+    });
+  }
+}
+
+const getReplies = () => {
+  return async (data, setComments) => {
+    var getReplies = functions.httpsCallable("posts-getReplies");
+    getReplies(data).then((res) => {
+      setComments(res);
+      return res;
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+}
+
+const addReply = () => {
+  return async (data) => {
+    var managePostLikes = functions.httpsCallable("posts-addReply");
+    managePostLikes(data).then((res) => {
+      console.log('addReply', res);
+    }).catch((error) => {
+      console.error(error);
     });
   }
 }
@@ -319,7 +342,9 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserPost,
     getFeedbackPosts,
-    manageLikes
+    manageLikes,
+    getReplies,
+    addReply
   },
   { token: null, errorMessage: "", posts: {} }
 );
