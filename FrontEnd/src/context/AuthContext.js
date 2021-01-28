@@ -231,7 +231,6 @@ function sendXmlHttpRequest(data) {
 }
 
 const uploadPost = (dispatch) => async ({
-  username,
   caption,
   type,
   media,
@@ -239,16 +238,15 @@ const uploadPost = (dispatch) => async ({
   uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
 
     const data = {
-      username: username,
       caption: caption,
       mediaPath: path,
-      uid: firebaseApp.auth().currentUser.uid,
     };
     let uploadPost;
     if (type === "feedback") {
       uploadPost = functions.httpsCallable("posts-createFeedbackPost");
     } else if (type === "regular") {
-      //route for regular posts.
+      //route for regular posts
+      uploadPost = functions.httpsCallable("posts-createGeneralPost");
     }
 
     uploadPost(data)
