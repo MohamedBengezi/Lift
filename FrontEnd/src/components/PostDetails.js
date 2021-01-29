@@ -18,9 +18,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { navigate } from "../navigationRef";
 import { KeyboardAvoidingView } from "react-native";
 import { Context as PostsContext } from '../context/AuthContext';
+import { functions } from "../../firebase";
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
-    const { state, manageLikes, getReplies, addReply } = useContext(PostsContext);
+    const { state, manageLikes, addReply } = useContext(PostsContext);
 
     const [comments, setComments] = useState(null);
 
@@ -30,12 +31,27 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         name = item.item.username;
         title = item.item.caption;
         mediaPath = item.item.mediaPath
-        if (!comments && postID !== undefined) getReplies({ postid: postID }, setComments);
     } else {
         title = "title";
         mediaPath = "https://i.imgur.com/GfkNpVG.jpg";
 
     }
+
+    useEffect(() => {
+        let mounted = true;
+        var getReplies = functions.httpsCallable("posts-getReplies");
+        if (!comments && postID !== undefined) {
+            getReplies({ postid: postID }).then((res) => {
+                if (mounted) {
+                    setComments(res);
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        return () => mounted = false;
+    }, []);
 
     let collection = (isFeedback) ? "feedback_posts" : "general_posts";
 
