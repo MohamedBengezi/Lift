@@ -43,7 +43,7 @@ const Profile = (props) => {
     const [tabs, setTabs] = useState({
         index: 0,
         routes: [
-            { key: '1', title: 'likes', count: 86 },
+            { key: '1', title: 'posts', count: 0 },
             { key: '2', title: 'following', count: 95 },
             { key: '3', title: 'followers', count: '1.3 K' },
         ],
@@ -92,6 +92,8 @@ const Profile = (props) => {
 
         const currentIndex = parseInt(route.key) - 1
         const color = labels[currentIndex]
+
+        currentIndex === 0 ? route.count = posts ? posts.length : 0 : null;
 
         return (
             <View>
