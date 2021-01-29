@@ -50,10 +50,13 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     const [newComment, setNewComment] = useState("");
 
     const onPressLike = () => {
-        let { liked } = likedOrCommented;
+        let { liked, unliked } = likedOrCommented;
         let likes = likesAndComments.likes;
-
         if (!liked) {
+            if (unliked) {
+                manageLikes({ postID: postID, like: true, collection: collection });
+                likes++;
+            }
             setLikedOrCommented({ liked: true, unliked: false });
             setLikes({ ...likesAndComments, likes: likes + 1 });
             manageLikes({ postID: postID, like: true, collection: collection });
@@ -66,10 +69,14 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         }
     };
     const onPressUnlike = () => {
-        let { unliked } = likedOrCommented;
+        let { unliked, liked } = likedOrCommented;
         let likes = likesAndComments.likes;
 
         if (!unliked) {
+            if (liked) {
+                manageLikes({ postID: postID, like: false, collection: collection });
+                likes--;
+            }
             setLikedOrCommented({ liked: false, unliked: true });
             setLikes({ ...likesAndComments, likes: likes - 1 });
             manageLikes({ postID: postID, like: false, collection: collection });
