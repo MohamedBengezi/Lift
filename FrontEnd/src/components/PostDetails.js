@@ -211,6 +211,18 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     function postComment() {
         if (newComment === "") return;
         addReply({ docID: postID, comment: newComment, mediaPath: "https://reactnative.dev/img/tiny_logo.png" });
+        if (comments) {
+            comments.data.replies.push({
+                "comment": newComment,
+                "disliked_by": [],
+                "id": "",
+                "liked_by": [],
+                "likes": 0,
+                "mediaPath": "https://storage.googleapis.com/uplift-e96ab.appspot.com/https%3A//reactnative.dev/img/tiny_logo.png?GoogleAccessId=firebase-adminsdk-fxouf%40uplift-e96ab.iam.gserviceaccount.com&Expires=2577844800&Signature=J07%2BDVV6ZuwT%2Bm%2FhhR%2B4uz9yQIo3gWRTxBWTOw2TYsKi8VEWCD1EwKSVwx8HZ9dVvQjOpKIAHc4sBRz%2BYB2iF0ls03SucEIwRHB%2BuD1O3%2F44FzZIJxCbfLTPqWixPF6mZzZXfVAMFGkd5GNk%2BgRboLMMKsZutZ7d9l01SPL7Sn1xI%2B9MZNzW8%2FS7Ar6xKsQUI0bTTP8HxhswpSJW02DO1NvrrGo2SxXel2vNXUuOlm7CieShPKDJpYnHktFPXRX8BnBy9jrOKQunWAuHuolmiS502iZuHDXbVgCGg0W3KLKjWJH0XOtbxGSg6VscQzeCucFNPPfLBmTrYDx4R7oU%2Bg%3D%3D",
+                "username": state.username,
+            })
+            comments.data.count++
+        }
         setNewComment("");
     }
 
