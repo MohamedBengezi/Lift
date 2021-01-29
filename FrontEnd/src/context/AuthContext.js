@@ -323,8 +323,8 @@ const getReplies = () => {
 
 const addReply = () => {
   return async (data) => {
-    var managePostLikes = functions.httpsCallable("posts-addReply");
-    managePostLikes(data).then((res) => {
+    var addReply = functions.httpsCallable("posts-addReply");
+    addReply(data).then((res) => {
       console.log('addReply', res);
     }).catch((error) => {
       console.error(error);
