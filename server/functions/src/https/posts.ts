@@ -12,6 +12,8 @@ export const createFeedbackPost = functions.https.onCall(
     let username = "";
     const userRef = admin.firestore().collection("users").doc(uid);
 
+    const isImage = mediaPath.indexOf(".png") >= 0 || mediaPath.indexOf(".jpg") >= 0;
+
     try {
       const userDoc = await userRef.get();
 
@@ -44,6 +46,8 @@ export const createFeedbackPost = functions.https.onCall(
         answered: true,
         liked_by: [],
         disliked_by: [],
+        isImage: isImage,
+        isFeedback: true,
       })
       .then(() => {
         return "success";
@@ -69,6 +73,8 @@ export const createGeneralPost = functions.https.onCall(
     let username = "";
 
     const userRef = admin.firestore().collection("users").doc(uid);
+
+    const isImage = mediaPath.indexOf(".png") >= 0 || mediaPath.indexOf(".jpg") >= 0;
 
     try {
       const userDoc = await userRef.get();
@@ -100,6 +106,8 @@ export const createGeneralPost = functions.https.onCall(
         mediaPath: mediaPath,
         liked_by: [],
         disliked_by: [],
+        isImage: isImage,
+        isFeedback: false,
       })
       .then(() => {
         return "success";
