@@ -12,11 +12,26 @@ export const getDownloadURL = (filePath: string) => {
   if (filePath === null || filePath === undefined) {
     return null;
   }
+
   const storage = admin.storage();
-  return storage
+
+  async function getContentType() {
+    const [metadata] = await storage
     .bucket(BUCKET_PATH)
     .file(filePath)
-    .getSignedUrl({ action: "read", expires: "09-09-2051" });
+    .getMetadata();
+
+    return metadata.contentType;
+  }
+
+  const type = getContentType();
+
+  const mediaData = {
+    downloadURL: storage.bucket(BUCKET_PATH).file(filePath).getSignedUrl({ action: "read", expires: "09-09-2051" }),
+    contentType: type,
+  }
+
+  return mediaData;
 };
 
 /**

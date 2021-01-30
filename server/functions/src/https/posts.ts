@@ -12,7 +12,7 @@ export const createFeedbackPost = functions.https.onCall(
     let username = "";
     const userRef = admin.firestore().collection("users").doc(uid);
 
-    const isImage = mediaPath.indexOf(".png") >= 0 || mediaPath.indexOf(".jpg") >= 0;
+    const type = await storageUtils.getDownloadURL(mediaPath)?.contentType;
 
     try {
       const userDoc = await userRef.get();
@@ -46,7 +46,7 @@ export const createFeedbackPost = functions.https.onCall(
         answered: true,
         liked_by: [],
         disliked_by: [],
-        isImage: isImage,
+        isImage: type == "application/jpeg",
         isFeedback: true,
       })
       .then(() => {
@@ -74,7 +74,7 @@ export const createGeneralPost = functions.https.onCall(
 
     const userRef = admin.firestore().collection("users").doc(uid);
 
-    const isImage = mediaPath.indexOf(".png") >= 0 || mediaPath.indexOf(".jpg") >= 0;
+    const type = await storageUtils.getDownloadURL(mediaPath)?.contentType;
 
     try {
       const userDoc = await userRef.get();
@@ -106,7 +106,7 @@ export const createGeneralPost = functions.https.onCall(
         mediaPath: mediaPath,
         liked_by: [],
         disliked_by: [],
-        isImage: isImage,
+        isImage: type == "application/jpeg",
         isFeedback: false,
       })
       .then(() => {
@@ -201,7 +201,7 @@ export const getUserPosts = functions.https.onCall(async (data, context) => {
         id: doc.id,
         ...doc.data(),
         mediaPath: (
-          await storageUtils.getDownloadURL(doc.data().mediaPath)
+          await storageUtils.getDownloadURL(doc.data().mediaPath)?.downloadURL
         )?.[0],
         isLikedByUser: doc.data().liked_by.includes(userID),
         isDislikedByUser: doc.data().disliked_by.includes(userID),
@@ -230,7 +230,7 @@ export const getFeedbackPosts = functions.https.onCall(
           id: doc.id,
           ...doc.data(),
           mediaPath: (
-            await storageUtils.getDownloadURL(doc.data().mediaPath)
+            await storageUtils.getDownloadURL(doc.data().mediaPath)?.downloadURL
           )?.[0],
           isLikedByUser: doc.data().liked_by.includes(userID),
           isDislikedByUser: doc.data().disliked_by.includes(userID),
@@ -258,7 +258,7 @@ export const getGeneralPosts = functions.https.onCall(async (data, context) => {
         id: doc.id,
         ...doc.data(),
         mediaPath: (
-          await storageUtils.getDownloadURL(doc.data().mediaPath)
+          await storageUtils.getDownloadURL(doc.data().mediaPath)?.downloadURL
         )?.[0],
         isLikedByUser: doc.data().liked_by.includes(userID),
         isDislikedByUser: doc.data().disliked_by.includes(userID),
@@ -390,7 +390,7 @@ export const getReplies = functions.https.onCall(async (data, context) => {
         id: doc.id,
         ...doc.data(),
         mediaPath: (
-          await storageUtils.getDownloadURL(doc.data().mediaPath)
+          await storageUtils.getDownloadURL(doc.data().mediaPath)?.downloadURL
         )?.[0],
       };
     })
