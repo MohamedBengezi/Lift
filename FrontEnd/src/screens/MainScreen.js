@@ -131,6 +131,7 @@ const MainScreen = ({ navigation }) => {
   // };
 
   const onSwipeUp = (gestureState) => {
+    console.log('swiped up')
     navigation.navigate('WorkoutPlans');
   }
 
@@ -202,58 +203,66 @@ const MainScreen = ({ navigation }) => {
       );
     } else {
       return (
-        <GestureRecognizer
-          onSwipeUp={() => onSwipeUp()}
-          style={{ flex: 1 }}
-        >
-          <View style={{ flex: 1 }}>
-            <Camera
-              style={{ flex: 1 }}
-              type={camera.type}
-              flashMode={camera.flashMode}
-              ref={(ref) => {
-                this.camera = ref;
-              }}
+
+        <View style={{ flex: 1 }}>
+          <Camera
+            style={{ flex: 1 }}
+            type={camera.type}
+            flashMode={camera.flashMode}
+            ref={(ref) => {
+              this.camera = ref;
+            }}
+          >
+            <View style={styles.menu}>
+              <View style={styles.subMenu}>
+                <TouchableOpacity onPress={() => toggleCamera()}>
+                  <Text style={styles.button}>
+                    <Ionicons name="md-reverse-camera" style={styles.button} />
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.subMenu}>
+                <TouchableOpacity onPress={() => toggleFlashLight()}>
+                  <Text style={styles.button}>
+                    <Ionicons
+                      name="md-flash"
+                      style={{
+                        ...styles.button,
+                        color:
+                          camera.flashMode === "on"
+                            ? colors.white
+                            : colors.black,
+                      }}
+                    />
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.cameraButton}>
+              <TouchableHighlight
+                style={styles.capture}
+                onPress={takePicture}
+                onLongPress={takeVideo}
+                onPressOut={stopRecording}
+                underlayColor="rgba(255, 255, 255, 0.5)"
+              >
+                <View />
+              </TouchableHighlight>
+            </View>
+            <GestureRecognizer
+              onSwipeUp={() => onSwipeUp()}
+              style={{ position: 'absolute', bottom: 0, left: "48%" }}
             >
-              <View style={styles.menu}>
-                <View style={styles.subMenu}>
-                  <TouchableOpacity onPress={() => toggleCamera()}>
-                    <Text style={styles.button}>
-                      <Ionicons name="md-reverse-camera" style={styles.button} />
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.subMenu}>
-                  <TouchableOpacity onPress={() => toggleFlashLight()}>
-                    <Text style={styles.button}>
-                      <Ionicons
-                        name="md-flash"
-                        style={{
-                          ...styles.button,
-                          color:
-                            camera.flashMode === "on"
-                              ? colors.white
-                              : colors.black,
-                        }}
-                      />
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.cameraButton}>
-                <TouchableHighlight
-                  style={styles.capture}
-                  onPress={takePicture}
-                  onLongPress={takeVideo}
-                  onPressOut={stopRecording}
-                  underlayColor="rgba(255, 255, 255, 0.5)"
-                >
-                  <View />
-                </TouchableHighlight>
-              </View>
-            </Camera>
-          </View>
-        </GestureRecognizer>
+              <Ionicons
+                name="md-arrow-up"
+                style={{
+                  ...styles.button,
+                  color: colors.white
+                }}
+              />
+            </GestureRecognizer>
+          </Camera>
+        </View>
 
       );
     }
@@ -311,7 +320,6 @@ const styles = StyleSheet.create({
   },
   button: {
     fontSize: 32,
-    color: colors.black,
   },
   cameraButton: {
     justifyContent: "space-around",
