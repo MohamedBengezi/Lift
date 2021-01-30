@@ -169,12 +169,13 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         );
     }
 
-    function displayComment(comment) {
+    function displayComment(comment, index) {
         return (
             <Comment
-                comment={comment.item}
-                key={comment.index}
-                index={comment.index}
+                comment={comment}
+                key={index}
+                index={index}
+                isFeedback={isFeedback}
             />
         );
     }
@@ -183,12 +184,9 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         return (
             <ScrollView>
                 <Text style={styles.sectionHeaderText}>{comments ? comments.data.count : 0} COMMENTS</Text>
-                <FlatList
-                    data={comments ? comments.data.replies : null}
-                    renderItem={(comment) => displayComment(comment)}
-                    keyExtractor={(item, index) => index.toString()}
-                    style={{ height: "37%" }}
-                />
+                {(comments) ? comments.data.replies.map((comment, index) => {
+                    return displayComment(comment, index);
+                }) : null}
             </ScrollView>
         );
     }
@@ -241,7 +239,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 "id": "",
                 "liked_by": [],
                 "likes": 0,
-                "mediaPath": "https://storage.googleapis.com/uplift-e96ab.appspot.com/https%3A//reactnative.dev/img/tiny_logo.png?GoogleAccessId=firebase-adminsdk-fxouf%40uplift-e96ab.iam.gserviceaccount.com&Expires=2577844800&Signature=J07%2BDVV6ZuwT%2Bm%2FhhR%2B4uz9yQIo3gWRTxBWTOw2TYsKi8VEWCD1EwKSVwx8HZ9dVvQjOpKIAHc4sBRz%2BYB2iF0ls03SucEIwRHB%2BuD1O3%2F44FzZIJxCbfLTPqWixPF6mZzZXfVAMFGkd5GNk%2BgRboLMMKsZutZ7d9l01SPL7Sn1xI%2B9MZNzW8%2FS7Ar6xKsQUI0bTTP8HxhswpSJW02DO1NvrrGo2SxXel2vNXUuOlm7CieShPKDJpYnHktFPXRX8BnBy9jrOKQunWAuHuolmiS502iZuHDXbVgCGg0W3KLKjWJH0XOtbxGSg6VscQzeCucFNPPfLBmTrYDx4R7oU%2Bg%3D%3D",
+                "mediaPath": "https://reactnative.dev/img/tiny_logo.png",
                 "username": state.username,
             })
             comments.data.count++
