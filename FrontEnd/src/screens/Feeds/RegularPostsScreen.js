@@ -5,7 +5,6 @@ import {
     RefreshControl,
     ScrollView
 } from 'react-native';
-import serverApi from "../../api/server";
 import Feed from '../../components/Feed';
 import PostDetail from '../../components/PostDetails';
 
@@ -20,13 +19,13 @@ const wait = timeout => {
 
 
 const RegularPostsScreen = ({ navigation }) => {
-    const { state, getUserPost } = useContext(PostsContext);
+    const { state, getGeneralPosts } = useContext(PostsContext);
     const [posts, setPosts] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        getUserPost(setPosts);
+        getGeneralPosts(setPosts);
         wait(2000).then(() => {
             setRefreshing(false);
         });
@@ -34,7 +33,7 @@ const RegularPostsScreen = ({ navigation }) => {
 
 
     useEffect(() => {
-        getUserPost(setPosts)
+        getGeneralPosts(setPosts)
     }, []);
     let dummyInfo = {
         item: {

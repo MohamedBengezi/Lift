@@ -18,9 +18,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { navigate } from "../navigationRef";
 import { KeyboardAvoidingView } from "react-native";
 import { Context as PostsContext } from '../context/AuthContext';
+import { functions } from "../../firebase";
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
-    const { state, manageLikes, getReplies, addReply } = useContext(PostsContext);
+    const { state, manageLikes, addReply } = useContext(PostsContext);
 
     const [comments, setComments] = useState(null);
 
@@ -30,12 +31,27 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         name = item.item.username;
         title = item.item.caption;
         mediaPath = item.item.mediaPath
-        if (!comments && postID !== undefined) getReplies({ postid: postID }, setComments);
     } else {
         title = "title";
         mediaPath = "https://i.imgur.com/GfkNpVG.jpg";
 
     }
+
+    useEffect(() => {
+        let mounted = true;
+        var getReplies = functions.httpsCallable("posts-getReplies");
+        if (!comments && postID !== undefined) {
+            getReplies({ postid: postID }).then((res) => {
+                if (mounted) {
+                    setComments(res);
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        return () => mounted = false;
+    }, []);
 
     let collection = (isFeedback) ? "feedback_posts" : "general_posts";
 
@@ -153,12 +169,13 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         );
     }
 
-    function displayComment(comment) {
+    function displayComment(comment, index) {
         return (
             <Comment
-                comment={comment.item}
-                key={comment.index}
-                index={comment.index}
+                comment={comment}
+                key={index}
+                index={index}
+                isFeedback={isFeedback}
             />
         );
     }
@@ -167,12 +184,9 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         return (
             <ScrollView>
                 <Text style={styles.sectionHeaderText}>{comments ? comments.data.count : 0} COMMENTS</Text>
-                <FlatList
-                    data={comments ? comments.data.replies : null}
-                    renderItem={(comment) => displayComment(comment)}
-                    keyExtractor={(item, index) => index.toString()}
-                    style={{ height: "37%" }}
-                />
+                {(comments) ? comments.data.replies.map((comment, index) => {
+                    return displayComment(comment, index);
+                }) : null}
             </ScrollView>
         );
     }
@@ -218,6 +232,18 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     function postComment() {
         if (newComment === "") return;
         addReply({ docID: postID, comment: newComment, mediaPath: "https://reactnative.dev/img/tiny_logo.png" });
+        if (comments) {
+            comments.data.replies.push({
+                "comment": newComment,
+                "disliked_by": [],
+                "id": "",
+                "liked_by": [],
+                "likes": 0,
+                "mediaPath": "https://reactnative.dev/img/tiny_logo.png",
+                "username": state.username,
+            })
+            comments.data.count++
+        }
         setNewComment("");
     }
 

@@ -295,6 +295,18 @@ const getFeedbackPosts = () => {
   }
 }
 
+const getGeneralPosts = () => {
+  return async (setPosts) => {
+    var getGeneralPosts = functions.httpsCallable("posts-getGeneralPosts");
+    getGeneralPosts().then((data) => {
+      setPosts(null)
+      setPosts(data.data.posts.slice(0, 15));
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+}
+
 
 const manageLikes = () => {
   return async (data) => {
@@ -321,8 +333,8 @@ const getReplies = () => {
 
 const addReply = () => {
   return async (data) => {
-    var managePostLikes = functions.httpsCallable("posts-addReply");
-    managePostLikes(data).then((res) => {
+    var addReply = functions.httpsCallable("posts-addReply");
+    addReply(data).then((res) => {
       console.log('addReply', res);
     }).catch((error) => {
       console.error(error);
@@ -342,6 +354,7 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserPost,
     getFeedbackPosts,
+    getGeneralPosts,
     manageLikes,
     getReplies,
     addReply
