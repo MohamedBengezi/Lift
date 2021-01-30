@@ -11,8 +11,8 @@ const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and tit
     console.log('ddd', comment)
     let profile_image = "https://reactnative.dev/img/tiny_logo.png";
     let username = comment.username;
-    let mediaPath = Image.resolveAssetSource(require("../../assets/icon.png")).uri;
     let cmt = comment.comment;
+    let mediaPath = (cmt.includes("Nice")) ? "https://cdn.stronglifts.com/wp-content/uploads/bench-press.jpg" : "https://www.mensjournal.com/wp-content/uploads/2018/02/squats-mens-journal-february-2018.jpg";
 
     const onPressLike = () => {
         setLiked(!liked);
