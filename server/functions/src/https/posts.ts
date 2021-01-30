@@ -12,6 +12,8 @@ export const createFeedbackPost = functions.https.onCall(
     let username = "";
     const userRef = admin.firestore().collection("users").doc(uid);
 
+    const isImage = mediaPath.indexOf(".png") >= 0 || mediaPath.indexOf(".jpg") >= 0;
+
     try {
       const userDoc = await userRef.get();
 
@@ -44,6 +46,8 @@ export const createFeedbackPost = functions.https.onCall(
         answered: true,
         liked_by: [],
         disliked_by: [],
+        isImage: isImage,
+        isFeedback: true,
       })
       .then(() => {
         return "success";
@@ -69,6 +73,8 @@ export const createGeneralPost = functions.https.onCall(
     let username = "";
 
     const userRef = admin.firestore().collection("users").doc(uid);
+
+    const isImage = mediaPath.indexOf(".png") >= 0 || mediaPath.indexOf(".jpg") >= 0;
 
     try {
       const userDoc = await userRef.get();
@@ -100,6 +106,8 @@ export const createGeneralPost = functions.https.onCall(
         mediaPath: mediaPath,
         liked_by: [],
         disliked_by: [],
+        isImage: isImage,
+        isFeedback: false,
       })
       .then(() => {
         return "success";
@@ -181,25 +189,38 @@ export const getUserPosts = functions.https.onCall(async (data, context) => {
       "Failed to fetch posts. Please pass in a userID. Expected body param: 'uid'"
     );
   }
-  const ref = await admin
+  const feedbackRef = await admin
     .firestore()
     .collection("feedback_posts")
     .where("uid", "==", userID)
     .get();
 
-  const docs = await Promise.all(
-    ref.docs.map(async (doc) => {
-      return {
-        id: doc.id,
-        ...doc.data(),
-        mediaPath: (
-          await storageUtils.getDownloadURL(doc.data().mediaPath)
-        )?.[0],
-        isLikedByUser: doc.data().liked_by.includes(userID),
-        isDislikedByUser: doc.data().disliked_by.includes(userID),
-      };
-    })
-  );
+  const generalRef = await admin
+    .firestore()
+    .collection("general_posts")
+    .where("uid", "==", userID)
+    .get();
+
+  const getDocuments = function (ref: FirebaseFirestore.QuerySnapshot) {
+    return Promise.all(
+      ref.docs.map(async (doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+          mediaPath: (
+            await storageUtils.getDownloadURL(doc.data().mediaPath)
+          )?.[0],
+          isLikedByUser: doc.data().liked_by?.includes(userID),
+          isDislikedByUser: doc.data().disliked_by?.includes(userID),
+        };
+      })
+    );
+  };
+
+  const feedbackPosts = await getDocuments(feedbackRef);
+  const generalPosts = await getDocuments(generalRef);
+  const docs = [...feedbackPosts, ...generalPosts];
+
   return { message: "success", count: docs.length, posts: docs };
 });
 
@@ -224,8 +245,8 @@ export const getFeedbackPosts = functions.https.onCall(
           mediaPath: (
             await storageUtils.getDownloadURL(doc.data().mediaPath)
           )?.[0],
-          isLikedByUser: doc.data().liked_by.includes(userID),
-          isDislikedByUser: doc.data().disliked_by.includes(userID),
+          isLikedByUser: doc.data().liked_by?.includes(userID),
+          isDislikedByUser: doc.data().disliked_by?.includes(userID),
         };
       })
     );
@@ -252,8 +273,8 @@ export const getGeneralPosts = functions.https.onCall(async (data, context) => {
         mediaPath: (
           await storageUtils.getDownloadURL(doc.data().mediaPath)
         )?.[0],
-        isLikedByUser: doc.data().liked_by.includes(userID),
-        isDislikedByUser: doc.data().disliked_by.includes(userID),
+        isLikedByUser: doc.data().liked_by?.includes(userID),
+        isDislikedByUser: doc.data().disliked_by?.includes(userID),
       };
     })
   );
