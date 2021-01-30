@@ -5,6 +5,7 @@ import { Button } from "react-native-elements";
 import { Video } from "expo-av";
 import { Context as AuthContext } from "../context/AuthContext";
 import colors from "../hooks/colors";
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const PostScreen = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -61,7 +62,7 @@ const PostScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", flexDirection: "column" }}>
+    <View style={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: "5%" }}>
       {renderCapture()}
       <TextInput
         style={styles.titleInput}
@@ -70,15 +71,20 @@ const PostScreen = ({ navigation }) => {
         placeholder="Caption"
       />
       <View style={styles.labelAndDropView}>
-        <Text style={styles.label}>POST TYPE:</Text>
-        <Picker
-          selectedValue={postType}
-          style={{ height: 50, width: "40%", borderWidth: 1 }}
-          onValueChange={(itemValue, itemIndex) => setPostType(itemValue)}
-        >
-          <Picker.Item label="Feedback" value="feedback" />
-          <Picker.Item label="Regular" value="regular" />
-        </Picker>
+        <Text style={styles.label}>POST TYPE: </Text>
+        <DropDownPicker
+          items={[
+            { label: 'Feedback', value: 'feedback', hidden: true },
+            { label: 'Regular', value: 'regular' },
+          ]}
+          defaultValue={postType}
+          style={{ width: 150, borderWidth: 1 }}
+          itemStyle={{
+            justifyContent: 'flex-start', color: colors.black
+          }}
+          labelStyle={{ color: colors.black }}
+          onChangeItem={item => setPostType(item.value)}
+        />
       </View>
 
       <Button
@@ -109,11 +115,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: colors.blue,
-    width: "50%",
+    width: "90%",
     borderRadius: 5,
   },
   containerStyle: {
-    justifyContent: "center",
+    position: 'absolute',
+    bottom: 100,
     alignItems: "center",
     flex: 0.15,
   },
@@ -128,8 +135,8 @@ const styles = StyleSheet.create({
     marginTop: "5%",
   },
   labelAndDropView: {
-    flexDirection:"row",
-    flex: 0.2,
+    flexDirection: "row",
+    flex: 0.1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: "10%",
@@ -138,7 +145,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 20,
     textDecorationColor: colors.black,
-    fontWeight:"bold"
+    fontWeight: "bold"
   },
 });
 
