@@ -335,7 +335,7 @@ const addReply = () => {
   return async (data) => {
     var addReply = functions.httpsCallable("posts-addReply");
     addReply(data).then((res) => {
-      console.log('addReply', res);
+      console.log('addReply', "posted comment to database");
     }).catch((error) => {
       console.error(error);
     });

@@ -231,7 +231,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function postComment() {
         if (newComment === "") return;
-        addReply({ docID: postID, comment: newComment, mediaPath: "https://reactnative.dev/img/tiny_logo.png" });
+        if(isFeedback){
+            addReply({ docID: postID, comment: newComment, mediaPath: "https://reactnative.dev/img/tiny_logo.png", isFeedback: isFeedback });
+        } else {
+            addReply({ docID: postID, comment: newComment, mediaPath: "", isFeedback: isFeedback });
+        }
+        
         if (comments) {
             comments.data.replies.push({
                 "comment": newComment,
