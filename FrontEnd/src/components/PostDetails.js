@@ -27,13 +27,21 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     const [comments, setComments] = useState(null);
     const [image, setImage] = useState(null);
 
-    let title, mediaPath, name, postID, isUsersPost, isAnswered;
+    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted;
     if (item) {
         postID = item.item.id;
         name = item.item.username;
         title = item.item.caption;
         mediaPath = item.item.mediaPath
         isUsersPost = (name == state.username);
+        isFeedback = item.item.answered;
+
+        timeSubmitted = "";
+        if (item.item.timeSubmitted) {
+            timeSubmitted = item.item.timeSubmitted;
+            timeSubmitted = timeSubmitted.substring(0, 15) + timeSubmitted.substring(timeSubmitted.length - 11, timeSubmitted.length);
+        }
+
         isAnswered = (isFeedback && comments && comments.data.count > 0);
 
     } else {
@@ -277,7 +285,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 "id": "",
                 "liked_by": [],
                 "likes": 0,
-                "mediaPath": image.uri,
+                "mediaPath": (image.uri) ? image.uri : null,
                 "username": state.username,
             })
             comments.data.count++
@@ -338,7 +346,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                         <Text style={{ fontSize: 17 }}>{name}</Text>
                         <View style={styles.postDate}>
                             <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
-                                5 mins ago{" "}
+                                {timeSubmitted}
                             </Text>
                         </View>
                     </TouchableOpacity>
@@ -461,7 +469,7 @@ const styles = StyleSheet.create({
     avatarName: {
         flex: 2,
         justifyContent: "center",
-        marginLeft: 5,
+        marginLeft: 10
     },
     location: {
         flex: 1,
