@@ -348,7 +348,7 @@ const addReply = () => async ({
 
     addReply(data)
       .then(() => {
-        console.log("Uploaded post details to db");
+        console.log("Uploaded reply details to db");
       })
       .catch((error) => {
         showError(error, dispatch);
@@ -360,7 +360,6 @@ const getComments = () => {
   return async (data, setComments) => {
     var getComments = functions.httpsCallable("posts-getComments");
     getComments(data).then((res) => {
-      console.log('getComments', res);
       setComments(res);
     }).catch((error) => {
       console.error(error);
@@ -372,7 +371,17 @@ const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
     addComment(data).then((res) => {
-      console.log('addComment', res);
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+}
+
+const archivePost = () => {
+  return async (data) => {
+    var archivePost = functions.httpsCallable("posts-archiveFeedbackPost");
+    console.log('archiving', data.docID)
+    archivePost(data).then((res) => {
     }).catch((error) => {
       console.error(error);
     });
@@ -396,7 +405,8 @@ export const { Provider, Context } = createDataContext(
     getReplies,
     addReply,
     getComments,
-    addComment
+    addComment,
+    archivePost
   },
   { token: null, errorMessage: "", posts: {} }
 );
