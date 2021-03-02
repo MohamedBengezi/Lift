@@ -113,7 +113,6 @@ export const createGeneralPost = functions.https.onCall(
         isFeedback: false,
       })
       .then(() => {
-        console.log("POSTSSSSS ",)
         return "success";
       })
       .catch((err) => {
