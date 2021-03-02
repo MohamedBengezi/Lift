@@ -22,6 +22,8 @@ const authReducer = (state, action) => {
       return { ...state, username: action.username };
     case "getUserPosts":
       return { ...state, posts: action.posts };
+    case "updateFitbit":
+      return {...state, heartRate:action.heartRate, calories: action.calories};
     default:
       return state;
   }
@@ -312,7 +314,7 @@ const manageLikes = () => {
     var managePostLikes = functions.httpsCallable("posts-managePostLikes");
     managePostLikes(data)
       .then((res) => {
-        console.log("manageLikes", res);
+        console.log("called manageLikes");
       })
       .catch((error) => {
         console.error(error);
@@ -347,12 +349,13 @@ const addReply = () => {
   };
 };
 
-const saveFitbitToken = () => {
+const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
     var fitbitInfo = functions.httpsCallable("user-saveFitbitToken");
     fitbitInfo({access_token})
       .then((res) => {
         console.log("Saved the token to the database");
+        dispatch({ type: "updateFitbit", heartRate: res.data.heartRate, calories: res.data.calories});
       })
       .catch((error) => {
         console.error(error);

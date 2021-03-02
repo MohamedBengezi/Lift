@@ -42,7 +42,7 @@ const FeedBackScreen = ({ navigation }) => {
       comments_numer: 1
     }
   }
-  console.log('Feedback', posts);
+  
 
   return (
     <SafeAreaView style={styles.background}>
