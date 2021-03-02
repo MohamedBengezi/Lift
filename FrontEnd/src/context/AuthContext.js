@@ -331,11 +331,48 @@ const getReplies = () => {
   }
 }
 
-const addReply = () => {
-  return async (data) => {
+const addReply = () => async ({
+  docID, comment, media, isFeedback
+}) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, 'feedback').then((path) => {
+
+    const data = {
+      docID: docID,
+      isFeedback: isFeedback,
+      comment: comment,
+      mediaPath: path,
+    };
+
     var addReply = functions.httpsCallable("posts-addReply");
-    addReply(data).then((res) => {
-      console.log('addReply', "posted comment to database");
+
+
+    addReply(data)
+      .then(() => {
+        console.log("Uploaded post details to db");
+      })
+      .catch((error) => {
+        showError(error, dispatch);
+      });
+  });
+}
+
+const getComments = () => {
+  return async (data, setComments) => {
+    var getComments = functions.httpsCallable("posts-getComments");
+    getComments(data).then((res) => {
+      console.log('getComments', res);
+      setComments(res);
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+}
+
+const addComment = () => {
+  return async (data) => {
+    var addComment = functions.httpsCallable("posts-addComment");
+    addComment(data).then((res) => {
+      console.log('addComment', res);
     }).catch((error) => {
       console.error(error);
     });
@@ -357,7 +394,9 @@ export const { Provider, Context } = createDataContext(
     getGeneralPosts,
     manageLikes,
     getReplies,
-    addReply
+    addReply,
+    getComments,
+    addComment
   },
   { token: null, errorMessage: "", posts: {} }
 );
