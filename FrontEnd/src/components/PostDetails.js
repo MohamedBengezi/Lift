@@ -19,11 +19,15 @@ import { navigate } from "../navigationRef";
 import { KeyboardAvoidingView } from "react-native";
 import { Context as PostsContext } from '../context/AuthContext';
 import { functions } from "../../firebase";
+import * as ImagePicker from "expo-image-picker";
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
-    const { state, manageLikes, addReply } = useContext(PostsContext);
+    const { state, manageLikes, addReply, addComment } = useContext(PostsContext);
+
+    console.log('postdetails', item)
 
     const [comments, setComments] = useState(null);
+    const [image, setImage] = useState(null);
 
     let title, mediaPath, name, postID;
     if (item) {
@@ -39,7 +43,8 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     useEffect(() => {
         let mounted = true;
-        var getReplies = functions.httpsCallable("posts-getReplies");
+        let commentsOrReplies = (isFeedback) ? "posts-getReplies" : "posts-getComments";
+        var getReplies = functions.httpsCallable(commentsOrReplies);
         if (!comments && postID !== undefined) {
             getReplies({ postid: postID }).then((res) => {
                 if (mounted) {
@@ -50,6 +55,16 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             });
         }
 
+        async () => {
+            if (Platform.OS !== "web") {
+                const {
+                    status,
+                } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== "granted") {
+                    alert("Sorry, we need camera roll permissions to make this work!");
+                }
+            }
+        };
         return () => mounted = false;
     }, []);
 
@@ -191,6 +206,21 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         );
     }
 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.cancelled) {
+            setImage(result);
+        }
+    };
+
     function renderAddComment() {
         return (
             <KeyboardAvoidingView
@@ -207,10 +237,11 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                     }}
                 >
                     <Ionicons
-                        name="md-chatbubbles"
+                        name="md-camera"
                         color={colors.black}
                         size={25}
                         style={{ marginHorizontal: 10, position: "absolute", left: 10 }}
+                        onPress={pickImage}
                     />
                     <Input
                         containerStyle={{ width: "80%" }}
@@ -231,12 +262,16 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function postComment() {
         if (newComment === "") return;
-        if(isFeedback){
-            addReply({ docID: postID, comment: newComment, mediaPath: "https://reactnative.dev/img/tiny_logo.png", isFeedback: isFeedback });
+
+        if (isFeedback) {
+            console.log('XXX image', image)
+            addReply({ docID: postID, comment: newComment, media: image, isFeedback: isFeedback })
         } else {
-            addReply({ docID: postID, comment: newComment, mediaPath: "", isFeedback: isFeedback });
+            console.log('XXX comment', image)
+
+            addComment({ docID: postID, comment: newComment });
         }
-        
+
         if (comments) {
             comments.data.replies.push({
                 "comment": newComment,
@@ -244,7 +279,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 "id": "",
                 "liked_by": [],
                 "likes": 0,
-                "mediaPath": "https://reactnative.dev/img/tiny_logo.png",
+                "mediaPath": image.uri,
                 "username": state.username,
             })
             comments.data.count++
