@@ -235,7 +235,7 @@ export const getFeedbackPosts = functions.https.onCall(
         "Failed to fetch posts. Please pass in a userID. Expected body param: 'uid'"
       );
     }
-    const ref = await admin.firestore().collection("feedback_posts").get();
+    const ref = await admin.firestore().collection("feedback_posts").where('archived', '==', false).get();
 
     const docs = await Promise.all(
       ref.docs.map(async (doc) => {
