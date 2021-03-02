@@ -99,3 +99,17 @@ export const getUserInfo = functions.https.onCall(async (data, contxt) => {
     });
   return query;
 });
+
+export const saveFitbitToken = functions.https.onCall((data, context) => {
+  const token = data.access_token;
+  const uid = context.auth!.uid;
+  const usersRef = admin.firestore().collection("users");
+  let fitbitInfo = {fitbitInfo: {token: token, heartRate:'0', caloriesBurned:'0'}};
+  const query = usersRef
+    .doc(uid)
+    .update(fitbitInfo)
+    .then(() => {
+      return { message: "success" };
+    });
+  return query;
+});
