@@ -35,14 +35,15 @@ const FeedBackScreen = ({ navigation }) => {
 
   let dummyInfo = {
     item: {
-      username: 'Welcome',
-      caption: 'Please upload a post to get started',
-      mediaPath: "https://reactnative.dev/img/tiny_logo.png",
-      likes: 0,
-      comments_numer: 1
+      item: {
+        username: 'Welcome',
+        caption: 'Please upload a post to get started',
+        mediaPath: "https://reactnative.dev/img/tiny_logo.png",
+        likes: 0,
+        comments_numer: 1
+      }
     }
   }
-  console.log('Feedback', posts);
 
   return (
     <SafeAreaView style={styles.background}>
