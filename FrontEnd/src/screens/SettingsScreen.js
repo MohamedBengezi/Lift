@@ -1,14 +1,18 @@
-import React, { useEffect, useState,useContext } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import { View, Text, StyleSheet, Image, Linking } from "react-native";
 import { Input, Button } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 import colors from "../hooks/colors";
 import { Context as AuthContext } from "../context/AuthContext";
+import property from "../property.json";
+import qs from "qs";
+import * as WebBrowser from "expo-web-browser";
+import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 
 const SettingsScreen = () => {
-  const { signout } = useContext(AuthContext);
+  const { signout , saveFitbitToken} = useContext(AuthContext);
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -24,6 +28,7 @@ const SettingsScreen = () => {
     };
   });
 
+ 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -38,6 +43,30 @@ const SettingsScreen = () => {
       setImage(result.uri);
     }
   };
+
+  WebBrowser.maybeCompleteAuthSession();
+  let discovery = {
+  authorizationEndpoint: 'https://www.fitbit.com/oauth2/authorize',
+  };
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: property.client_id,
+      scopes: ["activity", "sleep"],
+      responseType: "token",
+      grant_type:"authorization_code",
+      // For usage in managed apps using the proxy
+      redirectUri: "exp://192.168.0.107:19000",
+    },
+    discovery
+  );
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { access_token } = response.params;
+      console.log(response);
+      saveFitbitToken(access_token);
+      }
+  }, [response]);
 
   return (
     <View style={styles.background}>
@@ -93,7 +122,7 @@ const SettingsScreen = () => {
       <Button
         title="Link Fitbit Account"
         onPress={() => {
-          console.log("Linked fitbit");
+          promptAsync();
         }}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}

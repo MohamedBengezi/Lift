@@ -3,6 +3,7 @@ const colors = {
   white: "#ffffff",
   black: "#000000",
   yellow: "#ffdc5b",
+  lighterGrey: "#ececec",
   lightGrey: "#d9d9d9",
   grey: "#f8f8f8",
   darkGrey: "#aaaaaa",

@@ -230,25 +230,18 @@ function sendXmlHttpRequest(data) {
   });
 }
 
-const uploadPost = (dispatch) => async ({
-  username,
-  caption,
-  type,
-  media,
-}) => {
+const uploadPost = (dispatch) => async ({ caption, type, media }) => {
   uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
-    
     const data = {
-      username: username,
       caption: caption,
-      mediaPath:path,
-      uid: firebaseApp.auth().currentUser.uid,
+      mediaPath: path,
     };
     let uploadPost;
     if (type === "feedback") {
       uploadPost = functions.httpsCallable("posts-createFeedbackPost");
     } else if (type === "regular") {
-      //route for regular posts.
+      //route for regular posts
+      uploadPost = functions.httpsCallable("posts-createGeneralPost");
     }
 
     uploadPost(data)
@@ -271,24 +264,101 @@ function getUserName(dispatch) {
   });
 }
 
-function getPosts(dispatch) {
-  let uid = firebaseApp.auth().currentUser.uid;
-  var getUserPosts = functions.httpsCallable("posts-getUserPosts");
-  getUserPosts({ uid: uid }).then((data) => {
-    console.log('getPosts: ', data);
-    dispatch({ type: "getUserPosts", posts: data });
-    return data;
-  }).catch((error) => {
-    showError(error, dispatch)
-  });
-}
+const getUserPost = () => {
+  return async (setPosts) => {
+    let uid = firebaseApp.auth().currentUser.uid;
+    var getUserPosts = functions.httpsCallable("posts-getUserPosts");
+    getUserPosts({ uid: uid })
+      .then((data) => {
+        setPosts(null);
+        setPosts(data.data.posts.slice(0, 5));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
-const getUserPost = (dispatch) => {
-  return () => {
-    let posts = getPosts(dispatch);
-    console.log('getUserPosts: ', posts);
-  }
-}
+const getFeedbackPosts = () => {
+  return async (setPosts) => {
+    var getFeedbackPosts = functions.httpsCallable("posts-getFeedbackPosts");
+    getFeedbackPosts()
+      .then((data) => {
+        setPosts(null);
+        setPosts(data.data.posts.slice(0, 15));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getGeneralPosts = () => {
+  return async (setPosts) => {
+    var getGeneralPosts = functions.httpsCallable("posts-getGeneralPosts");
+    getGeneralPosts()
+      .then((data) => {
+        setPosts(null);
+        setPosts(data.data.posts.slice(0, 15));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const manageLikes = () => {
+  return async (data) => {
+    var managePostLikes = functions.httpsCallable("posts-managePostLikes");
+    managePostLikes(data)
+      .then((res) => {
+        console.log("manageLikes", res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getReplies = () => {
+  return async (data, setComments) => {
+    var getReplies = functions.httpsCallable("posts-getReplies");
+    getReplies(data)
+      .then((res) => {
+        setComments(res);
+        return res;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const addReply = () => {
+  return async (data) => {
+    var addReply = functions.httpsCallable("posts-addReply");
+    addReply(data)
+      .then((res) => {
+        console.log("addReply", "posted comment to database");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const saveFitbitToken = () => {
+  return async (access_token) => {
+    var fitbitInfo = functions.httpsCallable("user-saveFitbitToken");
+    fitbitInfo({access_token})
+      .then((res) => {
+        console.log("Saved the token to the database");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 export const { Provider, Context } = createDataContext(
   authReducer,
@@ -300,7 +370,13 @@ export const { Provider, Context } = createDataContext(
     clearErrorMessage,
     tryLocalSignin,
     uploadPost,
-    getUserPost
+    getUserPost,
+    getFeedbackPosts,
+    getGeneralPosts,
+    manageLikes,
+    getReplies,
+    addReply,
+    saveFitbitToken,
   },
-  { token: null, errorMessage: "" }
+  { token: null, errorMessage: "", posts: {} }
 );

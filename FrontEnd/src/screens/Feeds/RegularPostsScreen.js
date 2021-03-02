@@ -1,19 +1,59 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import serverApi from "../../api/server";
+import React, { useState, useContext, useEffect } from "react";
+import {
+    StyleSheet,
+    SafeAreaView,
+    RefreshControl,
+    ScrollView
+} from 'react-native';
 import Feed from '../../components/Feed';
+import PostDetail from '../../components/PostDetails';
 
-const apiLink = serverApi.defaults.baseURL;
+import { Context as PostsContext } from '../../context/AuthContext';
+
+
+const wait = timeout => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
+
 
 const RegularPostsScreen = ({ navigation }) => {
-    url = apiLink + "/sample";
+    const { state, getGeneralPosts } = useContext(PostsContext);
+    const [posts, setPosts] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
 
-    let img = (navigation.getParam('image')) ? navigation.getParam('image') : null;
-    let title = (navigation.getParam('title')) ? navigation.getParam('title') : "this is a post";
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getGeneralPosts(setPosts);
+        wait(2000).then(() => {
+            setRefreshing(false);
+        });
+    }, []);
 
 
+    useEffect(() => {
+        getGeneralPosts(setPosts)
+    }, []);
+    let dummyInfo = {
+        item: {
+            username: 'Welcome',
+            caption: 'Please upload a post to get started',
+            mediaPath: "https://reactnative.dev/img/tiny_logo.png",
+            likes: 0,
+            comments_numer: 1
+        }
+    }
     return (
-        <Feed img={img} url={url} title={title} />
+        <SafeAreaView style={styles.background}>
+            <ScrollView
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+                {posts ? (
+                    <Feed posts={posts} isFeedback={false} />
+                ) : <PostDetail item={dummyInfo} showComments={false} />}
+            </ScrollView>
+        </SafeAreaView>
+
     );
 };
 

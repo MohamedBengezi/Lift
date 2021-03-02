@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -11,32 +11,35 @@ import { navigate } from "../navigationRef";
 import PostDetails from "./PostDetails";
 
 
-const Feed = ({ img, url, title }) => {
-  let image = null,
-    video = null,
-    count = 0;
-  if (img != null) {
-    image = [img, img, img, img];
-  } else {
-    video = [url, url, url, url];
-  }
+const Feed = ({ posts, isFeedback }) => {
+  const [listOfPosts, setList] = useState(null);
+
+  useEffect(() => {
+    if (listOfPosts) return;
+    setList(posts);
+
+  }, [listOfPosts]);
+
+  let count = 0;
 
   function renderPost(item) {
+
     return (
       <TouchableOpacity style={{ margin: 10, borderRadius: 4 }} onPress={() => onPress(item)}>
-        <PostDetails item={item} title={title} showComments={false} />
+        <PostDetails item={item} showComments={false} isFeedback={isFeedback} />
       </TouchableOpacity>
     )
   }
 
   const onPress = (item) => {
-    navigate("ViewPost", { item, title })
+    navigate("ViewPost", { item, isFeedback })
   }
 
   function ListOfPosts() {
+
     return (
       <FlatList
-        data={(image) ? image : video}
+        data={listOfPosts}
         renderItem={(item) => renderPost(item)}
         keyExtractor={() => "post:" + count++}
       />

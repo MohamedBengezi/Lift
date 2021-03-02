@@ -6,52 +6,62 @@ import { navigate } from "../navigationRef";
 import colors from '../hooks/colors';
 
 
-const Comment = ({ comment, index }) => { //pull out onPress and title properties from prop
+const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and title properties from prop
     const [liked, setLiked] = useState(false);
+    console.log('ddd', comment)
+    let profile_image = "https://reactnative.dev/img/tiny_logo.png";
+    let username = comment.username;
+    let cmt = comment.comment;
+    let mediaPath = (cmt.includes("Nice")) ? "https://cdn.stronglifts.com/wp-content/uploads/bench-press.jpg" : "https://www.mensjournal.com/wp-content/uploads/2018/02/squats-mens-journal-february-2018.jpg";
 
     const onPressLike = () => {
         setLiked(!liked);
     }
 
+    console.log('comment', mediaPath)
+
     return (
-        <View style={styles.commentContainer} key={index}>
-            <TouchableOpacity activeOpacity={0.8}
-                onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                <Image source={{ uri: comment.user.profile_image || '' }} style={styles.commentAvatar} />
-            </TouchableOpacity>
-            <View style={styles.postUsernameLocationContainer}>
-                <TouchableOpacity style={styles.postUsernameView}
-                    onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
-                    <Text style={styles.commentUsernameLabel}>{comment.user.name}</Text>
+        <View style={styles.container}>
+            <View style={styles.commentContainer} key={index}>
+                <TouchableOpacity activeOpacity={0.8}
+                    onPress={() => navigate('Profile', { isHeaderShow: true, username: username })}>
+                    <Image source={{ uri: profile_image || '' }} style={styles.commentAvatar} />
                 </TouchableOpacity>
-                <View style={styles.postLocationView}>
-                    <Text style={styles.commentContentLabel}>{comment.description}</Text>
+                <View style={styles.postUsernameLocationContainer}>
+                    <TouchableOpacity style={styles.postUsernameView}
+                        onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
+                        <Text style={styles.commentUsernameLabel}>{username}</Text>
+                    </TouchableOpacity>
+                    <View style={styles.postLocationView}>
+                        <Text style={styles.commentContentLabel}>{cmt}</Text>
+                    </View>
+                </View>
+                <View style={styles.like}>
+                    <Ionicons
+                        name={liked ? "md-heart" : "md-heart-empty"}
+                        color={liked ? colors.red : null} type="ionicon" size={25}
+                        onPress={() => onPressLike()}
+                    />
                 </View>
             </View>
-            <View style={styles.like}>
-                <Ionicons
-                    name={liked ? "md-heart" : "md-heart-empty"}
-                    color={liked ? colors.red : null} type="ionicon" size={25}
-                    onPress={() => onPressLike()}
-                />
-            </View>
+            {isFeedback ? <Image source={{ uri: mediaPath }} style={styles.image} /> : null}
+
         </View>
+
     );
 };
 
 const styles = StyleSheet.create({
-    sectionHeaderText: {
-        fontSize: 13,
-        color: colors.darkGrey,
-        marginVertical: 10,
-        marginLeft: 10
+    container: {
+        borderBottomWidth: 0.5,
+        borderColor: colors.darkGrey,
+        flexDirection: 'column',
+        height: 300
     },
     commentContainer: {
-        height: 50,
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: 0.5,
-        borderColor: colors.grey,
+
     },
     commentAvatar: {
         height: 25,
@@ -76,7 +86,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 15,
         flexDirection: 'column',
+    },
+    image: {
+        flex: 1,
+        resizeMode: 'contain',
+        marginBottom: 10,
+        marginTop: 10
     }
+
 });
 
 export default Comment;

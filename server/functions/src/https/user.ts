@@ -40,19 +40,13 @@ export const userNameExists = functions.https.onCall((data, context) => {
 });
 
 export const getUserName = functions.https.onCall((data, context) => {
-  const uid = data.uid;
+  const uid = context.auth!.uid;
   const usersRef = admin.firestore().collection("users");
   const query = usersRef
-    .where("uid", "==", uid)
+    .doc(uid)
     .get()
-    .then((querySnapshot) => {
-      let result = "";
-      querySnapshot.forEach(function (doc) {
-        result = doc.data().username;
-      });
-      return { username: result };
-    });
-
+    .then((doc)=>{return { username: doc.get("username") }})
+    
   return query;
 });
 
@@ -102,6 +96,20 @@ export const getUserInfo = functions.https.onCall(async (data, contxt) => {
         "unknown",
         `Something went wrong when accessing the database. Reason ${err}`
       );
+    });
+  return query;
+});
+
+export const saveFitbitToken = functions.https.onCall((data, context) => {
+  const token = data.access_token;
+  const uid = context.auth!.uid;
+  const usersRef = admin.firestore().collection("users");
+  let fitbitInfo = {fitbitInfo: {token: token, heartRate:'0', caloriesBurned:'0'}};
+  const query = usersRef
+    .doc(uid)
+    .update(fitbitInfo)
+    .then(() => {
+      return { message: "success" };
     });
   return query;
 });

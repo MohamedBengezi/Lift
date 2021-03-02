@@ -1,6 +1,6 @@
 import React from "react";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import { createStackNavigator, useHeaderHeight } from "react-navigation-stack";
+import { CardStyleInterpolators, createStackNavigator, useHeaderHeight } from "react-navigation-stack";
 import { createMaterialTopTabNavigator } from "react-navigation-tabs";
 import { StyleSheet, StatusBar, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -17,6 +17,8 @@ import ViewPostScreen from "./src/screens/ViewPostScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import LoadingScreen from "./src/screens/LoadingScreen";
 import colors from './src/hooks/colors';
+import WorkoutPlansScreen from "./src/screens/Plans/WorkoutPlansScreen";
+import ViewPlanScreen from "./src/screens/Plans/ViewPlanScreen";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -74,32 +76,10 @@ export default function RouteScreen() {
     },
   });
 
-  const PostStack = createStackNavigator({
-    Feed: FeedBackScreen,
-    ViewPost: ViewPostScreen,
-    Post: PostScreen
-  },
-    {
-      headerMode: 'none',
-      headerShown: false,
-    })
-
-  const ProfileStack = createStackNavigator({
-    Profile: ProfileScreen,
-    Settings: {
-      screen: SettingsScreen,
-      navigationOptions: {
-        headerMode: 'none',
-        headerShown: false,
-        animationEnabled: false
-
-      },
-    }
-  })
 
   const FeedStack = createMaterialTopTabNavigator({
     FeedbackFeed: {
-      screen: PostStack,
+      screen: FeedBackScreen,
       navigationOptions: {
         tabBarVisible: true,
         tabBarLabel: ({ tintColor, focused, item }) => {
@@ -131,6 +111,72 @@ export default function RouteScreen() {
       }
     });
 
+  const MainFlow = createMaterialTopTabNavigator(
+    {
+      Feed: {
+        screen: FeedStack,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: "Feed",
+          tabBarOptions: styleTab,
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            let iconName = `md-paper`;
+            return (
+              <Ionicons
+                name={iconName}
+                size={horizontal ? 20 : 25}
+                color={tintColor}
+                style={styles.container}
+              />
+            );
+          },
+        },
+      },
+      Main: {
+        screen: MainScreen,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: "Main",
+          tabBarOptions: styleTab,
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            let iconName = `md-camera`;
+            return (
+              <Ionicons
+                name={iconName}
+                size={horizontal ? 20 : 25}
+                color={tintColor}
+                style={styles.container}
+              />
+            );
+          },
+        },
+      },
+      Profile: {
+        screen: ProfileScreen,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: "Profile",
+          tabBarOptions: styleTab,
+          tabBarIcon: ({ focused, horizontal, tintColor }) => {
+            let iconName = `md-person`;
+            return (
+              <Ionicons
+                name={iconName}
+                size={horizontal ? 20 : 25}
+                color={tintColor}
+                style={styles.container}
+              />
+            );
+          },
+        },
+      },
+    },
+    {
+      initialRouteName: "Main",
+      tabBarPosition: "bottom",
+    }
+  );
+
   const switchNavigator = createSwitchNavigator({
     loading: LoadingScreen,
     loginFlow: createStackNavigator({
@@ -138,69 +184,55 @@ export default function RouteScreen() {
       Signup: SignupScreen,
       Signin: SigninScreen,
     }),
-    mainFlow: createMaterialTopTabNavigator(
+    mainFlow: createStackNavigator(
       {
-        Feed: {
-          screen: FeedStack,
-          navigationOptions: {
-            tabBarVisible: true,
-            tabBarLabel: "Feed",
-            tabBarOptions: styleTab,
-            tabBarIcon: ({ focused, horizontal, tintColor }) => {
-              let iconName = `md-paper`;
-              return (
-                <Ionicons
-                  name={iconName}
-                  size={horizontal ? 20 : 25}
-                  color={tintColor}
-                  style={styles.container}
-                />
-              );
-            },
-          },
-        },
         Main: {
-          screen: MainScreen,
+          screen: MainFlow,
           navigationOptions: {
-            tabBarVisible: true,
-            tabBarLabel: "Main",
-            tabBarOptions: styleTab,
-            tabBarIcon: ({ focused, horizontal, tintColor }) => {
-              let iconName = `md-camera`;
-              return (
-                <Ionicons
-                  name={iconName}
-                  size={horizontal ? 20 : 25}
-                  color={tintColor}
-                  style={styles.container}
-                />
-              );
-            },
+            headerMode: 'none',
+            headerShown: false,
+          }
+        },
+        WorkoutPlans: {
+          screen: WorkoutPlansScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerShown: false,
+            animationEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forRevealFromBottomAndroid
+          }
+        },
+        Settings: {
+          screen: SettingsScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerShown: false,
+            animationEnabled: true,
+            gestureDirection: 'vertical-inverted',
+            cardStyleInterpolator: CardStyleInterpolators.forRevealFromBottomAndroid
+
           },
         },
-        Profile: {
-          screen: ProfileStack,
+        ViewPost: {
+          screen: ViewPostScreen,
           navigationOptions: {
-            tabBarVisible: true,
-            tabBarLabel: "Profile",
-            tabBarOptions: styleTab,
-            tabBarIcon: ({ focused, horizontal, tintColor }) => {
-              let iconName = `md-person`;
-              return (
-                <Ionicons
-                  name={iconName}
-                  size={horizontal ? 20 : 25}
-                  color={tintColor}
-                  style={styles.container}
-                />
-              );
-            },
+            headerMode: 'none',
+            headerShown: false,
+            animationEnabled: true
+
           },
         },
-      },
-      {
-        initialRouteName: "Main",
-        tabBarPosition: "bottom",
+        Post: PostScreen,
+        ViewPlan: {
+          screen: ViewPlanScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: true,
+            animationEnabled: true
+
+          },
+        },
       }
     ),
   });

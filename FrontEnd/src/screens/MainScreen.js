@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableHighlight,
 } from "react-native";
+import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import { Video } from "expo-av";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
@@ -129,6 +130,12 @@ const MainScreen = ({ navigation }) => {
   //   return await media.blob();
   // };
 
+  const onSwipeUp = (gestureState) => {
+    console.log('swiped up')
+    navigation.navigate('WorkoutPlans');
+  }
+
+
   if (camera.hasCameraPermission === null) {
     return <View />;
   } else if (camera.hasCameraPermission === false) {
@@ -196,6 +203,7 @@ const MainScreen = ({ navigation }) => {
       );
     } else {
       return (
+
         <View style={{ flex: 1 }}>
           <Camera
             style={{ flex: 1 }}
@@ -241,8 +249,21 @@ const MainScreen = ({ navigation }) => {
                 <View />
               </TouchableHighlight>
             </View>
+            <GestureRecognizer
+              onSwipeUp={() => onSwipeUp()}
+              style={{ position: 'absolute', bottom: 0, left: "48%" }}
+            >
+              <Ionicons
+                name="md-arrow-up"
+                style={{
+                  ...styles.button,
+                  color: colors.white
+                }}
+              />
+            </GestureRecognizer>
           </Camera>
         </View>
+
       );
     }
   }
@@ -299,7 +320,6 @@ const styles = StyleSheet.create({
   },
   button: {
     fontSize: 32,
-    color: colors.black,
   },
   cameraButton: {
     justifyContent: "space-around",
