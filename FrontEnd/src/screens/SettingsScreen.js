@@ -1,14 +1,19 @@
-import React, { useEffect, useState,useContext } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import { View, Text, StyleSheet, Image, Linking } from "react-native";
 import { Input, Button } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 import colors from "../hooks/colors";
 import { Context as AuthContext } from "../context/AuthContext";
+import property from "../property.json";
+import qs from "qs";
+import * as WebBrowser from "expo-web-browser";
+import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
+import axios from "axios";
 
 const SettingsScreen = () => {
-  const { signout } = useContext(AuthContext);
+  const { signout, saveFitbitToken } = useContext(AuthContext);
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -38,6 +43,51 @@ const SettingsScreen = () => {
       setImage(result.uri);
     }
   };
+
+  WebBrowser.maybeCompleteAuthSession();
+  let discovery = {
+    authorizationEndpoint: "https://www.fitbit.com/oauth2/authorize",
+  };
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: property.client_id,
+      scopes: ["heartrate", "activity"],
+      responseType: "token",
+      redirectUri: "exp://192.168.0.107:19000",
+      expired_in:'2592000',
+      prompt:"consent"
+    },
+    discovery
+  );
+  const getHeartRate = async (token) => {
+    const api = axios.create({
+      baseURL:
+        "https://api.fitbit.com/1/user/-/activities/date",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const fitbitResponse = await api.get("/2021-3-2.json");
+    console.log(fitbitResponse.headers);
+    console.log("Line after api call");
+  };
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { access_token } = response.params;
+      console.log(response);
+      if (access_token) {
+        saveFitbitToken(access_token);
+      }
+
+      /**
+       * Test code to see if you can make an api call using axios and above access_token
+       */
+     // getHeartRate(access_token);
+
+      
+    }
+  }, [response]);
 
   return (
     <View style={styles.background}>
@@ -93,7 +143,7 @@ const SettingsScreen = () => {
       <Button
         title="Link Fitbit Account"
         onPress={() => {
-          console.log("Linked fitbit");
+          promptAsync();
         }}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}
