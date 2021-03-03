@@ -37,7 +37,7 @@ const wait = timeout => {
 };
 
 const Profile = (props) => {
-    const { state, getUserPost } = useContext(PostsContext);
+    const { state, getUserPost, getFitbitInfo } = useContext(PostsContext);
     const [propTypes, setPropTypes] = useState({ ...props });
     const [posts, setPosts] = useState(null);
     const [tabs, setTabs] = useState({
@@ -59,10 +59,10 @@ const Profile = (props) => {
     }, []);
 
     useEffect(() => {
-        getUserPost(setPosts)
-        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
-        LogBox.ignoreLogs(['Setting a timer'])
-
+        getUserPost(setPosts);
+        getFitbitInfo();
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+        LogBox.ignoreLogs(['Setting a timer']);
     }, []);
 
     const handleIndexChange = index => {

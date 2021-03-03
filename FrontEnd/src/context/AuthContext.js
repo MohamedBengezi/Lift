@@ -23,7 +23,12 @@ const authReducer = (state, action) => {
     case "getUserPosts":
       return { ...state, posts: action.posts };
     case "updateFitbit":
-      return {...state, heartRate:action.heartRate, calories: action.calories};
+      return {
+        ...state,
+        heartRate: action.heartRate,
+        calories: action.calories,
+        isFitbitLinked: action.isFitbitLinked,
+      };
     default:
       return state;
   }
@@ -407,10 +412,34 @@ const markPostAsAnswered = () => {
 const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
     var fitbitInfo = functions.httpsCallable("user-saveFitbitToken");
-    fitbitInfo({access_token})
+    fitbitInfo({ access_token })
       .then((res) => {
         console.log("Saved the token to the database");
-        dispatch({ type: "updateFitbit", heartRate: res.data.heartRate, calories: res.data.calories});
+        dispatch({
+          type: "updateFitbit",
+          heartRate: res.data.heartRate,
+          calories: res.data.calories,
+          isFitbitLinked: res.data.isLinked,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getFitbitInfo = (dispatch) => {
+  return async () => {
+    var getFitbitInfo = functions.httpsCallable("user-getFitbitInfo");
+    getFitbitInfo()
+      .then((res) => {
+        console.log("Got fitbitInfo");
+        dispatch({
+          type: "updateFitbit",
+          heartRate: res.data.heartRate,
+          calories: res.data.calories,
+          isFitbitLinked: res.data.isLinked,
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -439,6 +468,7 @@ export const { Provider, Context } = createDataContext(
     archivePost,
     markPostAsAnswered,
     saveFitbitToken,
+    getFitbitInfo
   },
   { token: null, errorMessage: "", posts: {} }
 );
