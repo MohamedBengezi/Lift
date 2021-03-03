@@ -22,7 +22,14 @@ import { functions } from "../../firebase";
 import * as ImagePicker from "expo-image-picker";
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
-    const { state, manageLikes, addReply, addComment, archivePost } = useContext(PostsContext);
+    const {
+        state,
+        manageLikes,
+        addReply,
+        addComment,
+        archivePost,
+        markPostAsAnswered
+    } = useContext(PostsContext);
 
     const [comments, setComments] = useState(null);
     const [image, setImage] = useState(null);
@@ -42,7 +49,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             timeSubmitted = timeSubmitted.substring(0, 15) + timeSubmitted.substring(timeSubmitted.length - 11, timeSubmitted.length);
         }
 
-        isAnswered = (isFeedback && comments && comments.data.count > 0);
+        isAnswered = (isFeedback && item.item.answered);
 
     } else {
         title = "title";
@@ -313,11 +320,14 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function renderAnsweredText() {
         return (
-            <View style={{ ...styles.answered, backgroundColor: (isAnswered ? colors.blue : colors.darkGrey) }}>
+            <TouchableOpacity
+                style={{ ...styles.answered, backgroundColor: (isAnswered ? colors.blue : colors.darkGrey) }}
+                onPress={() => markPostAsAnswered({ docID: postID })}
+            >
                 <Text style={{ fontWeight: 'bold' }}>
                     ANSWERED
                 </Text>
-            </View>
+            </TouchableOpacity>
         );
     }
 

@@ -388,6 +388,17 @@ const archivePost = () => {
   }
 }
 
+const markPostAsAnswered = () => {
+  return async (data) => {
+    var archivePost = functions.httpsCallable("posts-markPostAsAnswered");
+    console.log('marking post as answered', data.docID)
+    archivePost(data).then((res) => {
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+}
+
 export const { Provider, Context } = createDataContext(
   authReducer,
   {
@@ -406,7 +417,8 @@ export const { Provider, Context } = createDataContext(
     addReply,
     getComments,
     addComment,
-    archivePost
+    archivePost,
+    markPostAsAnswered
   },
   { token: null, errorMessage: "", posts: {} }
 );
