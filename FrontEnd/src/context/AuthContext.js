@@ -23,7 +23,12 @@ const authReducer = (state, action) => {
     case "getUserPosts":
       return { ...state, posts: action.posts };
     case "updateFitbit":
-      return {...state, heartRate:action.heartRate, calories: action.calories};
+      return {
+        ...state,
+        heartRate: action.heartRate,
+        calories: action.calories,
+        isFitbitLinked: action.isFitbitLinked,
+      };
     default:
       return state;
   }
@@ -336,61 +341,87 @@ const getReplies = () => {
   };
 };
 
-const addReply = () => async ({
-  docID, comment, media, isFeedback
-}) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, 'feedback').then((path) => {
+const addReply = () => async ({ docID, comment, media, isFeedback }) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, "feedback").then(
+    (path) => {
+      const data = {
+        docID: docID,
+        isFeedback: isFeedback,
+        comment: comment,
+        mediaPath: path,
+      };
 
-    const data = {
-      docID: docID,
-      isFeedback: isFeedback,
-      comment: comment,
-      mediaPath: path,
-    };
+      var addReply = functions.httpsCallable("posts-addReply");
 
-    var addReply = functions.httpsCallable("posts-addReply");
-
-
-    addReply(data)
-      .then(() => {
-        console.log("Uploaded post details to db");
-      })
-      .catch((error) => {
-        showError(error, dispatch);
-      });
-  });
-}
+      addReply(data)
+        .then(() => {
+          console.log("Uploaded post details to db");
+        })
+        .catch((error) => {
+          showError(error, dispatch);
+        });
+    }
+  );
+};
 
 const getComments = () => {
   return async (data, setComments) => {
     var getComments = functions.httpsCallable("posts-getComments");
-    getComments(data).then((res) => {
-      console.log('getComments', res);
-      setComments(res);
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    getComments(data)
+      .then((res) => {
+        console.log("getComments", res);
+        setComments(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
-    addComment(data).then((res) => {
-      console.log('addComment', res);
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
-   
+    addComment(data)
+      .then((res) => {
+        console.log("addComment", res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
 const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
     var fitbitInfo = functions.httpsCallable("user-saveFitbitToken");
-    fitbitInfo({access_token})
+    fitbitInfo({ access_token })
       .then((res) => {
         console.log("Saved the token to the database");
-        dispatch({ type: "updateFitbit", heartRate: res.data.heartRate, calories: res.data.calories});
+        dispatch({
+          type: "updateFitbit",
+          heartRate: res.data.heartRate,
+          calories: res.data.calories,
+          isFitbitLinked: res.data.isLinked,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getFitbitInfo = (dispatch) => {
+  return async () => {
+    var getFitbitInfo = functions.httpsCallable("user-getFitbitInfo");
+    getFitbitInfo()
+      .then((res) => {
+        console.log("Got fitbitInfo");
+        dispatch({
+          type: "updateFitbit",
+          heartRate: res.data.heartRate,
+          calories: res.data.calories,
+          isFitbitLinked: res.data.isLinked,
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -417,6 +448,7 @@ export const { Provider, Context } = createDataContext(
     getComments,
     addComment,
     saveFitbitToken,
+    getFitbitInfo
   },
   { token: null, errorMessage: "", posts: {} }
 );

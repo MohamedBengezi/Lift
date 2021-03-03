@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, Linking } from "react-native";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import { Input, Button } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -13,7 +13,9 @@ import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import axios from "axios";
 
 const SettingsScreen = () => {
-  const { signout, saveFitbitToken } = useContext(AuthContext);
+  const { signout, saveFitbitToken, state, getFitbitInfo } = useContext(
+    AuthContext
+  );
   const [image, setImage] = useState(null);
 
   useEffect(() => {
@@ -28,6 +30,10 @@ const SettingsScreen = () => {
       }
     };
   });
+  // getFitbitInfo();
+  
+
+  
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -36,9 +42,6 @@ const SettingsScreen = () => {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.cancelled) {
       setImage(result.uri);
     }
@@ -54,12 +57,12 @@ const SettingsScreen = () => {
       scopes: ["heartrate", "activity"],
       responseType: "token",
       redirectUri: "exp://192.168.0.107:19000",
-      extraParams: {expires_in:'31536000'},
-      prompt:"consent"
+      extraParams: { expires_in: "31536000" },
+      prompt: "consent",
     },
     discovery
   );
- /* console.log(request);
+  /* console.log(request);
   const getHeartRate = async (token) => {
     const api = axios.create({
       baseURL:
@@ -76,14 +79,13 @@ const SettingsScreen = () => {
   useEffect(() => {
     if (response?.type === "success") {
       const { access_token } = response.params;
-      console.log(response);
-      if (access_token) {
+      if (access_token && !state.isFitbitLinked) {
         saveFitbitToken(access_token);
       }
       /**
        * Test code to see if you can make an api call using axios and above access_token
        */
-     // getHeartRate(access_token);
+      // getHeartRate(access_token);
     }
   }, [response]);
 
@@ -141,7 +143,21 @@ const SettingsScreen = () => {
       <Button
         title="Link Fitbit Account"
         onPress={() => {
-          promptAsync();
+          if (!state.isFitbitLinked) {
+            promptAsync();
+          } else {
+            Alert.alert(
+              "Fitbit",
+              "Fitbit Account already linked!",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+              ],
+              { cancelable: true }
+            );
+          }
         }}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}

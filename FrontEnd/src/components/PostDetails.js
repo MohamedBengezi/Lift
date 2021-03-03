@@ -24,8 +24,6 @@ import * as ImagePicker from "expo-image-picker";
 const PostDetails = ({ item, showComments, isFeedback }) => {
     const { state, manageLikes, addReply, addComment } = useContext(PostsContext);
 
-    console.log('postdetails', item)
-
     const [comments, setComments] = useState(null);
     const [image, setImage] = useState(null);
 
