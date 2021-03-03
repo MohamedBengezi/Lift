@@ -22,19 +22,35 @@ import { functions } from "../../firebase";
 import * as ImagePicker from "expo-image-picker";
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
-    const { state, manageLikes, addReply, addComment } = useContext(PostsContext);
-
-    console.log('postdetails', item)
+    const {
+        state,
+        manageLikes,
+        addReply,
+        addComment,
+        archivePost,
+        markPostAsAnswered
+    } = useContext(PostsContext);
 
     const [comments, setComments] = useState(null);
     const [image, setImage] = useState(null);
 
-    let title, mediaPath, name, postID;
+    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted;
     if (item) {
         postID = item.item.id;
         name = item.item.username;
         title = item.item.caption;
         mediaPath = item.item.mediaPath
+        isUsersPost = (name == state.username);
+        isFeedback = item.item.answered;
+
+        timeSubmitted = "";
+        if (item.item.timeSubmitted) {
+            timeSubmitted = item.item.timeSubmitted;
+            timeSubmitted = timeSubmitted.substring(0, 15) + timeSubmitted.substring(timeSubmitted.length - 11, timeSubmitted.length);
+        }
+
+        isAnswered = (isFeedback && item.item.answered);
+
     } else {
         title = "title";
         mediaPath = "https://i.imgur.com/GfkNpVG.jpg";
@@ -264,11 +280,8 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         if (newComment === "") return;
 
         if (isFeedback) {
-            console.log('XXX image', image)
             addReply({ docID: postID, comment: newComment, media: image, isFeedback: isFeedback })
         } else {
-            console.log('XXX comment', image)
-
             addComment({ docID: postID, comment: newComment });
         }
 
@@ -279,7 +292,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 "id": "",
                 "liked_by": [],
                 "likes": 0,
-                "mediaPath": image.uri,
+                "mediaPath": (image.uri) ? image.uri : null,
                 "username": state.username,
             })
             comments.data.count++
@@ -293,6 +306,72 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         </View>
     );
 
+    function renderArchiveButton() {
+        return (
+            <Ionicons
+                name="md-trash"
+                color={colors.black}
+                size={25}
+                style={{ marginLeft: 10, marginRight: 5 }}
+                onPress={() => archivePost({ docID: postID })}
+            />
+        );
+    }
+
+    function renderAnsweredText() {
+        return (
+            <TouchableOpacity
+                style={{ ...styles.answered, backgroundColor: (isAnswered ? colors.blue : colors.darkGrey) }}
+                onPress={() => markPostAsAnswered({ docID: postID })}
+            >
+                <Text style={{ fontWeight: 'bold' }}>
+                    ANSWERED
+                </Text>
+            </TouchableOpacity>
+        );
+    }
+
+    function Header() {
+        return (
+            <View style={showComments ? styles.postDetailsHeader : styles.postHeader}>
+                <TouchableOpacity
+                    style={styles.displayImageContainer}
+                    onPress={() => console.log("Profile Image pressed")}
+                    activeOpacity={0.8}
+                >
+                    <Image
+                        style={styles.avatar}
+                        source={{
+                            uri: "https://reactnative.dev/img/tiny_logo.png",
+                        }}
+                    />
+                </TouchableOpacity>
+
+                <View style={styles.nameAndImageContainer}>
+                    <TouchableOpacity
+                        style={styles.avatarName}
+                        onPress={() => console.log("Profile pressed")}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={{ fontSize: 17 }}>{name}</Text>
+                        <View style={styles.postDate}>
+                            <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
+                                {timeSubmitted}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                    {isFeedback ? renderAnsweredText() : null}
+                    {isUsersPost ? renderArchiveButton() : null}
+                </View>
+
+
+            </View>
+        );
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={
@@ -303,35 +382,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                         showComments ? styles.postDetailsContainer : styles.postContainer
                     }
                 >
-                    <View style={showComments ? styles.postDetailsHeader : styles.postHeader}>
-                        <TouchableOpacity
-                            style={styles.displayImageContainer}
-                            onPress={() => console.log("Profile Image pressed")}
-                            activeOpacity={0.8}
-                        >
-                            <Image
-                                style={styles.avatar}
-                                source={{
-                                    uri: "https://reactnative.dev/img/tiny_logo.png",
-                                }}
-                            />
-                        </TouchableOpacity>
-
-                        <View style={styles.nameAndImageContainer}>
-                            <TouchableOpacity
-                                style={styles.avatarName}
-                                onPress={() => console.log("Profile pressed")}
-                                activeOpacity={0.8}
-                            >
-                                <Text style={{ fontSize: 17 }}>{name}</Text>
-                                <View style={styles.postDate}>
-                                    <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
-                                        5 mins ago{" "}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    <Header />
                     <View style={showComments ? styles.postDetailsImageCaptionContainer : styles.postImageCaptionContainer}>
                         <TouchableOpacity
                             onPress={() => navigate("ViewPost", { item })}
@@ -384,11 +435,17 @@ const styles = StyleSheet.create({
     postDetailsHeader: {
         height: 70,
         flexDirection: "row",
-        marginBottom: -40
+        marginBottom: -40,
+        justifyContent: "center",
+        alignItems: "center"
+
     },
     postHeader: {
         height: 70,
         flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
+
     },
     postImageCaptionContainer: {
         alignItems: "center",
@@ -422,7 +479,7 @@ const styles = StyleSheet.create({
     avatarName: {
         flex: 2,
         justifyContent: "center",
-        marginLeft: 5,
+        marginLeft: 10
     },
     location: {
         flex: 1,
@@ -464,6 +521,12 @@ const styles = StyleSheet.create({
         bottom: 0,
         width: "100%",
     },
+    answered: {
+        borderRadius: 4,
+        height: "40%",
+        justifyContent: "center",
+        padding: 5
+    }
 });
 
 export default PostDetails;

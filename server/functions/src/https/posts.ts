@@ -32,6 +32,8 @@ export const createFeedbackPost = functions.https.onCall(
         "Something unexpected happened."
       );
     }
+    var date = admin.firestore.Timestamp.now().toDate()
+    var time = admin.firestore.Timestamp.now().toDate().toLocaleTimeString('en-US')
 
     const query = feedBackPostsRef
       .add({
@@ -40,7 +42,7 @@ export const createFeedbackPost = functions.https.onCall(
         caption: caption,
         likes: 0,
         comments_number: 0,
-        timeSubmitted: admin.firestore.Timestamp.now(),
+        timeSubmitted: date + " at " + time,
         mediaPath: mediaPath,
         archived: false,
         answered: false,
@@ -94,7 +96,8 @@ export const createGeneralPost = functions.https.onCall(
         "Something unexpected happened."
       );
     }
-
+    var date = admin.firestore.Timestamp.now().toDate()
+    var time = admin.firestore.Timestamp.now().toDate().toLocaleTimeString('en-US')
     const query = generalPostsRef
       .add({
         uid: uid,
@@ -102,7 +105,7 @@ export const createGeneralPost = functions.https.onCall(
         caption: caption,
         likes: 0,
         comments_number: 0,
-        timeSubmitted: admin.firestore.Timestamp.now(),
+        timeSubmitted: date + ' at ' + time,
         mediaPath: mediaPath,
         liked_by: [],
         disliked_by: [],

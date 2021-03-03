@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   TouchableHighlight,
+  Alert
 } from "react-native";
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import { Video } from "expo-av";
@@ -14,6 +15,7 @@ import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
+import * as MediaLibrary from 'expo-media-library';
 import colors from "../hooks/colors";
 
 const MainScreen = ({ navigation }) => {
@@ -135,6 +137,24 @@ const MainScreen = ({ navigation }) => {
     navigation.navigate('WorkoutPlans');
   }
 
+  const saveToCameraRoll = () => {
+    var media = (image != null) ? image : video;
+    MediaLibrary.saveToLibraryAsync(media.uri).then(() => {
+      Alert.alert(
+        "Media Saved!",
+        "Check your camera roll",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    })
+  }
 
   if (camera.hasCameraPermission === null) {
     return <View />;
@@ -161,9 +181,9 @@ const MainScreen = ({ navigation }) => {
           />
 
           <Ionicons
-            name="md-backspace"
-            onPress={() => setImage(null)}
-            style={styles.cancel}
+            name="md-save"
+            onPress={() => saveToCameraRoll()}
+            style={styles.save}
           />
         </View>
       );
@@ -198,6 +218,12 @@ const MainScreen = ({ navigation }) => {
             name="md-backspace"
             onPress={() => setVideo(null)}
             style={styles.cancel}
+          />
+
+          <Ionicons
+            name="md-save"
+            onPress={() => saveToCameraRoll()}
+            style={styles.save}
           />
         </View>
       );
@@ -300,6 +326,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     top: 40,
+    color: colors.white,
+    fontWeight: "600",
+    fontSize: 28,
+  },
+  save: {
+    position: "absolute",
+    right: 20,
+    bottom: 60,
     color: colors.white,
     fontWeight: "600",
     fontSize: 28,
