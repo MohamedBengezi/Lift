@@ -43,7 +43,7 @@ export const createFeedbackPost = functions.https.onCall(
         timeSubmitted: admin.firestore.Timestamp.now(),
         mediaPath: mediaPath,
         archived: false,
-        answered: true,
+        answered: false,
         liked_by: [],
         disliked_by: [],
         isImage: type == "application/jpeg",
