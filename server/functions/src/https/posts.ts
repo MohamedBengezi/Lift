@@ -330,7 +330,6 @@ export const addReply = functions.https.onCall(async (data, context) => {
   const comment = data.comment;
   const mediaPath = data.mediaPath;
   const docID = data.docID;
-  const isFeedback = data.isFeedback;
   const uid = context.auth!.uid;
 
   if (docID === null || docID === undefined) {
@@ -363,36 +362,19 @@ export const addReply = functions.https.onCall(async (data, context) => {
     );
   }
 
-  let replyData = {};
-  let replyRef = null;
-  if (isFeedback) {
-    replyData = {
-      username: username,
-      comment: comment,
-      mediaPath: mediaPath,
-      likes: 0,
-      liked_by: [],
-      disliked_by: [],
-    };
-    replyRef = admin
-      .firestore()
-      .collection("feedback_posts")
-      .doc(docID)
-      .collection("replies");
-  } else {
-    replyData = {
-      username: username,
-      comment: comment,
-      likes: 0,
-      liked_by: [],
-      disliked_by: [],
-    };
-    replyRef = admin
-      .firestore()
-      .collection("general_posts")
-      .doc(docID)
-      .collection("replies");
-  }
+  const replyData = {
+    username: username,
+    comment: comment,
+    mediaPath: mediaPath,
+    likes: 0,
+    liked_by: [],
+    disliked_by: [],
+  };
+  const replyRef = admin
+    .firestore()
+    .collection("feedback_posts")
+    .doc(docID)
+    .collection("replies");
 
   await replyRef.add(replyData);
 });
