@@ -54,11 +54,12 @@ const SettingsScreen = () => {
       scopes: ["heartrate", "activity"],
       responseType: "token",
       redirectUri: "exp://192.168.0.107:19000",
-      expired_in:'2592000',
+      extraParams: {expires_in:'31536000'},
       prompt:"consent"
     },
     discovery
   );
+ /* console.log(request);
   const getHeartRate = async (token) => {
     const api = axios.create({
       baseURL:
@@ -70,7 +71,7 @@ const SettingsScreen = () => {
     const fitbitResponse = await api.get("/2021-3-2.json");
     console.log(fitbitResponse.headers);
     console.log("Line after api call");
-  };
+  }; */
 
   useEffect(() => {
     if (response?.type === "success") {
@@ -79,13 +80,10 @@ const SettingsScreen = () => {
       if (access_token) {
         saveFitbitToken(access_token);
       }
-
       /**
        * Test code to see if you can make an api call using axios and above access_token
        */
      // getHeartRate(access_token);
-
-      
     }
   }, [response]);
 
