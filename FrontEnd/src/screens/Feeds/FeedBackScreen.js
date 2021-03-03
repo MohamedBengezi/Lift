@@ -44,6 +44,7 @@ const FeedBackScreen = ({ navigation }) => {
       }
     }
   }
+  
 
   return (
     <SafeAreaView style={styles.background}>
