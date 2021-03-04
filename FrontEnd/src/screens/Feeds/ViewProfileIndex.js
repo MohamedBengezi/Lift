@@ -7,7 +7,6 @@ import ViewProfile from "./ViewProfileScreen";
 
 const ViewProfileScreen = ({ navigation }) => {
     let username = navigation.getParam('username');
-    console.log("XXX", username)
     contactData.name = username;
     return <ViewProfile {...contactData} />;
 };
