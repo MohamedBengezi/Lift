@@ -19,6 +19,7 @@ import LoadingScreen from "./src/screens/LoadingScreen";
 import colors from './src/hooks/colors';
 import WorkoutPlansScreen from "./src/screens/Plans/WorkoutPlansScreen";
 import ViewPlanScreen from "./src/screens/Plans/ViewPlanScreen";
+import ViewProfileScreen from "./src/screens/Feeds/ViewProfileIndex";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -233,6 +234,16 @@ export default function RouteScreen() {
 
           },
         },
+        ViewProfile: {
+          screen: ViewProfileScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: true,
+            animationEnabled: true
+
+          },
+        }
       }
     ),
   });
