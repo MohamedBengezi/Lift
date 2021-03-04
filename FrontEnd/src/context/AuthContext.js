@@ -22,6 +22,13 @@ const authReducer = (state, action) => {
       return { ...state, username: action.username };
     case "getUserPosts":
       return { ...state, posts: action.posts };
+    case "updateFitbit":
+      return {
+        ...state,
+        heartRate: action.heartRate,
+        calories: action.calories,
+        isFitbitLinked: action.isFitbitLinked,
+      };
     default:
       return state;
   }
@@ -230,13 +237,8 @@ function sendXmlHttpRequest(data) {
   });
 }
 
-const uploadPost = (dispatch) => async ({
-  caption,
-  type,
-  media,
-}) => {
+const uploadPost = (dispatch) => async ({ caption, type, media }) => {
   uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
-
     const data = {
       caption: caption,
       mediaPath: path,
@@ -269,67 +271,75 @@ function getUserName(dispatch) {
   });
 }
 
-
 const getUserPost = () => {
   return async (setPosts) => {
     let uid = firebaseApp.auth().currentUser.uid;
     var getUserPosts = functions.httpsCallable("posts-getUserPosts");
-    getUserPosts({ uid: uid }).then((data) => {
-      setPosts(null);
-      setPosts(data.data.posts.slice(0, 5));
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    getUserPosts({ uid: uid })
+      .then((data) => {
+        setPosts(null);
+        setPosts(data.data.posts.slice(0, 5));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const getFeedbackPosts = () => {
   return async (setPosts) => {
     var getFeedbackPosts = functions.httpsCallable("posts-getFeedbackPosts");
-    getFeedbackPosts().then((data) => {
-      setPosts(null)
-      setPosts(data.data.posts.slice(0, 15));
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    getFeedbackPosts()
+      .then((data) => {
+        setPosts(null);
+        setPosts(data.data.posts.slice(0, 15));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const getGeneralPosts = () => {
   return async (setPosts) => {
     var getGeneralPosts = functions.httpsCallable("posts-getGeneralPosts");
-    getGeneralPosts().then((data) => {
-      setPosts(null)
-      setPosts(data.data.posts.slice(0, 15));
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
-
+    getGeneralPosts()
+      .then((data) => {
+        setPosts(null);
+        setPosts(data.data.posts.slice(0, 15));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const manageLikes = () => {
   return async (data) => {
     var managePostLikes = functions.httpsCallable("posts-managePostLikes");
-    managePostLikes(data).then((res) => {
-      console.log('manageLikes', res);
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    managePostLikes(data)
+      .then((res) => {
+        console.log("called manageLikes");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const getReplies = () => {
   return async (data, setComments) => {
     var getReplies = functions.httpsCallable("posts-getReplies");
-    getReplies(data).then((res) => {
-      setComments(res);
-      return res;
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    getReplies(data)
+      .then((res) => {
+        setComments(res);
+        return res;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const addReply = () => async ({
   docID, comment, media, isFeedback
@@ -398,6 +408,44 @@ const markPostAsAnswered = () => {
     });
   }
 }
+   
+const saveFitbitToken = (dispatch) => {
+  return async (access_token) => {
+    var fitbitInfo = functions.httpsCallable("user-saveFitbitToken");
+    fitbitInfo({ access_token })
+      .then((res) => {
+        console.log("Saved the token to the database");
+        dispatch({
+          type: "updateFitbit",
+          heartRate: res.data.heartRate,
+          calories: res.data.calories,
+          isFitbitLinked: res.data.isLinked,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getFitbitInfo = (dispatch) => {
+  return async () => {
+    var getFitbitInfo = functions.httpsCallable("user-getFitbitInfo");
+    getFitbitInfo()
+      .then((res) => {
+        console.log("Got fitbitInfo");
+        dispatch({
+          type: "updateFitbit",
+          heartRate: res.data.heartRate,
+          calories: res.data.calories,
+          isFitbitLinked: res.data.isLinked,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 export const { Provider, Context } = createDataContext(
   authReducer,
@@ -418,7 +466,9 @@ export const { Provider, Context } = createDataContext(
     getComments,
     addComment,
     archivePost,
-    markPostAsAnswered
+    markPostAsAnswered,
+    saveFitbitToken,
+    getFitbitInfo
   },
   { token: null, errorMessage: "", posts: {} }
 );
