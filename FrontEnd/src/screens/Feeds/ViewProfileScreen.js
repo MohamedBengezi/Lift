@@ -23,6 +23,7 @@ import Feed from '../../components/Feed'
 import colors from '../../hooks/colors'
 import { Context as PostsContext } from '../../context/AuthContext';
 import { firebaseApp, functions } from "../../../firebase";
+import { Button } from "react-native-elements";
 
 const wait = timeout => {
     return new Promise(resolve => {
@@ -34,6 +35,7 @@ const ViewProfile = (props) => {
     const { state, getUserPost } = useContext(PostsContext);
     const [propTypes, setPropTypes] = useState({ ...props });
     const [posts, setPosts] = useState(null);
+    const [isFollowing, setIsFollowing] = useState(false);
     const [tabs, setTabs] = useState({
         index: 0,
         routes: [
@@ -53,6 +55,7 @@ const ViewProfile = (props) => {
     }, []);
 
     useEffect(() => {
+        setIsFollowing(true)
         getUserPost(setPosts)
         LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
         LogBox.ignoreLogs(['Setting a timer'])
@@ -132,27 +135,28 @@ const ViewProfile = (props) => {
             </View>
         )
     }
+
+    function FollowButton() {
+        return (
+            <Button
+                title={isFollowing ? "Unfollow" : "Follow"}
+                onPress={() => {
+                    setIsFollowing(!isFollowing);
+                }}
+                buttonStyle={isFollowing ? styles.button : { ...styles.button, backgroundColor: colors.blue }}
+                titleStyle={styles.buttonText}
+                containerStyle={styles.containerStyle}
+            />
+        );
+    }
     return (
         <SafeAreaView>
             <ScrollView style={styles.scroll}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
                 <View style={[styles.container]}>
                     <View style={styles.cardContainer}>
-                        <TouchableOpacity style={styles.settings} onPress={() => navigate('Settings')}>
-
-                        </TouchableOpacity>
                         {renderContactHeader()}
-                        <TouchableOpacity
-                            style={{ ...styles.answered, backgroundColor: (false ? colors.blue : colors.darkGrey) }}
-                            onPress={() => {
-                                setAnswered(!answered);
-                                markPostAsAnswered({ docID: postID });
-                            }}
-                        >
-                            <Text style={{ fontWeight: 'bold' }}>
-                                ANSWERED
-                        </Text>
-                        </TouchableOpacity>
+                        <FollowButton />
                         <TabView
                             style={[styles.tabContainer]}
                             navigationState={tabs}
@@ -250,13 +254,20 @@ const styles = StyleSheet.create({
         margin: 15,
         marginTop: StatusBar.currentHeight
     },
-    answered: {
-        borderRadius: 4,
-        height: "5%",
-        width: "20%",
-        justifyContent: "center",
-        alignItems: 'center',
-        padding: 5
-    }
+    button: {
+        backgroundColor: colors.yellow,
+        width: "30%",
+        borderRadius: 5,
+    },
+    containerStyle: {
+        alignItems: "center",
+        marginBottom: "5%",
+        flex: 0.15,
+    },
+    buttonText: {
+        color: colors.black,
+        flex: 1,
+        fontSize: 15,
+    },
 });
 export default ViewProfile;
