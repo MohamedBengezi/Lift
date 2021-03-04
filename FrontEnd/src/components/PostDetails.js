@@ -323,8 +323,11 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     function renderAnsweredText() {
         return (
             <TouchableOpacity
-                style={{ ...styles.answered, backgroundColor: (isAnswered ? colors.blue : colors.darkGrey) }}
-                onPress={() => markPostAsAnswered({ docID: postID })}
+                style={{ ...styles.answered, backgroundColor: (answered ? colors.blue : colors.darkGrey) }}
+                onPress={() => {
+                    setAnswered(!answered);
+                    markPostAsAnswered({ docID: postID });
+                }}
             >
                 <Text style={{ fontWeight: 'bold' }}>
                     ANSWERED
