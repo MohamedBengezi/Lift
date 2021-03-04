@@ -175,7 +175,7 @@ export const saveFitbitToken = functions.https.onCall(async (data, context) => {
         message: "success",
         heartRate: restingHeartRate,
         calories: caloriesBurned,
-        isLinked: true
+        isLinked: true,
       };
     });
   return query;
@@ -206,3 +206,84 @@ export const getFitbitInfo = functions.https.onCall((data, context) => {
     });
   return query;
 });
+
+/**
+ * Scheduled function to update fitbit info in users database
+ */
+export const updateFitbitInfo = functions.pubsub
+  .schedule("every 15 minutes")
+  .onRun(async (context) => {
+    const usersRef = admin.firestore().collection("users");
+    var tokensUid: { token: any; uid: string }[] = [];
+    const query = await usersRef.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().fitbitInfo.isLinked) {
+          const token = doc.data().fitbitInfo.token;
+          const obj = {
+            token: token,
+            uid: doc.id,
+          };
+          tokensUid.push(obj);
+        }
+      });
+      return null;
+    });
+    for (var i = 0; i < tokensUid.length; i++) {
+      var val = tokensUid[i];
+      try {
+        const heartRate = await getRestingHeartRate(val.token);
+        const caloriesBurned = await getCaloriesBurned(val.token);
+        var fitbitInfo = {};
+        if (heartRate && caloriesBurned) {
+          fitbitInfo = {
+            "fitbitInfo.heartRate": heartRate,
+            "fitbitInfo.caloriesBurned": caloriesBurned,
+          };
+        } else if (heartRate) {
+          fitbitInfo = {
+            "fitbitInfo.heartRate": heartRate,
+          };
+        } else if (caloriesBurned) {
+          //Usually Fitbit always return this as 0 not undefined
+          fitbitInfo = {
+            "fitbitInfo.caloriesBurned": caloriesBurned,
+          };
+        }
+
+        usersRef
+          .doc(val.uid)
+          .update(fitbitInfo)
+          .then((res) => {
+            return null;
+          })
+          .catch((err) => {
+            console.error(err);
+            fitbitInfo = {
+              "fitbitInfo.isLinked": false,
+            };
+            usersRef
+              .doc(val.uid)
+              .update(fitbitInfo)
+              .then((res) => {
+                return "token expired or fitbit api call failed";
+              })
+              .catch((err2) => {
+                console.error(err2);
+              });
+          });
+      } catch (error) {
+        console.error(error);
+        usersRef
+          .doc(val.uid)
+          .update({ "fitbitInfo.isLinked": false })
+          .then((res) => {
+            return "token expired or fitbit api call failed";
+          })
+          .catch((err2) => {
+            console.error(err2);
+          });
+      }
+    }
+
+    return query;
+  });

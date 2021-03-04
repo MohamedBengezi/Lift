@@ -53,6 +53,7 @@ const Profile = (props) => {
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         getUserPost(setPosts);
+        getFitbitInfo();
         wait(2000).then(() => {
             setRefreshing(false);
         });
