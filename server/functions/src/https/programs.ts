@@ -42,4 +42,21 @@ export const createWorkoutPlan = functions.https.onCall(
         return query;
     }
 );
+
+export const deleteWorkoutPlan = functions.https.onCall(
+    async (data, context) => {
+      const docID = data.docID;
+  
+      try {
+        const planRef = admin.firestore().collection("workout_plans").doc(docID);
+        await planRef.delete();
+      } catch (err) {
+        throw new functions.https.HttpsError(
+          "internal",
+          "Something unexpected happened."
+        );
+      }
+    }
+  );
+  
   
