@@ -238,7 +238,7 @@ function sendXmlHttpRequest(data) {
 }
 
 const uploadPost = (dispatch) => async ({ caption, type, media, isVideo }) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid,type).then((path) => {
     const data = {
       caption: caption,
       mediaPath: path,
