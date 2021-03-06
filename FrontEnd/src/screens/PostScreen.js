@@ -53,10 +53,10 @@ const PostScreen = ({ navigation }) => {
     };
 
     if (video != null) {
-      uploadPost({ ...data, media: video });
+      uploadPost({ ...data, media: video, isVideo: true });
       navigation.navigate("FeedbackFeed", { video, title });
     } else {
-      uploadPost({ ...data, media: image });
+      uploadPost({ ...data, media: image, isVideo: false });
       navigation.navigate("FeedbackFeed", { image, title });
     }
   };

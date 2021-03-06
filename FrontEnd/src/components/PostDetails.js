@@ -35,8 +35,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     const [image, setImage] = useState(null);
     const [answered, setAnswered] = useState(false);
 
-    console.log('postdetails', item)
-    let title, mediaPath, name, postID, isUsersPost, timeSubmitted;
+    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
     if (item) {
         postID = item.item.id;
         name = item.item.username;
@@ -44,7 +43,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         mediaPath = item.item.mediaPath
         isUsersPost = (name == state.username);
         isFeedback = item.item.isFeedback;
-
+        isImage = item.item.isImage;
         timeSubmitted = "";
         if (item.item.timeSubmitted) {
             timeSubmitted = item.item.timeSubmitted;
@@ -56,7 +55,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         mediaPath = "https://i.imgur.com/GfkNpVG.jpg";
 
     }
-
     useEffect(() => {
         let mounted = true;
         let commentsOrReplies = (isFeedback) ? "posts-getReplies" : "posts-getComments";
@@ -85,7 +83,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         };
         return () => mounted = false;
     }, []);
-
     let collection = (isFeedback) ? "feedback_posts" : "general_posts";
 
     const [likedOrCommented, setLikedOrCommented] = useState({
@@ -395,11 +392,11 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                             onPress={() => navigate("ViewPost", { item })}
                             activeOpacity={1}
                         >
-                            {mediaPath ? (
+                            {isImage ? (
                                 <ImageElement image={mediaPath} title={title} />
                             ) : (
-                                    <VideoElement video={item} title={title} />
-                                )}
+                                <VideoElement video={mediaPath} title={title} />
+                            )}
                         </TouchableOpacity>
                     </View>
                     {likes}
