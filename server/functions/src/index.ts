@@ -3,6 +3,7 @@ import * as admin from "firebase-admin";
 
 import * as posts from "./https/posts";
 import * as user from "./https/user";
+import * as programs from "./https/programs";
 
 const serviceAccount = require("../uplift-e96ab-firebase-adminsdk-fxouf-8b4d87f004.json");
 
@@ -18,4 +19,4 @@ const helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-export = { posts, helloWorld, user };
+export = { posts, helloWorld, user, programs };

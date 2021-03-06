@@ -19,6 +19,7 @@ export const addUserToDB = functions.https.onCall((data, context) => {
       following: 0,
       followers: 0,
       fitbitInfo: fitbitInfo,
+      workout_plans: [],
     })
     .then(() => {
       return { message: "success" };
@@ -175,7 +176,7 @@ export const saveFitbitToken = functions.https.onCall(async (data, context) => {
         message: "success",
         heartRate: restingHeartRate,
         calories: caloriesBurned,
-        isLinked: true
+        isLinked: true,
       };
     });
   return query;
