@@ -237,11 +237,12 @@ function sendXmlHttpRequest(data) {
   });
 }
 
-const uploadPost = (dispatch) => async ({ caption, type, media }) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid).then((path) => {
+const uploadPost = (dispatch) => async ({ caption, type, media, isVideo }) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid,type).then((path) => {
     const data = {
       caption: caption,
       mediaPath: path,
+      isVideo: isVideo
     };
     let uploadPost;
     if (type === "feedback") {
@@ -408,7 +409,7 @@ const markPostAsAnswered = () => {
     });
   }
 }
-   
+
 const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
     var fitbitInfo = functions.httpsCallable("user-saveFitbitToken");
