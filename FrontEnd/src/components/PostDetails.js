@@ -34,7 +34,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     const [comments, setComments] = useState(null);
     const [image, setImage] = useState(null);
 
-    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted;
+    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
     if (item) {
         postID = item.item.id;
         name = item.item.username;
@@ -42,6 +42,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         mediaPath = item.item.mediaPath
         isUsersPost = (name == state.username);
         isFeedback = item.item.answered;
+        isImage = item.item.isImage;
 
         timeSubmitted = "";
         if (item.item.timeSubmitted) {
@@ -388,11 +389,11 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                             onPress={() => navigate("ViewPost", { item })}
                             activeOpacity={1}
                         >
-                            {mediaPath ? (
+                            {isImage ? (
                                 <ImageElement image={mediaPath} title={title} />
                             ) : (
-                                    <VideoElement video={item} title={title} />
-                                )}
+                                <VideoElement video={item} title={title} />
+                            )}
                         </TouchableOpacity>
                     </View>
                     {likes}
