@@ -41,7 +41,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         title = item.item.caption;
         mediaPath = item.item.mediaPath
         isUsersPost = (name == state.username);
-        isFeedback = item.item.answered;
+        isFeedback = item.item.isFeedback;
         isImage = item.item.isImage;
         timeSubmitted = "";
         if (item.item.timeSubmitted) {
@@ -56,7 +56,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         mediaPath = "https://i.imgur.com/GfkNpVG.jpg";
 
     }
-
     useEffect(() => {
         let mounted = true;
         let commentsOrReplies = (isFeedback) ? "posts-getReplies" : "posts-getComments";
@@ -83,7 +82,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         };
         return () => mounted = false;
     }, []);
-
     let collection = (isFeedback) ? "feedback_posts" : "general_posts";
 
     const [likedOrCommented, setLikedOrCommented] = useState({
