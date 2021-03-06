@@ -43,7 +43,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         isUsersPost = (name == state.username);
         isFeedback = item.item.answered;
         isImage = item.item.isImage;
-
+        console.log('XXX, ', title, ' ', isImage)
         timeSubmitted = "";
         if (item.item.timeSubmitted) {
             timeSubmitted = item.item.timeSubmitted;
@@ -392,7 +392,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                             {isImage ? (
                                 <ImageElement image={mediaPath} title={title} />
                             ) : (
-                                <VideoElement video={item} title={title} />
+                                <VideoElement video={mediaPath} title={title} />
                             )}
                         </TouchableOpacity>
                     </View>

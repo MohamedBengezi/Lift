@@ -16,7 +16,7 @@ const VideoElement = ({ title, video }) => {
                   <title></title>
               </head>
               <body>
-              <video preload autoplay="false" src=${video.item} controls="true" style="width: 50; height: 150">
+              <video preload autoplay="false" src=${video} controls="true" style="width: 50; height: 150">
               </video>
               </body>
               </html>`,
