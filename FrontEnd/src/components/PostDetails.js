@@ -43,7 +43,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         isUsersPost = (name == state.username);
         isFeedback = item.item.answered;
         isImage = item.item.isImage;
-        console.log('XXX, ', title, ' ', isImage)
         timeSubmitted = "";
         if (item.item.timeSubmitted) {
             timeSubmitted = item.item.timeSubmitted;
