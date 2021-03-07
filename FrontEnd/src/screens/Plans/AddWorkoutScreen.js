@@ -10,13 +10,13 @@ const AddWorkoutScreen = ({ navigation }) => {
     const [workout, setWorkout] = useState({
         name: "",
         duration_type: "mins",
-        duration: "0 hours",
-        subduration: "0 mins "
+        duration: "1 hours",
+        subduration: "1 mins "
     });
 
     let plan = navigation.getParam('plan');
     let day = navigation.getParam('day');
-    let workouts = day.workouts;
+    let exercises = day.exercises;
 
     var items = [];
 
@@ -36,7 +36,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                     <Text style={styles.label}>Sets:  </Text>
                     <DropDownPicker
                         items={items}
-                        defaultValue={2}
+                        defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
                             justifyContent: 'flex-start', color: colors.black
@@ -50,7 +50,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                     <Text style={styles.label}>Reps:  </Text>
                     <DropDownPicker
                         items={items.slice(0, 15)}
-                        defaultValue={2}
+                        defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
                             justifyContent: 'flex-start', color: colors.black
@@ -76,7 +76,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                     <Text style={styles.label}>Hour(s):  </Text>
                     <DropDownPicker
                         items={items}
-                        defaultValue={2}
+                        defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
                             justifyContent: 'flex-start', color: colors.black
@@ -89,8 +89,8 @@ const AddWorkoutScreen = ({ navigation }) => {
                 <View style={styles.labelAndDropView}>
                     <Text style={styles.label}>Min(s):  </Text>
                     <DropDownPicker
-                        items={items.slice(0, 15)}
-                        defaultValue={2}
+                        items={items}
+                        defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
                             justifyContent: 'flex-start', color: colors.black
@@ -138,9 +138,9 @@ const AddWorkoutScreen = ({ navigation }) => {
             <Button
                 title="SAVE WORKOUT"
                 onPress={() => {
-                    let workut = [workout.name, workout.duration, workout.subduration]
-                    workouts.push(workut)
-                    day.workouts = workouts
+                    let exercise = workout.name + "," + workout.duration_type + "," + workout.duration + "," + workout.subduration
+                    exercises.push(exercise)
+                    day.exercises = exercises
                     navigate('AddPlan', { day: day, plan: plan });
                 }}
                 buttonStyle={styles.create}

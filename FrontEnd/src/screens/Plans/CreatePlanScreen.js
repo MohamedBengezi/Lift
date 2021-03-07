@@ -33,23 +33,23 @@ const CreatePlanScreen = ({ navigation }) => {
 
   const onSubmit = () => {
     plan.tags = plan.tags.split(',');
-    //converting workouts double array for each day to object of arrays
-    //because firebase doesn't like nested arrays
-    for (var i = 0; i < plan.days.length; i++) {
-      plan.days[i].workouts = plan.days[i].workouts.reduce((accumulator, currentValue) => {
-        accumulator[currentValue] = currentValue;
-        return accumulator;
-      }, {});
-    }
-
     createWorkoutPlan(plan);
-    navigate('WorkoutPlans')
+    navigate('WorkoutPlans');
   };
 
   function renderPlan(item) {
     if (!item) return null;
+
+    //turning each exercise string into an array for DayWorkout to render
+    let workouts = item.item.exercises.slice()
+    for (var i = 0; i < workouts.length; i++) {
+      if (typeof workouts[i] === 'string') {
+        workouts[i] = workouts[i].split(",")
+        workouts[i].splice(1, 1);
+      }
+    }
     return (
-      <DayWorkout weekday={item.item.name} program={item.item.workouts} />
+      <DayWorkout weekday={item.item.dayoftheweek} program={workouts} />
     );
   }
 
@@ -145,7 +145,7 @@ const CreatePlanScreen = ({ navigation }) => {
         <FlatList
           data={plan.days}
           renderItem={(item) => renderPlan(item)}
-          keyExtractor={(item) => item.week_number + item.name + ""}
+          keyExtractor={(item) => item.week_number + item.dayoftheweek + ""}
         />
       </ScrollView>
 

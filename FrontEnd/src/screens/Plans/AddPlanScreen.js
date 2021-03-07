@@ -9,8 +9,8 @@ import { FlatList, ScrollView } from "react-native-gesture-handler";
 
 const AddPlanScreen = ({ navigation }) => {
     let day = {
-        workouts: [],
-        name: "Monday",
+        exercises: [],
+        dayoftheweek: "Monday",
         week_number: 1
     }
     let plan = navigation.getParam('plan');
@@ -24,10 +24,11 @@ const AddPlanScreen = ({ navigation }) => {
     }
 
     function renderWorkouts(workout) {
+        let workoutInfo = workout.item.split(',')
         return (
             <View style={styles.workout} key={workout.index}>
-                <Text>{workout.item[0]}</Text>
-                <Text>{workout.item[1] + " " + workout.item[2]}</Text>
+                <Text>{workoutInfo[0]}</Text>
+                <Text>{workoutInfo[2] + " " + workoutInfo[3]}</Text>
             </View>
         );
     }
@@ -53,7 +54,7 @@ const AddPlanScreen = ({ navigation }) => {
                         justifyContent: 'flex-start', color: colors.black
                     }}
                     labelStyle={{ color: colors.black }}
-                    onChangeItem={item => day.name = item.value}
+                    onChangeItem={item => day.dayoftheweek = item.value}
                 />
             </View>
 
@@ -83,7 +84,7 @@ const AddPlanScreen = ({ navigation }) => {
                 containerStyle={styles.containerStyle}
             />
             <FlatList
-                data={day.workouts}
+                data={day.exercises}
                 renderItem={(item) => renderWorkouts(item)}
                 keyExtractor={(item) => " " + count++}
             />
