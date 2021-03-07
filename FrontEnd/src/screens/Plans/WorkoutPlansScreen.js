@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useContext } from 'react';
+import React, { useReducer, useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import SearchBar from '../../components/SearchBar';
@@ -26,6 +26,10 @@ const WorkoutPlansScreen = ({ navigation }) => {
     const [filter, setFilter] = useState('');
 
     const { state, searchWorkoutPlans } = useContext(AuthContext);
+
+    useEffect(() => {
+        searchDatabase({ query: "" })
+    }, [])
 
     const onSwipeDown = (gestureState) => {
         console.log('swiped down');
