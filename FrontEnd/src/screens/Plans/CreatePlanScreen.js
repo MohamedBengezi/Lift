@@ -11,13 +11,11 @@ import DayWorkout from "../../components/DayWorkout";
 import { SafeAreaView } from "react-native";
 
 const CreatePlanScreen = ({ navigation }) => {
-  const { state, uploadPost } = useContext(AuthContext);
+  const { state, createWorkoutPlan } = useContext(AuthContext);
   let plan = {
-    id: "",
-    creator_id: state.username,
     name: "",
     duration: "1 days",
-    experience: "Beginner",
+    experience_level: "Beginner",
     goal: "strength",
     tags: "",
     days: []
@@ -35,19 +33,21 @@ const CreatePlanScreen = ({ navigation }) => {
 
   const onSubmit = () => {
     plan.tags = plan.tags.split(',');
-
-    if (video != null) {
-      uploadPost({ ...data, media: video });
-      navigation.navigate("WorkoutPlans");
-    } else {
-      uploadPost({ ...data, media: image });
-      navigation.navigate("WorkoutPlans");
+    //converting workouts double array for each day to object of arrays
+    //because firebase doesn't like nested arrays
+    for (var i = 0; i < plan.days.length; i++) {
+      plan.days[i].workouts = plan.days[i].workouts.reduce((accumulator, currentValue) => {
+        accumulator[currentValue] = currentValue;
+        return accumulator;
+      }, {});
     }
+
+    createWorkoutPlan(plan);
+    navigate('WorkoutPlans')
   };
 
   function renderPlan(item) {
     if (!item) return null;
-    console.log('renderPlan', item)
     return (
       <DayWorkout weekday={item.item.name} program={item.item.workouts} />
     );
@@ -119,7 +119,7 @@ const CreatePlanScreen = ({ navigation }) => {
             justifyContent: 'flex-start', color: colors.black
           }}
           labelStyle={{ color: colors.black }}
-          onChangeItem={item => plan.experience = item.value}
+          onChangeItem={item => plan.experience_level = item.value}
         />
       </View>
       <View style={styles.labelAndDropView}>

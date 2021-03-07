@@ -454,6 +454,21 @@ const getFitbitInfo = (dispatch) => {
 
 // Workout Plan functions
 
+const createWorkoutPlan = () => {
+  return async (data) => {
+    var createWorkoutPlan = functions.httpsCallable("programs-createWorkoutPlan");
+    console.log("uploading plan ", data);
+    createWorkoutPlan(data)
+      .then((res) => {
+        console.log("plan uploaded");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+
 
 const searchWorkoutPlans = (dispatch) => {
   return async (data) => {
@@ -461,7 +476,7 @@ const searchWorkoutPlans = (dispatch) => {
     console.log("searching for plans: ", data.query);
     searchWorkoutPlans(data)
       .then((res) => {
-        console.log("found plans");
+        console.log("found plans ", res.results);
         dispatch({
           type: "getPlans",
           plans: res.plans
@@ -522,6 +537,7 @@ export const { Provider, Context } = createDataContext(
     markPostAsAnswered,
     saveFitbitToken,
     getFitbitInfo,
+    createWorkoutPlan,
     searchWorkoutPlans,
     followWorkoutPlan,
     unfollowWorkoutPlan
