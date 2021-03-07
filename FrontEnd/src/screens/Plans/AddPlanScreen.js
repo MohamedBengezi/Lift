@@ -16,8 +16,9 @@ const AddPlanScreen = ({ navigation }) => {
     let plan = navigation.getParam('plan');
     day = (navigation.getParam('day')) ? navigation.getParam('day') : day;
 
-    var items = [];
+    var count = 0;
 
+    var items = [];
     for (var i = 1; i <= 30; i++) {
         items.push({ label: i.toString(), value: i, hidden: false });
     }
@@ -84,7 +85,7 @@ const AddPlanScreen = ({ navigation }) => {
             <FlatList
                 data={day.workouts}
                 renderItem={(item) => renderWorkouts(item)}
-                keyExtractor={(item) => item.name}
+                keyExtractor={(item) => " " + count++}
             />
 
             <Button
