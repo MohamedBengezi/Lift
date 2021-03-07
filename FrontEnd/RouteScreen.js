@@ -19,6 +19,9 @@ import LoadingScreen from "./src/screens/LoadingScreen";
 import colors from './src/hooks/colors';
 import WorkoutPlansScreen from "./src/screens/Plans/WorkoutPlansScreen";
 import ViewPlanScreen from "./src/screens/Plans/ViewPlanScreen";
+import CreatePlanScreen from "./src/screens/Plans/CreatePlanScreen";
+import AddPlanScreen from "./src/screens/Plans/AddPlanScreen";
+import AddWorkoutScreen from "./src/screens/Plans/AddWorkoutScreen";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -229,6 +232,36 @@ export default function RouteScreen() {
             headerMode: 'none',
             headerTitle: '',
             headerShown: true,
+            animationEnabled: true
+
+          },
+        },
+        CreatePlan: {
+          screen: CreatePlanScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
+            animationEnabled: true
+
+          },
+        },
+        AddPlan: {
+          screen: AddPlanScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
+            animationEnabled: true
+
+          },
+        },
+        AddWorkout: {
+          screen: AddWorkoutScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
             animationEnabled: true
 
           },
