@@ -54,111 +54,120 @@ const CreatePlanScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: "12%" }}>
-      <Spacer />
-      <Button
-        title="CREATE"
-        onPress={() => {
-          onSubmit();
-        }}
-        buttonStyle={styles.create}
-        titleStyle={styles.buttonText}
-        containerStyle={styles.containerStyle}
-      />
+    <SafeAreaView >
+      <ScrollView contentContainerStyle={{ alignItems: "center", flexDirection: "column", marginTop: "12%" }}>
 
-      <TextInput
-        style={styles.titleInput}
-        onChangeText={(text) => plan.name = text}
-        placeholder="Program Name"
-      />
-      <View style={styles.labelAndDropView}>
-        <Text style={styles.label}>Duration:  </Text>
-        <DropDownPicker
-          items={items}
-          defaultValue={1}
-          style={{ width: 60, borderWidth: 1, marginRight: 5 }}
-          itemStyle={{
-            justifyContent: 'flex-start', color: colors.black
+        <Spacer />
+        <Button
+          title="CREATE"
+          onPress={() => {
+            onSubmit();
           }}
-          labelStyle={{ color: colors.black }}
-          onChangeItem={item => plan.duration = item.value}
+          buttonStyle={styles.create}
+          titleStyle={styles.buttonText}
+          containerStyle={styles.containerStyle}
         />
-        <DropDownPicker
-          items={[
-            { label: 'Days', value: 'days', hidden: true },
-            { label: 'Weeks', value: 'weeks', hidden: true },
-            { label: 'Months', value: 'months' },
-          ]}
-          defaultValue={'days'}
-          style={{ width: 100, borderWidth: 1 }}
-          itemStyle={{
-            justifyContent: 'flex-start', color: colors.black
-          }}
-          labelStyle={{ color: colors.black }}
-          onChangeItem={item => plan.duration = plan.duration + " " + item.value}
-        />
-      </View>
 
-      <TextInput
-        style={styles.titleInput}
-        onChangeText={(text) => plan.tags = text}
-        placeholder="Tags e.g. strength, full body, cardio"
-      />
+        <TextInput
+          style={styles.titleInput}
+          onChangeText={(text) => plan.name = text}
+          placeholder="Program Name"
+        />
+        <View style={styles.labelAndDropView}>
+          <Text style={styles.label}>Duration:  </Text>
+          <DropDownPicker
+            items={items}
+            defaultValue={1}
+            style={{ width: 60, borderWidth: 1, marginRight: 5 }}
+            itemStyle={{
+              justifyContent: 'flex-start', color: colors.black
+            }}
+            labelStyle={{ color: colors.black }}
+            onChangeItem={item => plan.duration = item.value}
+          />
+          <DropDownPicker
+            items={[
+              { label: 'Days', value: 'days', hidden: true },
+              { label: 'Weeks', value: 'weeks', hidden: true },
+              { label: 'Months', value: 'months' },
+            ]}
+            defaultValue={'days'}
+            style={{ width: 100, borderWidth: 1 }}
+            itemStyle={{
+              justifyContent: 'flex-start', color: colors.black
+            }}
+            labelStyle={{ color: colors.black }}
+            onChangeItem={item => plan.duration = plan.duration + " " + item.value}
+          />
+        </View>
 
-      <View style={styles.labelAndDropView}>
-        <Text style={styles.label}>Experience Level:  </Text>
-        <DropDownPicker
-          items={[
-            { label: 'Beginner', value: 'beginner', hidden: true },
-            { label: 'Intermediate', value: 'intermediate' },
-            { label: 'Advanced', value: 'advanced' }
-          ]}
-          defaultValue={'beginner'}
-          style={{ width: 150, borderWidth: 1 }}
-          itemStyle={{
-            justifyContent: 'flex-start', color: colors.black
-          }}
-          labelStyle={{ color: colors.black }}
-          onChangeItem={item => plan.experience_level = item.value}
+        <TextInput
+          style={styles.titleInput}
+          onChangeText={(text) => plan.tags = text}
+          placeholder="Tags e.g. strength, full body, cardio"
         />
-      </View>
-      <View style={styles.labelAndDropView}>
-        <Text style={styles.label}>Goal:  </Text>
-        <DropDownPicker
-          items={[
-            { label: 'Strength', value: 'strength' },
-            { label: 'Muscle Mass', value: 'muscle' },
-            { label: 'Endurance', value: 'endurance' },
-            { label: 'Muscle Mass + Strength', value: 'muscle_strength' },
-            { label: 'Weight Loss', value: 'weightloss' }
-          ]}
-          defaultValue={'strength'}
-          style={{ width: 150, borderWidth: 1 }}
-          itemStyle={{
-            justifyContent: 'flex-start', color: colors.black
-          }}
-          labelStyle={{ color: colors.black }}
-          onChangeItem={item => plan.goal = item.value}
-        />
-      </View>
-      <ScrollView contentContainerStyle={{ marginTop: 15 }}>
+
+        <View style={styles.labelAndDropView}>
+          <Text style={styles.label}>Experience Level:  </Text>
+          <DropDownPicker
+            items={[
+              { label: 'Beginner', value: 'beginner', hidden: true },
+              { label: 'Intermediate', value: 'intermediate' },
+              { label: 'Advanced', value: 'advanced' }
+            ]}
+            defaultValue={'beginner'}
+            style={{ width: 150, borderWidth: 1 }}
+            itemStyle={{
+              justifyContent: 'flex-start', color: colors.black
+            }}
+            labelStyle={{ color: colors.black }}
+            onChangeItem={item => plan.experience_level = item.value}
+          />
+        </View>
+        <View style={styles.labelAndDropView}>
+          <Text style={styles.label}>Goal:  </Text>
+          <DropDownPicker
+            items={[
+              { label: 'Strength', value: 'strength' },
+              { label: 'Muscle Mass', value: 'muscle' },
+              { label: 'Endurance', value: 'endurance' },
+              { label: 'Muscle Mass + Strength', value: 'muscle_strength' },
+              { label: 'Weight Loss', value: 'weightloss' }
+            ]}
+            defaultValue={'strength'}
+            style={{ width: 150, borderWidth: 1 }}
+            itemStyle={{
+              justifyContent: 'flex-start', color: colors.black
+            }}
+            labelStyle={{ color: colors.black }}
+            onChangeItem={item => plan.goal = item.value}
+          />
+        </View>
+        <Spacer />
+
         <FlatList
           data={plan.days}
           renderItem={(item) => renderPlan(item)}
           keyExtractor={(item) => item.week_number + item.dayoftheweek + ""}
+          scrollEnabled={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+
+        <Spacer />
+        <Spacer />
+        <Spacer />
+
+        <Button
+          title="ADD PLAN"
+          onPress={() => {
+            navigate('AddPlan', { plan: plan });
+          }}
+          buttonStyle={styles.button}
+          titleStyle={styles.buttonText}
+          containerStyle={styles.addPlanStyle}
         />
       </ScrollView>
 
-
-      <Button
-        title="ADD PLAN"
-        onPress={() => {
-          navigate('AddPlan', { plan: plan });
-        }}
-        buttonStyle={styles.button}
-        titleStyle={styles.buttonText}
-        containerStyle={styles.addPlanStyle}
-      />
     </SafeAreaView>
   );
 };
@@ -188,7 +197,7 @@ const styles = StyleSheet.create({
   },
   addPlanStyle: {
     position: 'absolute',
-    bottom: 10,
+    bottom: "4.5%",
     alignItems: "center",
   },
   buttonText: {
