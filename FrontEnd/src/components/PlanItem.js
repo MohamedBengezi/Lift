@@ -35,6 +35,16 @@ const PlanItem = (props) => {
                     buttonStyle={{ ...styles.button, backgroundColor: (isFollowing) ? colors.yellow : colors.blue }}
                     titleStyle={styles.buttonText}
                 />
+                <Button
+                    title={"Give Rating"}
+                    onPress={() => {
+                        console.log('going to AddTestimonialScreen');
+                        navigation.navigate('AddTestimonial', { plan: plan });
+                    }}
+                    buttonStyle={{ ...styles.button, backgroundColor: colors.yellow, width:100  }}
+                    titleStyle={styles.buttonText}
+                />
+                
 
 
             </View>
@@ -77,7 +87,7 @@ const PlanItem = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.lightGrey,
+        backgroundColor: colors.white,
         borderRadius: 10,
         height: "90%",
         width: "100%",
@@ -89,7 +99,7 @@ const styles = StyleSheet.create({
     viewPlanContainer: {
         backgroundColor: colors.white,
         borderRadius: 10,
-        height: "22%",
+        height: "20%",
         width: "100%",
         marginBottom: 20,
         flexDirection: 'row',

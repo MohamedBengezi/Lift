@@ -22,6 +22,8 @@ import ViewPlanScreen from "./src/screens/Plans/ViewPlanScreen";
 import CreatePlanScreen from "./src/screens/Plans/CreatePlanScreen";
 import AddPlanScreen from "./src/screens/Plans/AddPlanScreen";
 import AddWorkoutScreen from "./src/screens/Plans/AddWorkoutScreen";
+import AddTestimonialScreen from "./src/screens/Plans/AddTestiomonialScreen";
+
 
 export default function RouteScreen() {
   const styleTab = {
@@ -248,6 +250,16 @@ export default function RouteScreen() {
         },
         AddPlan: {
           screen: AddPlanScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
+            animationEnabled: true
+
+          },
+        },
+        AddTestimonial: {
+          screen: AddTestimonialScreen,
           navigationOptions: {
             headerMode: 'none',
             headerTitle: '',

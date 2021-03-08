@@ -41,7 +41,7 @@ const ViewPlanScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView >
-            <ScrollView contentContainerStyle={{ backgroundColor: colors.white }}>
+            <ScrollView contentContainerStyle={{ backgroundColor: colors.white, height:'100%' }}>
                 <View style={{ flex: 1, alignItems: 'center' }}>
                     <PlanItem plan={plan} navigation={navigation} />
                     <FlatList
