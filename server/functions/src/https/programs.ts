@@ -222,14 +222,21 @@ export const editTestimonial = functions.https.onCall(async (data, context) => {
 export const searchWorkoutPlans = functions.https.onCall(
   async (data, context) => {
     const query: string = data.query;
-
-    const tokenizedQuery = query.split(" ");
     const planRef = admin.firestore().collection("workout_plans");
-    // We can only search up to 10 elements in firebase for the array-contains-any
-    const matchingPlansResults = await planRef
-      .where("tokenized", "array-contains-any", tokenizedQuery.slice(0, 10))
-      .get();
-    let plans = matchingPlansResults.docs.map((doc) => {
+    let planDocs: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>;
+
+    if (query === "") {
+      // Empty query, get all plans
+      planDocs = await planRef.get();
+    } else {
+      const tokenizedQuery = query.split(" ");
+      // We can only search up to 10 elements in firebase for the array-contains-any
+      planDocs = await planRef
+        .where("tokenized", "array-contains-any", tokenizedQuery.slice(0, 10))
+        .get();
+    }
+
+    let plans = planDocs.docs.map((doc) => {
       return { id: doc.id, ...doc.data() };
     });
     return { message: "Success", results: plans };
