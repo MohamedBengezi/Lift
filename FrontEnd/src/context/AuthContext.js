@@ -34,6 +34,11 @@ const authReducer = (state, action) => {
         ...state,
         plans: action.plans,
       };
+    case "profilePicture":
+      return {
+        ...state,
+        profilePicture: action.profilePicture,
+      };
     default:
       return state;
   }
@@ -558,11 +563,38 @@ const addTestimonial = () => {
               });
           })
           .catch((err) => {
-            console.error("error in uploading after image ",err);
+            console.error("error in uploading after image ", err);
           });
       })
       .catch((err) => {
-        console.error("error in uploading before image ",err);
+        console.error("error in uploading before image ", err);
+      });
+  };
+};
+
+const addProfilePicture = (dispatch) => {
+  return async (data) => {
+    let uid = firebaseApp.auth().currentUser.uid;
+    uploadMedia(data.uri, uid, "profilePicture")
+      .then((res) => {
+        console.log("Uploaded profile picture to firestore");
+        var addProfilePicture = functions.httpsCallable(
+          "user-addProfilePicture"
+        );
+        addProfilePicture({ path: res })
+          .then((res) => {
+            dispatch({
+              type: "profilePicture",
+              profilePicture: res.data.profilePicture,
+            });
+            console.log("Saved profile picture path to user db ");
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      })
+      .catch((err) => {
+        console.error(err);
       });
   };
 };
@@ -594,6 +626,7 @@ export const { Provider, Context } = createDataContext(
     followWorkoutPlan,
     unfollowWorkoutPlan,
     addTestimonial,
+    addProfilePicture,
   },
   { token: null, errorMessage: "", posts: {} }
 );

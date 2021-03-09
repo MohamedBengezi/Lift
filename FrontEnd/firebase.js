@@ -61,6 +61,8 @@ export const uploadMedia = async (mediaURI, uid, postType) => {
     path=`public/general_posts/${uid}/${uuidv4()}`;
   } else if (postType === "testimonial"){
     path=`public/workout_plans/${uid}/${uuidv4()}`;
+  } else if(postType === "profilePicture"){
+    path=`public/profiles/${uid}/${uuidv4()}`;
   }
 
   ref = ref.child(path);

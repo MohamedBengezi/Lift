@@ -130,7 +130,7 @@ const Profile = (props) => {
                 <View style={styles.userRow}>
                     <Image
                         style={styles.userImage}
-                        source={{ uri: avatar }}
+                        source={{ uri: state.profilePicture ? state.profilePicture : avatar }}
                     />
                     <View style={styles.userNameRow}>
                         <Text style={styles.userNameText}>{name}</Text>
