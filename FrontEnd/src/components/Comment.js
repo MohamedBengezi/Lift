@@ -17,18 +17,16 @@ const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and tit
         setLiked(!liked);
     }
 
-    console.log('comment', mediaPath)
-
     return (
         <View style={styles.container}>
             <View style={styles.commentContainer} key={index}>
                 <TouchableOpacity activeOpacity={0.8}
-                    onPress={() => navigate('Profile', { isHeaderShow: true, username: username })}>
+                    onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: username })}>
                     <Image source={{ uri: profile_image || '' }} style={styles.commentAvatar} />
                 </TouchableOpacity>
                 <View style={styles.postUsernameLocationContainer}>
                     <TouchableOpacity style={styles.postUsernameView}
-                        onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
+                        onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: username })}>
                         <Text style={styles.commentUsernameLabel}>{username}</Text>
                     </TouchableOpacity>
                     <View style={styles.postLocationView}>
