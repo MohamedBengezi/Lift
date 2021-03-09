@@ -19,7 +19,15 @@ import LoadingScreen from "./src/screens/LoadingScreen";
 import colors from './src/hooks/colors';
 import WorkoutPlansScreen from "./src/screens/Plans/WorkoutPlansScreen";
 import ViewPlanScreen from "./src/screens/Plans/ViewPlanScreen";
+<<<<<<< HEAD
 import ViewProfileScreen from "./src/screens/Feeds/ViewProfileIndex";
+=======
+import CreatePlanScreen from "./src/screens/Plans/CreatePlanScreen";
+import AddPlanScreen from "./src/screens/Plans/AddPlanScreen";
+import AddWorkoutScreen from "./src/screens/Plans/AddWorkoutScreen";
+import AddTestimonialScreen from "./src/screens/Plans/AddTestiomonialScreen";
+
+>>>>>>> remotes/origin/workout_programs
 
 export default function RouteScreen() {
   const styleTab = {
@@ -234,6 +242,7 @@ export default function RouteScreen() {
 
           },
         },
+<<<<<<< HEAD
         ViewProfile: {
           screen: ViewProfileScreen,
           navigationOptions: {
@@ -244,6 +253,48 @@ export default function RouteScreen() {
 
           },
         }
+=======
+        CreatePlan: {
+          screen: CreatePlanScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
+            animationEnabled: true
+
+          },
+        },
+        AddPlan: {
+          screen: AddPlanScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
+            animationEnabled: true
+
+          },
+        },
+        AddTestimonial: {
+          screen: AddTestimonialScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
+            animationEnabled: true
+
+          },
+        },
+        AddWorkout: {
+          screen: AddWorkoutScreen,
+          navigationOptions: {
+            headerMode: 'none',
+            headerTitle: '',
+            headerShown: false,
+            animationEnabled: true
+
+          },
+        },
+>>>>>>> remotes/origin/workout_programs
       }
     ),
   });

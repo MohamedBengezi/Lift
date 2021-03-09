@@ -4,6 +4,8 @@ import PlanItem from '../../components/PlanItem';
 import DayWorkout from '../../components/DayWorkout';
 import colors from '../../hooks/colors';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native';
 
 
 const reducer = (state, action) => {
@@ -18,40 +20,42 @@ const reducer = (state, action) => {
 }
 
 const ViewPlanScreen = ({ navigation }) => {
-    const author = navigation.getParam('author')
-    const title = navigation.getParam('title')
-    let mondayPlan = [
-        ['Benchpress', '3 sets', '10'],
-        ['Squats', '4 sets', '5'],
-        ['Deadlifts', '4 sets', '5'],
-        ['Cardio', '25 mins', '1']
-    ]
-    let tuesdayPlan = [
-        ['Flys', '5 sets', '8'],
-        ['Bicep Curls', '5 sets', '10'],
-        ['Tricep Extensions', '5', '7'],
-    ]
+    let plan = navigation.getParam('plan');
+
+
+    function renderPlan(item) {
+        if (!item) return null;
+
+        //turning each exercise string into an array for DayWorkout to render
+        let workouts = item.item.exercises
+        for (var i = 0; i < workouts.length; i++) {
+            if (typeof workouts[i] === 'string') {
+                workouts[i] = workouts[i].split(",")
+                workouts[i].splice(1, 1);
+            }
+        }
+        return (
+            <DayWorkout weekday={item.item.dayoftheweek} program={workouts} />
+        );
+    }
+
     return (
-        <View style={{ flex: 1, backgroundColor: colors.white }}>
-            {/* <TouchableOpacity
-                onPress={() => {
-                    navigation.goBack();
-                }}
-                style={styles.cancel}
+        <SafeAreaView >
+            <ScrollView contentContainerStyle={{ backgroundColor: colors.white, height:'100%' }}>
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                    <PlanItem plan={plan} navigation={navigation} />
+                    <FlatList
+                        data={plan.days}
+                        renderItem={(item) => renderPlan(item)}
+                        keyExtractor={(item) => item.week_number + item.dayoftheweek + ""}
+                        scrollEnabled={false}
+                        contentContainerStyle={{ paddingBottom: "30%" }}
 
-            >
-                <Ionicons
-                    name="ios-arrow-round-back"
-                    style={styles.icon}
-                />
-            </TouchableOpacity> */}
-            <View style={{ flex: 1, alignItems: 'center' }}>
-                <PlanItem author={author} title={title} navigation={navigation} />
-                <DayWorkout weekday={'Monday'} program={mondayPlan} />
-                <DayWorkout weekday={'Tuesday'} program={tuesdayPlan} />
-            </View>
+                    />
+                </View>
 
-        </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 

@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
+import * as storageUtils from "../util/storage";
 
 export const addUserToDB = functions.https.onCall((data, context) => {
   const username = data.username;
@@ -19,6 +20,7 @@ export const addUserToDB = functions.https.onCall((data, context) => {
       following: 0,
       followers: 0,
       fitbitInfo: fitbitInfo,
+      workout_plans: [],
     })
     .then(() => {
       return { message: "success" };
@@ -85,20 +87,20 @@ export const modifyFollowing = functions.https.onRequest(
 );
 
 export const getUserInfo = functions.https.onCall(async (data, contxt) => {
-  const username = data.username;
-  const query = await admin
+  const uid = data.uid;
+  const query = admin
     .firestore()
     .collection("users")
-    .where("username", "==", username)
+    .doc(uid)
     .get()
-    .then((querySnapShot) => {
-      let result;
-      let dId;
-      querySnapShot.forEach(function (doc) {
-        result = doc.data();
-        dId = doc.id;
-      });
-      return { dId, result };
+    .then(async (res) => {
+      return {
+        id:res.id,
+        ...res.data(),
+        profilePicture: (
+          await storageUtils.getDownloadURL(data.path)?.downloadURL
+        )?.[0],
+      };
     })
     .catch((err) => {
       throw new functions.https.HttpsError(
@@ -106,8 +108,28 @@ export const getUserInfo = functions.https.onCall(async (data, contxt) => {
         `Something went wrong when accessing the database. Reason ${err}`
       );
     });
+
   return query;
 });
+
+export const addProfilePicture = functions.https.onCall(
+  async (data, context) => {
+    const uid = context.auth!.uid;
+    const query = admin
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .update({ profilePicture: data.path })
+      .then(async (res) => {
+        return {
+          profilePicture: (
+            await storageUtils.getDownloadURL(data.path)?.downloadURL
+          )?.[0],
+        };
+      });
+    return query;
+  }
+);
 
 async function getRestingHeartRate(token: string) {
   let restingHeartRate = 0;
