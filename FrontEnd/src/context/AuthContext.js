@@ -39,6 +39,11 @@ const authReducer = (state, action) => {
         ...state,
         profilePicture: action.profilePicture,
       };
+    case "updateUserInfo":
+      return {
+        ...state,
+        userInfo: action.userInfo
+      };
     default:
       return state;
   }
@@ -248,7 +253,7 @@ function sendXmlHttpRequest(data) {
 }
 
 const uploadPost = (dispatch) => async ({ caption, type, media, isVideo }) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid,type).then((path) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, type).then((path) => {
     const data = {
       caption: caption,
       mediaPath: path,
@@ -282,6 +287,24 @@ function getUserName(dispatch) {
     return "success";
   });
 }
+
+const getUserInfo = (dispatch) => {
+  return async (data) => {
+    var getUserInfo = functions.httpsCallable("user-getUserInfo");
+    getUserInfo(data)
+      .then((res) => {
+        console.log("got user info", res);
+        dispatch({
+          type: "updateUserInfo",
+          userInfo: res
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
 
 const getUserPost = () => {
   return async (setPosts) => {
@@ -608,6 +631,7 @@ export const { Provider, Context } = createDataContext(
     clearErrorMessage,
     tryLocalSignin,
     uploadPost,
+    getUserInfo,
     getUserPost,
     getFeedbackPosts,
     getGeneralPosts,
