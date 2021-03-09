@@ -13,6 +13,7 @@ const PlanItem = (props) => {
     let mainScreen = 'ViewPlan'
     const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(AuthContext);
     let planID = plan.id
+    let rating = plan.rating;
     let uid = firebaseApp.auth().currentUser.uid;
     const [isFollowing, setIsFollowing] = useState(plan.followers.includes(uid));
 
@@ -41,44 +42,26 @@ const PlanItem = (props) => {
                         console.log('going to AddTestimonialScreen');
                         navigation.navigate('AddTestimonial', { plan: plan });
                     }}
-                    buttonStyle={{ ...styles.button, backgroundColor: colors.yellow, width:100  }}
+                    buttonStyle={{ ...styles.button, backgroundColor: colors.yellow, width: 100 }}
                     titleStyle={styles.buttonText}
                 />
-                
+
 
 
             </View>
+
             <View style={styles.stars}>
-                <Ionicons
-                    name="md-star"
-                    color={colors.yellow}
-                    type="ionicon"
-                    size={STAR_SIZE}
-                />
-                <Ionicons
-                    name="md-star"
-                    color={colors.yellow}
-                    type="ionicon"
-                    size={STAR_SIZE}
-                />
-                <Ionicons
-                    name="md-star"
-                    color={colors.yellow}
-                    type="ionicon"
-                    size={STAR_SIZE}
-                />
-                <Ionicons
-                    name="md-star"
-                    color={colors.yellow}
-                    type="ionicon"
-                    size={STAR_SIZE}
-                />
-                <Ionicons
-                    name="md-star"
-                    color={colors.yellow}
-                    type="ionicon"
-                    size={STAR_SIZE}
-                />
+                {
+                    [...Array(rating)].map((e, i) =>
+                        <Ionicons
+                            name="md-star"
+                            color={colors.yellow}
+                            type="ionicon"
+                            size={STAR_SIZE}
+                        />
+
+                    )
+                }
             </View>
 
         </TouchableOpacity>
