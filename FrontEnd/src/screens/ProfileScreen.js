@@ -39,13 +39,14 @@ const wait = timeout => {
 const Profile = (props) => {
     const { state, getUserPost, getFitbitInfo } = useContext(PostsContext);
     const [propTypes, setPropTypes] = useState({ ...props });
+    const [userInfo, setUserInfo] = useState(propTypes.userInfo.data);
     const [posts, setPosts] = useState(null);
     const [tabs, setTabs] = useState({
         index: 0,
         routes: [
             { key: '1', title: 'posts', count: 0 },
-            { key: '2', title: 'following', count: 95 },
-            { key: '3', title: 'followers', count: '1.3 K' },
+            { key: '2', title: 'following', count: userInfo.result.following },
+            { key: '3', title: 'followers', count: userInfo.result.followers },
         ],
     })
     const [refreshing, setRefreshing] = useState(false);
@@ -134,10 +135,10 @@ const Profile = (props) => {
                         source={{ uri: avatar }}
                     />
                     <View style={styles.userNameRow}>
-                        <Text style={styles.userNameText}>{name}</Text>
+                        <Text style={styles.userNameText}>{userInfo.result.info}</Text>
                     </View>
                     <View style={styles.userBioRow}>
-                        <Text style={styles.userBioText}>{bio}</Text>
+                        <Text style={styles.userBioText}>{userInfo.result.bio}</Text>
                     </View>
                 </View>
             </View>
