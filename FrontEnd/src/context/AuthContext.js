@@ -247,20 +247,20 @@ function sendXmlHttpRequest(data) {
   });
 }
 
-const uploadPost = (dispatch) => async ({ caption, type, media }) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, type).then(
-    (path) => {
-      const data = {
-        caption: caption,
-        mediaPath: path,
-      };
-      let uploadPost;
-      if (type === "feedback") {
-        uploadPost = functions.httpsCallable("posts-createFeedbackPost");
-      } else if (type === "regular") {
-        //route for regular posts
-        uploadPost = functions.httpsCallable("posts-createGeneralPost");
-      }
+const uploadPost = (dispatch) => async ({ caption, type, media, isVideo }) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid,type).then((path) => {
+    const data = {
+      caption: caption,
+      mediaPath: path,
+      isVideo: isVideo
+    };
+    let uploadPost;
+    if (type === "feedback") {
+      uploadPost = functions.httpsCallable("posts-createFeedbackPost");
+    } else if (type === "regular") {
+      //route for regular posts
+      uploadPost = functions.httpsCallable("posts-createGeneralPost");
+    }
 
       uploadPost(data)
         .then(() => {
@@ -415,14 +415,13 @@ const archivePost = () => {
 const markPostAsAnswered = () => {
   return async (data) => {
     var archivePost = functions.httpsCallable("posts-markPostAsAnswered");
-    console.log("marking post as answered", data.docID);
-    archivePost(data)
-      .then((res) => {})
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-};
+    console.log('marking post as answered', data.docID)
+    archivePost(data).then((res) => {
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+}
 
 const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
