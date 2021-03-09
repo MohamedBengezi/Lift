@@ -35,7 +35,7 @@ const PlanList = ({ navigation }) => {
             <FlatList
                 data={plans}
                 renderItem={(item) => renderPlanItem(item)}
-                keyExtractor={(item) => item.week_number + item.dayoftheweek + ""}
+                keyExtractor={(item) => item.id}
             />
         </View>
     );

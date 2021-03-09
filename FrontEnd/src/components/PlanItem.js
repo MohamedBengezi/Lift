@@ -15,6 +15,7 @@ const PlanItem = (props) => {
     AuthContext
   );
   let planID = plan.id;
+  let rating = plan.rating;
   let uid = firebaseApp.auth().currentUser.uid;
   const [isFollowing, setIsFollowing] = useState(plan.followers.includes(uid));
 
@@ -60,37 +61,16 @@ const PlanItem = (props) => {
           />
         ) : null}
       </View>
+
       <View style={styles.stars}>
-        <Ionicons
-          name="md-star"
-          color={colors.yellow}
-          type="ionicon"
-          size={STAR_SIZE}
-        />
-        <Ionicons
-          name="md-star"
-          color={colors.yellow}
-          type="ionicon"
-          size={STAR_SIZE}
-        />
-        <Ionicons
-          name="md-star"
-          color={colors.yellow}
-          type="ionicon"
-          size={STAR_SIZE}
-        />
-        <Ionicons
-          name="md-star"
-          color={colors.yellow}
-          type="ionicon"
-          size={STAR_SIZE}
-        />
-        <Ionicons
-          name="md-star"
-          color={colors.yellow}
-          type="ionicon"
-          size={STAR_SIZE}
-        />
+        {[...Array(rating)].map((e, i) => (
+          <Ionicons
+            name="md-star"
+            color={colors.yellow}
+            type="ionicon"
+            size={STAR_SIZE}
+          />
+        ))}
       </View>
     </TouchableOpacity>
   );
@@ -100,7 +80,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: 10,
-    height: "90%",
+    height: 175,
     width: "100%",
     marginBottom: 20,
     flexDirection: "row",

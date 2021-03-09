@@ -6,6 +6,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Spacer from "../../components/Spacer";
 import { navigate } from "../../navigationRef";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { StatusBar } from "react-native";
 
 const AddPlanScreen = ({ navigation }) => {
     let day = {
@@ -34,7 +35,7 @@ const AddPlanScreen = ({ navigation }) => {
     }
 
     return (
-        <ScrollView contentContainerStyle={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: "12%" }}>
+        <ScrollView contentContainerStyle={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: StatusBar.currentHeight + 25 }}>
             <Spacer />
             <View style={styles.labelAndDropView}>
                 <Text style={styles.label}>Day:  </Text>

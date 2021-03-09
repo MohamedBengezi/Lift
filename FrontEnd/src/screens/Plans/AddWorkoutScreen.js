@@ -5,6 +5,7 @@ import colors from "../../hooks/colors";
 import DropDownPicker from 'react-native-dropdown-picker';
 import Spacer from "../../components/Spacer";
 import { navigate } from "../../navigationRef";
+import { StatusBar } from "react-native";
 
 const AddWorkoutScreen = ({ navigation }) => {
     const [workout, setWorkout] = useState({
@@ -104,7 +105,7 @@ const AddWorkoutScreen = ({ navigation }) => {
         );
     }
     return (
-        <View style={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: "12%" }}>
+        <View style={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: StatusBar.currentHeight + 25 }}>
             <Spacer />
             <TextInput
                 style={styles.titleInput}
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         width: "80%",
         fontSize: 15,
-        marginTop: "5%",
+        marginVertical: "5%",
     },
     preview: {
         alignItems: "center",
