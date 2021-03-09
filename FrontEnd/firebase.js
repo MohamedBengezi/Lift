@@ -35,6 +35,7 @@ if (property.useEmulator) {
  // firebaseApp.auth().useEmulator(`${link}:9099`);
  // var db = firebase.firestore();
 //  db.useEmulator(link,8080);
+
   f1.useEmulator("10.0.2.2", 5001);
 }
 export const functions = f1;
@@ -56,8 +57,10 @@ export const uploadMedia = async (mediaURI, uid, postType) => {
   let path = ``;
   if(postType==="feedback"){
     path=`public/feedback_posts/${uid}/${uuidv4()}`;
-  } else{
+  } else if (postType==="regular"){
     path=`public/general_posts/${uid}/${uuidv4()}`;
+  } else if (postType === "testimonial"){
+    path=`public/workout_plans/${uid}/${uuidv4()}`;
   }
 
   ref = ref.child(path);
