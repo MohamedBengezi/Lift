@@ -86,30 +86,41 @@ export const modifyFollowing = functions.https.onRequest(
   }
 );
 
-export const getUserInfo = functions.https.onCall(async (data, contxt) => {
-  const uid = data.uid;
-  const query = admin
-    .firestore()
-    .collection("users")
-    .doc(uid)
-    .get()
-    .then(async (res) => {
-      return {
-        id:res.id,
-        ...res.data(),
-        profilePicture: (
-          await storageUtils.getDownloadURL(data.path)?.downloadURL
-        )?.[0],
-      };
-    })
-    .catch((err) => {
-      throw new functions.https.HttpsError(
-        "unknown",
-        `Something went wrong when accessing the database. Reason ${err}`
-      );
-    });
+export const getUserInfo = functions.https.onCall(async (data, context) => {
+  const uid = context.auth!.uid;
+  const userRef = admin.firestore().collection("users").doc(uid);
 
-  return query;
+  try {
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      throw new functions.https.HttpsError(
+        "not-found",
+        "Document does not exist. Please check the document id again"
+      );
+    } else {
+      const docData = userDoc.data()!;
+      let mediaPath = null;
+      if (docData.profilePicture) {
+        mediaPath = (
+          await storageUtils.getDownloadURL(docData.profilePicture)?.downloadURL
+        )?.[0];
+      }
+
+      return {
+        id: userDoc.id,
+        bio: docData.bio,
+        followers: docData.followers,
+        following: docData.following,
+        profilePicture: mediaPath,
+      };
+    }
+  } catch (err) {
+    throw new functions.https.HttpsError(
+      "internal",
+      "Something unexpected happened."
+    );
+  }
 });
 
 export const addProfilePicture = functions.https.onCall(

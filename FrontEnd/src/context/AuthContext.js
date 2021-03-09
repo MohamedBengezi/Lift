@@ -42,7 +42,8 @@ const authReducer = (state, action) => {
     case "updateUserInfo":
       return {
         ...state,
-        userInfo: action.userInfo
+        userInfo: action.userInfo,
+        profilePicture: action.userInfo.profilePicture
       };
     default:
       return state;
@@ -293,10 +294,9 @@ const getUserInfo = (dispatch) => {
     var getUserInfo = functions.httpsCallable("user-getUserInfo");
     getUserInfo(data)
       .then((res) => {
-        console.log("got user info", res);
         dispatch({
           type: "updateUserInfo",
-          userInfo: res
+          userInfo: res.data
         });
       })
       .catch((error) => {
@@ -593,6 +593,10 @@ const addTestimonial = () => {
       });
   };
 };
+
+const updateUserInfo = (dispatch,data) => {
+  //code to update userInfo on save button in settings page
+}
 
 const addProfilePicture = (dispatch) => {
   return async (data) => {
