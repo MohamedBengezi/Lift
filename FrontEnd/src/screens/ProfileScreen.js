@@ -39,18 +39,17 @@ const wait = timeout => {
 const Profile = (props) => {
     const { state, getUserPost, getFitbitInfo } = useContext(PostsContext);
     const [propTypes, setPropTypes] = useState({ ...props });
-    const [userInfo, setUserInfo] = useState(propTypes.userInfo.data);
+    const userInfo = state.userInfo;
     const [posts, setPosts] = useState(null);
     const [tabs, setTabs] = useState({
         index: 0,
         routes: [
             { key: '1', title: 'posts', count: 0 },
-            { key: '2', title: 'following', count: userInfo.result.following },
-            { key: '3', title: 'followers', count: userInfo.result.followers },
+            { key: '2', title: 'following', count: userInfo ? userInfo.following :0 },
+            { key: '3', title: 'followers', count: userInfo ? userInfo.followers :0 },
         ],
     })
     const [refreshing, setRefreshing] = useState(false);
-
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         getUserPost(setPosts);
@@ -135,10 +134,10 @@ const Profile = (props) => {
                         source={{ uri: state.profilePicture ? state.profilePicture : avatar }}
                     />
                     <View style={styles.userNameRow}>
-                        <Text style={styles.userNameText}>{userInfo.result.info}</Text>
+                        <Text style={styles.userNameText}>{name}</Text>
                     </View>
                     <View style={styles.userBioRow}>
-                        <Text style={styles.userBioText}>{userInfo.result.bio}</Text>
+                        <Text style={styles.userBioText}>{userInfo ? userInfo.bio : ""}</Text>
                     </View>
                 </View>
             </View>

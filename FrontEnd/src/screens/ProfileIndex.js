@@ -13,7 +13,6 @@ const ProfileScreen = ({ navigation }) => {
     getUserInfo({ username: state.username })
 
   }, [navigation])
-  console.log("userInfo ", state.userInfo)
   contactData.userInfo = state.userInfo;
   contactData.name = state.username;
   return <Profile {...contactData} />;
