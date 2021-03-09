@@ -9,6 +9,7 @@ import { navigate } from "../../navigationRef";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import DayWorkout from "../../components/DayWorkout";
 import { SafeAreaView } from "react-native";
+import { StatusBar } from "react-native";
 
 const CreatePlanScreen = ({ navigation }) => {
   const { state, createWorkoutPlan } = useContext(AuthContext);
@@ -55,7 +56,7 @@ const CreatePlanScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView >
-      <ScrollView contentContainerStyle={{ alignItems: "center", flexDirection: "column", marginTop: "12%" }}>
+      <ScrollView contentContainerStyle={{ alignItems: "center", flexDirection: "column", marginTop: StatusBar.currentHeight + 25 }}>
 
         <Spacer />
         <Button
