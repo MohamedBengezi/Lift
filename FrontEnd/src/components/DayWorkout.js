@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     plans: {
         backgroundColor: colors.lighterGrey,
         borderRadius: 20,
-        width: "90%",
+        width: 300,
         flex: 1,
         marginBottom: 20
     },

@@ -1,33 +1,52 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useContext, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import colors from '../hooks/colors';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Button } from 'react-native-elements'
+import { Context as AuthContext } from "../context/AuthContext";
+import { firebaseApp } from "../../firebase";
 
 const STAR_SIZE = 45;
 const PlanItem = (props) => {
-    let { title, author, navigation } = props
+    let { plan, navigation } = props;
     let parentRoute = navigation.state.routeName;
-    let mainScreen = 'Main'
+    let mainScreen = 'ViewPlan'
+    const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(AuthContext);
+    let planID = plan.id
+    let uid = firebaseApp.auth().currentUser.uid;
+    const [isFollowing, setIsFollowing] = useState(plan.followers.includes(uid));
+
     return (
         <TouchableOpacity
-            style={parentRoute != mainScreen ? styles.viewPlanContainer : styles.container}
-            onPress={() => navigation.navigate('ViewPlan', { author, title })}
+            style={parentRoute == mainScreen ? styles.viewPlanContainer : styles.container}
+            onPress={() => navigation.navigate('ViewPlan', { plan: plan })}
         >
             <View style={styles.textContainer}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.author}>{author}</Text>
-                {parentRoute != mainScreen ?
-                    <Button
-                        title="Follow"
-                        onPress={() => {
-                            console.log('followed plan');
-                        }}
-                        buttonStyle={styles.button}
-                        titleStyle={styles.buttonText}
-                    />
-                    : null
-                }
+                <Text style={styles.title}>{plan.name}</Text>
+                <Text style={styles.author}>{plan.experience_level}</Text>
+
+                <Button
+                    title={!isFollowing ? "Follow" : "Unfollow"}
+                    onPress={() => {
+                        console.log('followed plan');
+                        !isFollowing ? followWorkoutPlan({ planID: planID }) : unfollowWorkoutPlan({ planID: planID })
+                        setIsFollowing(!isFollowing)
+                    }}
+                    buttonStyle={{ ...styles.button, backgroundColor: (isFollowing) ? colors.yellow : colors.blue }}
+                    titleStyle={styles.buttonText}
+                />
+                <Button
+                    title={"Give Rating"}
+                    onPress={() => {
+                        console.log('going to AddTestimonialScreen');
+                        navigation.navigate('AddTestimonial', { plan: plan });
+                    }}
+                    buttonStyle={{ ...styles.button, backgroundColor: colors.yellow, width:100  }}
+                    titleStyle={styles.buttonText}
+                />
+                
+
+
             </View>
             <View style={styles.stars}>
                 <Ionicons
@@ -68,9 +87,9 @@ const PlanItem = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.lightGrey,
+        backgroundColor: colors.white,
         borderRadius: 10,
-        height: "22%",
+        height: "90%",
         width: "100%",
         marginBottom: 20,
         flexDirection: 'row',
@@ -80,7 +99,7 @@ const styles = StyleSheet.create({
     viewPlanContainer: {
         backgroundColor: colors.white,
         borderRadius: 10,
-        height: "22%",
+        height: "20%",
         width: "100%",
         marginBottom: 20,
         flexDirection: 'row',
@@ -106,7 +125,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: colors.blue,
         marginTop: 5,
-        width: "60%",
+        width: 80,
         borderRadius: 5,
     },
     containerStyle: {

@@ -29,6 +29,11 @@ const authReducer = (state, action) => {
         calories: action.calories,
         isFitbitLinked: action.isFitbitLinked,
       };
+    case "getPlans":
+      return {
+        ...state,
+        plans: action.plans
+      };
     default:
       return state;
   }
@@ -408,7 +413,7 @@ const markPostAsAnswered = () => {
     });
   }
 }
-   
+
 const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
     var fitbitInfo = functions.httpsCallable("user-saveFitbitToken");
@@ -447,6 +452,69 @@ const getFitbitInfo = (dispatch) => {
   };
 };
 
+// Workout Plan functions
+
+const createWorkoutPlan = () => {
+  return async (data) => {
+    var createWorkoutPlan = functions.httpsCallable("programs-createWorkoutPlan");
+    console.log("uploading plan ", data);
+    createWorkoutPlan(data)
+      .then((res) => {
+        console.log("plan uploaded");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+
+
+const searchWorkoutPlans = (dispatch) => {
+  return async (data) => {
+    var searchWorkoutPlans = functions.httpsCallable("programs-searchWorkoutPlans");
+    console.log("searching for plans: ", data.query);
+    searchWorkoutPlans(data)
+      .then((res) => {
+        console.log("found plans ", res);
+        dispatch({
+          type: "getPlans",
+          plans: res.data.results
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const followWorkoutPlan = () => {
+  return async (data) => {
+    var followWorkoutPlan = functions.httpsCallable("programs-followWorkoutPlan");
+    console.log("following plan ", data.planID);
+    followWorkoutPlan(data)
+      .then((res) => {
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const unfollowWorkoutPlan = () => {
+  return async (data) => {
+    var followWorkoutPlan = functions.httpsCallable("programs-unfollowWorkoutPlan");
+    console.log("unfollowing plan ", data.planID);
+    followWorkoutPlan(data)
+      .then((res) => {
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+
 export const { Provider, Context } = createDataContext(
   authReducer,
   {
@@ -468,7 +536,11 @@ export const { Provider, Context } = createDataContext(
     archivePost,
     markPostAsAnswered,
     saveFitbitToken,
-    getFitbitInfo
+    getFitbitInfo,
+    createWorkoutPlan,
+    searchWorkoutPlans,
+    followWorkoutPlan,
+    unfollowWorkoutPlan
   },
   { token: null, errorMessage: "", posts: {} }
 );
