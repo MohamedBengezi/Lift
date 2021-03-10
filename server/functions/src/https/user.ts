@@ -31,7 +31,7 @@ export const addUserToDB = functions.https.onCall((data, context) => {
 export const userNameExists = functions.https.onCall((data, context) => {
   const username = data.username;
   const usersRef = admin.firestore().collection("users");
-
+  console.log("Searching for username ", username);
   const query = usersRef
     .where("username", "==", username)
     .get()
@@ -86,41 +86,53 @@ export const modifyFollowing = functions.https.onRequest(
   }
 );
 
+async function getStreamablePicture(path: string) {
+  const result = (await storageUtils.getDownloadURL(path)?.downloadURL)?.[0];
+  return result;
+}
+
 export const getUserInfo = functions.https.onCall(async (data, context) => {
-  const uid = context.auth!.uid;
-  const userRef = admin.firestore().collection("users").doc(uid);
-
-  try {
-    const userDoc = await userRef.get();
-
-    if (!userDoc.exists) {
+  const username = data.username;
+  const usersRef = admin.firestore().collection("users");
+  let returnData = {
+    id: "",
+    bio: "",
+    followers: 0,
+    following: 0,
+    profilePicture: "",
+  };
+  await usersRef
+    .where("username", "==", username)
+    .get()
+    .then(function (res) {
+      res.forEach((doc) => {
+        console.log("Found 1 user ");
+        const docData = doc.data();
+        returnData = {
+          id: doc.id,
+          bio: docData.bio,
+          followers: docData.followers,
+          following: docData.following,
+          profilePicture: docData.profilePicture,
+        };
+        console.log("Leaving foreach ", returnData);
+        return;
+      });
+      return returnData;
+    })
+    .catch((err) => {
       throw new functions.https.HttpsError(
-        "not-found",
-        "Document does not exist. Please check the document id again"
+        "unknown",
+        `Something went wrong when accessing the database. Reason ${err}`
       );
-    } else {
-      const docData = userDoc.data()!;
-      let mediaPath = null;
-      if (docData.profilePicture) {
-        mediaPath = (
-          await storageUtils.getDownloadURL(docData.profilePicture)?.downloadURL
-        )?.[0];
-      }
-
-      return {
-        id: userDoc.id,
-        bio: docData.bio,
-        followers: docData.followers,
-        following: docData.following,
-        profilePicture: mediaPath,
-      };
-    }
-  } catch (err) {
-    throw new functions.https.HttpsError(
-      "internal",
-      "Something unexpected happened."
-    );
-  }
+    });
+  returnData = {
+    ...returnData,
+    profilePicture:
+      (await getStreamablePicture(returnData.profilePicture)) + "",
+  };
+  console.log("Result: ", returnData);
+  return returnData;
 });
 
 export const addProfilePicture = functions.https.onCall(

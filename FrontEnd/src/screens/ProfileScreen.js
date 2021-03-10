@@ -58,7 +58,6 @@ const Profile = (props) => {
             setRefreshing(false);
         });
     }, []);
-
     useEffect(() => {
         getUserPost(setPosts);
         getFitbitInfo();

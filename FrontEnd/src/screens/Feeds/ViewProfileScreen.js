@@ -34,19 +34,20 @@ const wait = timeout => {
 const ViewProfile = (props) => {
     const { state, getUserPost } = useContext(PostsContext);
     const [propTypes, setPropTypes] = useState({ ...props });
-    const [userInfo, setUserInfo] = useState(propTypes.userInfo.data);
+    
+  //  const [userInfo, setUserInfo] = useState(propTypes.userInfo.data);
+  const userInfo = state.otherUserInfo;
     const [posts, setPosts] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
     const [tabs, setTabs] = useState({
         index: 0,
         routes: [
             { key: '1', title: 'posts', count: 0 },
-            { key: '2', title: 'following', count: userInfo.result.following },
-            { key: '3', title: 'followers', count: userInfo.result.followers },
+            { key: '2', title: 'following', count: userInfo ? userInfo.following :0  },
+            { key: '3', title: 'followers', count: userInfo ? userInfo.followers :0 },
         ],
     })
     const [refreshing, setRefreshing] = useState(false);
-
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         getUserPost(setPosts);
@@ -54,7 +55,6 @@ const ViewProfile = (props) => {
             setRefreshing(false);
         });
     }, []);
-
     useEffect(() => {
         setIsFollowing(true)
         getUserPost(setPosts)
@@ -124,13 +124,13 @@ const ViewProfile = (props) => {
                 <View style={styles.userRow}>
                     <Image
                         style={styles.userImage}
-                        source={{ uri: avatar }}
+                        source={{ uri: state.otherProfilePicture ? state.otherProfilePicture : avatar }}
                     />
                     <View style={styles.userNameRow}>
-                        <Text style={styles.userNameText}>{userInfo.result.username}</Text>
+                        <Text style={styles.userNameText}>{name}</Text>
                     </View>
                     <View style={styles.userBioRow}>
-                        <Text style={styles.userBioText}>{userInfo.result.bio}</Text>
+                        <Text style={styles.userBioText}>{userInfo ? userInfo.bio : ""}</Text>
                     </View>
                 </View>
             </View>

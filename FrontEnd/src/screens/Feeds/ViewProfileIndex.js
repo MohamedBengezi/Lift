@@ -7,15 +7,17 @@ import { Context as AuthContext } from '../../context/AuthContext';
 const ViewProfileScreen = ({ navigation }) => {
     let username = navigation.getParam('username');
 
-    const { state, getUserPost, getUserInfo } = useContext(AuthContext);
+    const { state, getUserPost, getOtherUserInfo } = useContext(AuthContext);
 
     useEffect(() => {
-        getUserInfo({ username: username })
+        getOtherUserInfo({ username: username })
 
     }, [navigation])
-    console.log("userInfo ", state.userInfo)
+   // getOtherUserInfo({ username: username });
+   // console.log("userInfo ", state.getOtherUserInfo)
     contactData.name = username;
     contactData.userInfo = state.userInfo;
+   // console.log(contactData);
     return <ViewProfile {...contactData} />;
 };
 

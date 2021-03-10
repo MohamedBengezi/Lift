@@ -45,6 +45,13 @@ const authReducer = (state, action) => {
         userInfo: action.userInfo,
         profilePicture: action.userInfo.profilePicture
       };
+      case 'updateOtherUserInfo':
+        return{
+          ...state,
+          otherUserInfo:action.userInfo,
+          otherUsername:action.username,
+          otherProfilePicture: action.userInfo.profilePicture,
+        }
     default:
       return state;
   }
@@ -294,9 +301,32 @@ const getUserInfo = (dispatch) => {
     var getUserInfo = functions.httpsCallable("user-getUserInfo");
     getUserInfo(data)
       .then((res) => {
+        if(res.data.profilePicture === "undefined"){
+          res.data.profilePicture=undefined;
+        }
         dispatch({
           type: "updateUserInfo",
           userInfo: res.data
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getOtherUserInfo = (dispatch) => {
+  return async (data) => {
+    var getUserInfo = functions.httpsCallable("user-getUserInfo");
+    getUserInfo(data)
+      .then((res) => {
+        if(res.data.profilePicture === "undefined"){
+          res.data.profilePicture=undefined;
+        }
+        dispatch({
+          type: "updateOtherUserInfo",
+          userInfo: res.data,
+          username:data.username
         });
       })
       .catch((error) => {
@@ -654,6 +684,7 @@ export const { Provider, Context } = createDataContext(
     unfollowWorkoutPlan,
     addTestimonial,
     addProfilePicture,
+    getOtherUserInfo
   },
   { token: null, errorMessage: "", posts: {} }
 );
