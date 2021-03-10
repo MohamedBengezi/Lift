@@ -6,6 +6,7 @@ import { Context as AuthContext } from '../../context/AuthContext';
 
 const ViewProfileScreen = ({ navigation }) => {
     let username = navigation.getParam('username');
+    let uid = navigation.getParam('uid');
 
     const { state, getUserPost, getUserInfo } = useContext(AuthContext);
 
@@ -15,6 +16,7 @@ const ViewProfileScreen = ({ navigation }) => {
     }, [navigation])
     console.log("userInfo ", state.userInfo)
     contactData.name = username;
+    contactData.uid = uid;
     contactData.userInfo = state.userInfo;
     return <ViewProfile {...contactData} />;
 };

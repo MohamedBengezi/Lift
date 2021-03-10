@@ -41,15 +41,15 @@ const ViewProfile = (props) => {
         index: 0,
         routes: [
             { key: '1', title: 'posts', count: 0 },
-            { key: '2', title: 'following', count: userInfo.following },
-            { key: '3', title: 'followers', count: userInfo.followers },
+            { key: '2', title: 'following', count: userInfo ? userInfo.following : 0 },
+            { key: '3', title: 'followers', count: userInfo ? userInfo.followers : 0 },
         ],
     })
     const [refreshing, setRefreshing] = useState(false);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        getUserPost(setPosts);
+        getUserPost(setPosts, propTypes.uid);
         wait(2000).then(() => {
             setRefreshing(false);
         });
@@ -57,7 +57,7 @@ const ViewProfile = (props) => {
 
     useEffect(() => {
         setIsFollowing(true)
-        getUserPost(setPosts)
+        getUserPost(setPosts, propTypes.uid);
         LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
         LogBox.ignoreLogs(['Setting a timer'])
 
@@ -124,13 +124,13 @@ const ViewProfile = (props) => {
                 <View style={styles.userRow}>
                     <Image
                         style={styles.userImage}
-                        source={{ uri: avatar }}
+                        source={{ uri: state.profilePicture ? state.profilePicture : avatar }}
                     />
                     <View style={styles.userNameRow}>
                         <Text style={styles.userNameText}>{name}</Text>
                     </View>
                     <View style={styles.userBioRow}>
-                        <Text style={styles.userBioText}>{userInfo.bio}</Text>
+                        <Text style={styles.userBioText}>{userInfo ? userInfo.bio : ""}</Text>
                     </View>
                 </View>
             </View>

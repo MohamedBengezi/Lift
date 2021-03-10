@@ -35,7 +35,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     const [image, setImage] = useState(null);
     const [answered, setAnswered] = useState(false);
 
-    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
+    let title, mediaPath, name, uid, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
     if (item) {
         postID = item.item.id;
         name = item.item.username;
@@ -45,6 +45,8 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         isFeedback = item.item.isFeedback;
         isImage = item.item.isImage;
         timeSubmitted = "";
+        uid = item.item.uid;
+
         if (item.item.timeSubmitted) {
             timeSubmitted = item.item.timeSubmitted;
             timeSubmitted = timeSubmitted.substring(0, 15) + timeSubmitted.substring(timeSubmitted.length - 11, timeSubmitted.length);
@@ -322,6 +324,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             <TouchableOpacity
                 style={{ ...styles.answered, backgroundColor: (answered ? colors.blue : colors.darkGrey) }}
                 onPress={() => {
+                    if (state.username !== name) return;
                     setAnswered(!answered);
                     markPostAsAnswered({ docID: postID });
                 }}
@@ -337,7 +340,10 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         return (
             <TouchableOpacity
                 style={showComments ? styles.postDetailsHeader : styles.postHeader}
-                onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: name })}
+                onPress={() => {
+                    if (state.username == name) navigate('Profile')
+                    else navigate('ViewProfile', { isHeaderShow: true, username: name, uid: uid })
+                }}
             >
                 <View
                     style={styles.displayImageContainer}
