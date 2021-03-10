@@ -271,7 +271,7 @@ const MainScreen = ({ navigation }) => {
             <View style={styles.cameraButton}>
               <TouchableHighlight
                 style={styles.capture}
-                onPress={swipeHack}
+                onPress={takePicture}
                 onLongPress={takeVideo}
                 onPressOut={stopRecording}
                 underlayColor="rgba(255, 255, 255, 0.5)"

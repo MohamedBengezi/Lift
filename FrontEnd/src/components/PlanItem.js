@@ -17,7 +17,7 @@ const PlanItem = (props) => {
   let planID = plan.id;
   let rating = plan.rating;
   let uid = firebaseApp.auth().currentUser.uid;
-  const [isFollowing, setIsFollowing] = useState(plan.followers.includes(uid));
+  const [isFollowing, setIsFollowing] = useState((plan.followers) ? plan.followers.includes(uid) : false);
 
   return (
     <TouchableOpacity
@@ -83,9 +83,8 @@ const styles = StyleSheet.create({
     height: 175,
     width: "100%",
     marginBottom: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: "space-around",
+    alignItems: "flex-start",
   },
   viewPlanContainer: {
     backgroundColor: colors.white,
@@ -114,7 +113,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: colors.blue,
     marginTop: 5,
     width: 80,
     borderRadius: 5,

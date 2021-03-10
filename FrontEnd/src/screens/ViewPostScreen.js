@@ -5,7 +5,8 @@ import {
     Text,
     View,
     TouchableOpacity,
-    StatusBar
+    StatusBar,
+    ScrollView
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import colors from '../hooks/colors'
@@ -15,7 +16,7 @@ const ViewPostScreen = ({ navigation }) => {
     const isFeedback = navigation.getParam('isFeedback');
 
     return (
-        <View style={{ flex: 1 }}>
+        <ScrollView keyboardShouldPersistTaps='never' contentContainerStyle={{ flex: 1 }}>
             <TouchableOpacity
                 onPress={() => {
                     navigation.goBack();
@@ -31,7 +32,7 @@ const ViewPostScreen = ({ navigation }) => {
 
             <PostDetails item={item} showComments={true} isFeedback={isFeedback} />
 
-        </View>
+        </ScrollView>
     );
 };
 const styles = StyleSheet.create({

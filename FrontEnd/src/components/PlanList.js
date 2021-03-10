@@ -19,24 +19,29 @@ const STAR_SIZE = 45;
 const PlanList = ({ navigation }) => {
     const { state } = useContext(AuthContext);
     const [plans, setPlans] = useState(state.plans);
+    let count = 0;
     if (state.plans != plans) setPlans(state.plans)
     console.log('planlist ', plans);
 
     function renderPlanItem(item) {
         if (!item || !item.item) return
         return (
-            <PlanItem plan={item.item} navigation={navigation} />
+            <PlanItem plan={item.item} navigation={navigation} key={item.index} />
         );
     }
 
     return (
 
         <View style={styles.plans}>
-            <FlatList
-                data={plans}
-                renderItem={(item) => renderPlanItem(item)}
-                keyExtractor={(item) => item.id}
-            />
+            {(plans) ?
+                <FlatList
+                    data={plans}
+                    renderItem={(item) => renderPlanItem(item)}
+                    keyExtractor={(item) => item.id + " " + count++}
+                /> : null
+
+            }
+
         </View>
     );
 };
