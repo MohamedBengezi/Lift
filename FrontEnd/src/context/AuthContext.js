@@ -275,14 +275,14 @@ const uploadPost = (dispatch) => async ({ caption, type, media, isVideo }) => {
       uploadPost = functions.httpsCallable("posts-createGeneralPost");
     }
 
-      uploadPost(data)
-        .then(() => {
-          console.log("Uploaded post details to db");
-        })
-        .catch((error) => {
-          showError(error, dispatch);
-        });
-    }
+    uploadPost(data)
+      .then(() => {
+        console.log("Uploaded post details to db");
+      })
+      .catch((error) => {
+        showError(error, dispatch);
+      });
+  }
   );
 };
 
@@ -337,8 +337,8 @@ const getOtherUserInfo = (dispatch) => {
 
 
 const getUserPost = () => {
-  return async (setPosts) => {
-    let uid = firebaseApp.auth().currentUser.uid;
+  return async (setPosts, userid) => {
+    let uid = (userid) ? userid : firebaseApp.auth().currentUser.uid;
     var getUserPosts = functions.httpsCallable("posts-getUserPosts");
     getUserPosts({ uid: uid })
       .then((data) => {
@@ -446,7 +446,7 @@ const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
     addComment(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -458,7 +458,7 @@ const archivePost = () => {
     var archivePost = functions.httpsCallable("posts-archiveFeedbackPost");
     console.log("archiving", data.docID);
     archivePost(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -559,7 +559,7 @@ const followWorkoutPlan = () => {
     );
     console.log("following plan ", data.planID);
     followWorkoutPlan(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -624,7 +624,7 @@ const addTestimonial = () => {
   };
 };
 
-const updateUserInfo = (dispatch,data) => {
+const updateUserInfo = (dispatch, data) => {
   //code to update userInfo on save button in settings page
 }
 

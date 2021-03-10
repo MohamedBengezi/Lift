@@ -50,14 +50,14 @@ const ViewProfile = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        getUserPost(setPosts);
+        getUserPost(setPosts, propTypes.uid);
         wait(2000).then(() => {
             setRefreshing(false);
         });
     }, []);
     useEffect(() => {
         setIsFollowing(true)
-        getUserPost(setPosts)
+        getUserPost(setPosts, propTypes.uid);
         LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
         LogBox.ignoreLogs(['Setting a timer'])
 

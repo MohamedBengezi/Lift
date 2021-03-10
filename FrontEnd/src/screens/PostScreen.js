@@ -22,7 +22,7 @@ const PostScreen = ({ navigation }) => {
   const renderCapture = () => {
     if (video != null) {
       return (
-        <View>
+        <View style={styles.previewContainer}>
           <Video
             source={{
               uri: video.uri,
