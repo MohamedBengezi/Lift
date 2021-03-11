@@ -49,7 +49,7 @@ const ViewPlanScreen = ({ navigation }) => {
                         renderItem={(item) => renderPlan(item)}
                         keyExtractor={(item) => item.week_number + item.dayoftheweek + ""}
                         scrollEnabled={false}
-                        contentContainerStyle={{ paddingBottom: "30%" }}
+                        contentContainerStyle={{ paddingBottom: "30%", marginTop:5 }}
 
                     />
                 </View>

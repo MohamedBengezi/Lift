@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: "column",
     marginLeft: 10,
+    marginTop:15
   },
   title: {
     fontSize: 20,
