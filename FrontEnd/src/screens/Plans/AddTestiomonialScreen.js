@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, Image } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
 import { Button } from "react-native-elements";
 import colors from "../../hooks/colors";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -8,6 +8,7 @@ import { navigate } from "../../navigationRef";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { Context as AuthContext } from "../../context/AuthContext";
 
 const AddTestimonialScreen = ({ navigation }) => {
   let plan = navigation.getParam("plan");
@@ -17,8 +18,10 @@ const AddTestimonialScreen = ({ navigation }) => {
     afterMediaPath: "",
     text: "",
     rating: 1,
-    docId: planID,
+    docID: planID,
   };
+
+  const { addTestimonial } = useContext(AuthContext);
 
   var items = [];
   for (var i = 1; i <= 5; i++) {
@@ -26,6 +29,7 @@ const AddTestimonialScreen = ({ navigation }) => {
   }
   const [beforeImage, setBeforeImage] = useState(null);
   const [afterImage, setAfterImage] = useState(null);
+  const [reviewText, setReviewText] = useState("");
   const pickBeforeImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -49,6 +53,37 @@ const AddTestimonialScreen = ({ navigation }) => {
     }
   };
 
+  const checkAndSendTestimonial = () => {
+    if (!beforeImage) {
+      Alert.alert(
+        "Before Image",
+        "Please pick a before image!",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    } else if(!afterImage){
+      Alert.alert(
+        "After Image",
+        "Please pick an after image!",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+    testimonial.afterMediaPath=afterImage;
+    testimonial.beforeMediaPath=beforeImage;
+    testimonial.text= reviewText;
+    addTestimonial(testimonial);
+  };
   return (
     <ScrollView
       contentContainerStyle={{
@@ -68,7 +103,7 @@ const AddTestimonialScreen = ({ navigation }) => {
       <Spacer />
       <TextInput
         style={styles.titleInput}
-        onChangeText={(text) => (testimonial.text = text)}
+        onChangeText={(text) => {setReviewText(text);}}
         placeholder="Enter your review here"
       />
 
@@ -120,7 +155,7 @@ const AddTestimonialScreen = ({ navigation }) => {
       <Button
         title="POST RATING"
         onPress={() => {
-          console.log("clicked post rating");
+          checkAndSendTestimonial();
         }}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}

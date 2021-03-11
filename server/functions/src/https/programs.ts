@@ -284,6 +284,10 @@ export const followWorkoutPlan = functions.https.onCall(
       if (doc !== undefined)
         planRef.update({
           followers: [uid, ...doc.followers],
+        }).then((res) => {
+          console.log("Updated plans with its followers");
+        }).catch((err) =>{
+          console.error(err);
         });
       else
         throw new functions.https.HttpsError(
@@ -296,7 +300,11 @@ export const followWorkoutPlan = functions.https.onCall(
         const plans = user.workout_plans ?? [];
         userRef.update({
           workout_plans: [planId, ...plans],
-        });
+        }).then((res) => {
+          console.log("Added plan to the followed user's info in user db");
+        }).catch((err) =>{
+          console.error(err);
+        });;
       } else
         throw new functions.https.HttpsError(
           "not-found",
@@ -327,7 +335,11 @@ export const unfollowWorkoutPlan = functions.https.onCall(
         const followList: Array<string> = doc.followers;
         planRef.update({
           followers: followList.filter((e) => e !== uid),
-        });
+        }).then((res) => {
+          console.log("Removed follower from plans db");
+        }).catch((err) =>{
+          console.error(err);
+        });;
       } else
         throw new functions.https.HttpsError(
           "not-found",
@@ -339,7 +351,11 @@ export const unfollowWorkoutPlan = functions.https.onCall(
         const plans: Array<string> = user.workout_plans ?? [];
         userRef.update({
           workout_plans: plans.filter((e) => e !== planId),
-        });
+        }).then((res) => {
+          console.log("Removed plan from unfollowed user's info in user db");
+        }).catch((err) =>{
+          console.error(err);
+        });;
       } else
         throw new functions.https.HttpsError(
           "not-found",

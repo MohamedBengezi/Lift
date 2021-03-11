@@ -1,4 +1,4 @@
-import React, { Component, useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import {
     Animated,
     Image,
@@ -12,23 +12,18 @@ import {
     LogBox,
     StatusBar
 } from 'react-native'
-import { Icon } from 'react-native-elements'
 import {
     TabView,
     TabBar,
-    TabViewPagerScroll,
-    TabViewPagerPan,
 } from 'react-native-tab-view'
-import PropTypes from 'prop-types'
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Posts from './helpers/Posts'
-import { navigate } from '../navigationRef'
+import { navigate } from '../../navigationRef'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import Feed from '../components/Feed'
-import serverApi from "../api/server";
-import colors from '../hooks/colors'
-import { Context as PostsContext } from '../context/AuthContext';
-import { firebaseApp, functions } from "../../firebase";
+import Feed from '../../components/Feed'
+import colors from '../../hooks/colors'
+import { Context as PostsContext } from '../../context/AuthContext';
+import { firebaseApp, functions } from "../../../firebase";
+import { Button } from "react-native-elements";
 
 const wait = timeout => {
     return new Promise(resolve => {
@@ -36,34 +31,36 @@ const wait = timeout => {
     });
 };
 
-const Profile = (props) => {
-    const { state, getUserPost, getFitbitInfo } = useContext(PostsContext);
+const ViewProfile = (props) => {
+    const { state, getUserPost } = useContext(PostsContext);
     const [propTypes, setPropTypes] = useState({ ...props });
-    const userInfo = state.userInfo;
+    const [userInfo, setUserInfo] = useState(propTypes.userInfo.data);
     const [posts, setPosts] = useState(null);
+    const [isFollowing, setIsFollowing] = useState(false);
     const [tabs, setTabs] = useState({
         index: 0,
         routes: [
             { key: '1', title: 'posts', count: 0 },
-            { key: '2', title: 'following', count: userInfo ? userInfo.following :0 },
-            { key: '3', title: 'followers', count: userInfo ? userInfo.followers :0 },
+            { key: '2', title: 'following', count: userInfo.result.following },
+            { key: '3', title: 'followers', count: userInfo.result.followers },
         ],
     })
     const [refreshing, setRefreshing] = useState(false);
+
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         getUserPost(setPosts);
-        getFitbitInfo();
         wait(2000).then(() => {
             setRefreshing(false);
         });
     }, []);
 
     useEffect(() => {
-        getUserPost(setPosts);
-        getFitbitInfo();
-        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-        LogBox.ignoreLogs(['Setting a timer']);
+        setIsFollowing(true)
+        getUserPost(setPosts)
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
+        LogBox.ignoreLogs(['Setting a timer'])
+
     }, []);
 
     const handleIndexChange = index => {
@@ -110,10 +107,6 @@ const Profile = (props) => {
 
     const renderScene = ({ route: { key } }) => {
 
-        const apiLink = serverApi.defaults.baseURL;
-        let url = apiLink + "/sample";
-        //      posts ? console.log("XXX", posts, "\n\n\n") : null
-
         switch (key) {
             case '1':
                 return posts ? (
@@ -131,17 +124,31 @@ const Profile = (props) => {
                 <View style={styles.userRow}>
                     <Image
                         style={styles.userImage}
-                        source={{ uri: state.profilePicture ? state.profilePicture : avatar }}
+                        source={{ uri: avatar }}
                     />
                     <View style={styles.userNameRow}>
-                        <Text style={styles.userNameText}>{name}</Text>
+                        <Text style={styles.userNameText}>{userInfo.result.username}</Text>
                     </View>
                     <View style={styles.userBioRow}>
-                        <Text style={styles.userBioText}>{userInfo ? userInfo.bio : ""}</Text>
+                        <Text style={styles.userBioText}>{userInfo.result.bio}</Text>
                     </View>
                 </View>
             </View>
         )
+    }
+
+    function FollowButton() {
+        return (
+            <Button
+                title={isFollowing ? "Unfollow" : "Follow"}
+                onPress={() => {
+                    setIsFollowing(!isFollowing);
+                }}
+                buttonStyle={isFollowing ? styles.button : { ...styles.button, backgroundColor: colors.blue }}
+                titleStyle={styles.buttonText}
+                containerStyle={styles.containerStyle}
+            />
+        );
     }
     return (
         <SafeAreaView>
@@ -149,15 +156,8 @@ const Profile = (props) => {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
                 <View style={[styles.container]}>
                     <View style={styles.cardContainer}>
-                        <TouchableOpacity style={styles.settings} onPress={() => navigate('Settings')}>
-                            <Ionicons
-                                name="md-settings"
-                                color='#505050'
-                                type="ionicon" size={35}
-                            />
-
-                        </TouchableOpacity>
                         {renderContactHeader()}
+                        <FollowButton />
                         <TabView
                             style={[styles.tabContainer]}
                             navigationState={tabs}
@@ -254,6 +254,21 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         margin: 15,
         marginTop: StatusBar.currentHeight
-    }
+    },
+    button: {
+        backgroundColor: colors.yellow,
+        width: "30%",
+        borderRadius: 5,
+    },
+    containerStyle: {
+        alignItems: "center",
+        marginBottom: "5%",
+        flex: 0.15,
+    },
+    buttonText: {
+        color: colors.black,
+        flex: 1,
+        fontSize: 15,
+    },
 });
-export default Profile;
+export default ViewProfile;

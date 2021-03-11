@@ -137,6 +137,10 @@ const MainScreen = ({ navigation }) => {
     navigation.navigate('WorkoutPlans');
   }
 
+  const swipeHack = () => {
+    navigation.navigate('WorkoutPlans');
+  }
+
   const saveToCameraRoll = () => {
     var media = (image != null) ? image : video;
     MediaLibrary.saveToLibraryAsync(media.uri).then(() => {
@@ -267,7 +271,7 @@ const MainScreen = ({ navigation }) => {
             <View style={styles.cameraButton}>
               <TouchableHighlight
                 style={styles.capture}
-                onPress={takePicture}
+                onPress={swipeHack}
                 onLongPress={takeVideo}
                 onPressOut={stopRecording}
                 underlayColor="rgba(255, 255, 255, 0.5)"

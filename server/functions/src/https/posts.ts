@@ -7,12 +7,11 @@ export const createFeedbackPost = functions.https.onCall(
     const uid = context.auth!.uid;
     const caption = data.caption;
     const mediaPath = data.mediaPath;
+    const isVideo = data.isVideo;
     const feedBackPostsRef = admin.firestore().collection("feedback_posts");
 
     let username = "";
     const userRef = admin.firestore().collection("users").doc(uid);
-
-    const type = await storageUtils.getDownloadURL(mediaPath)?.contentType;
 
     try {
       const userDoc = await userRef.get();
@@ -48,7 +47,7 @@ export const createFeedbackPost = functions.https.onCall(
         answered: false,
         liked_by: [],
         disliked_by: [],
-        isImage: type == "application/jpeg",
+        isImage: !isVideo,
         isFeedback: true,
       })
       .then(() => {
@@ -70,13 +69,12 @@ export const createGeneralPost = functions.https.onCall(
     const uid = context.auth!.uid;
     const caption = data.caption;
     const mediaPath = data.mediaPath;
+    const isVideo = data.isVideo;
     const generalPostsRef = admin.firestore().collection("general_posts");
 
     let username = "";
 
     const userRef = admin.firestore().collection("users").doc(uid);
-
-    const type = await storageUtils.getDownloadURL(mediaPath)?.contentType;
 
     try {
       const userDoc = await userRef.get();
@@ -109,7 +107,7 @@ export const createGeneralPost = functions.https.onCall(
         mediaPath: mediaPath,
         liked_by: [],
         disliked_by: [],
-        isImage: type == "application/jpeg",
+        isImage: !isVideo,
         isFeedback: false,
       })
       .then(() => {

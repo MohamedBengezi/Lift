@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
+import * as storageUtils from "../util/storage";
 
 export const addUserToDB = functions.https.onCall((data, context) => {
   const username = data.username;
@@ -85,30 +86,61 @@ export const modifyFollowing = functions.https.onRequest(
   }
 );
 
-export const getUserInfo = functions.https.onCall(async (data, contxt) => {
-  const username = data.username;
-  const query = await admin
-    .firestore()
-    .collection("users")
-    .where("username", "==", username)
-    .get()
-    .then((querySnapShot) => {
-      let result;
-      let dId;
-      querySnapShot.forEach(function (doc) {
-        result = doc.data();
-        dId = doc.id;
-      });
-      return { dId, result };
-    })
-    .catch((err) => {
+export const getUserInfo = functions.https.onCall(async (data, context) => {
+  const uid = context.auth!.uid;
+  const userRef = admin.firestore().collection("users").doc(uid);
+
+  try {
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
       throw new functions.https.HttpsError(
-        "unknown",
-        `Something went wrong when accessing the database. Reason ${err}`
+        "not-found",
+        "Document does not exist. Please check the document id again"
       );
-    });
-  return query;
+    } else {
+      const docData = userDoc.data()!;
+      let mediaPath = null;
+      if (docData.profilePicture) {
+        mediaPath = (
+          await storageUtils.getDownloadURL(docData.profilePicture)?.downloadURL
+        )?.[0];
+      }
+
+      return {
+        id: userDoc.id,
+        bio: docData.bio,
+        followers: docData.followers,
+        following: docData.following,
+        profilePicture: mediaPath,
+      };
+    }
+  } catch (err) {
+    throw new functions.https.HttpsError(
+      "internal",
+      "Something unexpected happened."
+    );
+  }
 });
+
+export const addProfilePicture = functions.https.onCall(
+  async (data, context) => {
+    const uid = context.auth!.uid;
+    const query = admin
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .update({ profilePicture: data.path })
+      .then(async (res) => {
+        return {
+          profilePicture: (
+            await storageUtils.getDownloadURL(data.path)?.downloadURL
+          )?.[0],
+        };
+      });
+    return query;
+  }
+);
 
 async function getRestingHeartRate(token: string) {
   let restingHeartRate = 0;
@@ -207,3 +239,84 @@ export const getFitbitInfo = functions.https.onCall((data, context) => {
     });
   return query;
 });
+
+/**
+ * Scheduled function to update fitbit info in users database
+ */
+export const updateFitbitInfo = functions.pubsub
+  .schedule("every 15 minutes")
+  .onRun(async (context) => {
+    const usersRef = admin.firestore().collection("users");
+    var tokensUid: { token: any; uid: string }[] = [];
+    const query = await usersRef.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().fitbitInfo.isLinked) {
+          const token = doc.data().fitbitInfo.token;
+          const obj = {
+            token: token,
+            uid: doc.id,
+          };
+          tokensUid.push(obj);
+        }
+      });
+      return null;
+    });
+    for (var i = 0; i < tokensUid.length; i++) {
+      var val = tokensUid[i];
+      try {
+        const heartRate = await getRestingHeartRate(val.token);
+        const caloriesBurned = await getCaloriesBurned(val.token);
+        var fitbitInfo = {};
+        if (heartRate && caloriesBurned) {
+          fitbitInfo = {
+            "fitbitInfo.heartRate": heartRate,
+            "fitbitInfo.caloriesBurned": caloriesBurned,
+          };
+        } else if (heartRate) {
+          fitbitInfo = {
+            "fitbitInfo.heartRate": heartRate,
+          };
+        } else if (caloriesBurned) {
+          //Usually Fitbit always return this as 0 not undefined
+          fitbitInfo = {
+            "fitbitInfo.caloriesBurned": caloriesBurned,
+          };
+        }
+
+        usersRef
+          .doc(val.uid)
+          .update(fitbitInfo)
+          .then((res) => {
+            return null;
+          })
+          .catch((err) => {
+            console.error(err);
+            fitbitInfo = {
+              "fitbitInfo.isLinked": false,
+            };
+            usersRef
+              .doc(val.uid)
+              .update(fitbitInfo)
+              .then((res) => {
+                return "token expired or fitbit api call failed";
+              })
+              .catch((err2) => {
+                console.error(err2);
+              });
+          });
+      } catch (error) {
+        console.error(error);
+        usersRef
+          .doc(val.uid)
+          .update({ "fitbitInfo.isLinked": false })
+          .then((res) => {
+            return "token expired or fitbit api call failed";
+          })
+          .catch((err2) => {
+            console.error(err2);
+          });
+      }
+    }
+
+    return query;
+  });

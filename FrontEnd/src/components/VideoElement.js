@@ -1,6 +1,7 @@
 import React, { useReducer } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { WebView } from "react-native-webview";
+import { Video } from "expo-av";
 
 
 
@@ -8,21 +9,17 @@ const VideoElement = ({ title, video }) => {
     return (
         <View style={styles.post}>
             <Text style={{ marginLeft: 50 }}>{title}</Text>
-            <WebView
+            <Video
                 source={{
-                    html: `<!DOCTYPE html>
-              <html>
-              <head>
-                  <title></title>
-              </head>
-              <body>
-              <video preload autoplay="false" src=${video.item} controls="true" style="width: 50; height: 150">
-              </video>
-              </body>
-              </html>`,
+                    uri: video,
                 }}
+                rate={1.0}
+                volume={1.0}
+                isMuted={false}
+                resizeMode="cover"
+                shouldPlay
+                isLooping
                 style={styles.video}
-
             />
         </View>
     );
@@ -38,7 +35,7 @@ const styles = StyleSheet.create({
     },
     video: {
         width: Dimensions.get('window').width - 20,
-        height: 125,
+        height: 250,
         resizeMode: "cover",
         opacity: 0.99
     }

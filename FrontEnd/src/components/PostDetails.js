@@ -33,33 +33,33 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     const [comments, setComments] = useState(null);
     const [image, setImage] = useState(null);
+    const [answered, setAnswered] = useState(false);
 
-    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted;
+    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
     if (item) {
         postID = item.item.id;
         name = item.item.username;
         title = item.item.caption;
         mediaPath = item.item.mediaPath
         isUsersPost = (name == state.username);
-        isFeedback = item.item.answered;
-
+        isFeedback = item.item.isFeedback;
+        isImage = item.item.isImage;
         timeSubmitted = "";
         if (item.item.timeSubmitted) {
             timeSubmitted = item.item.timeSubmitted;
             timeSubmitted = timeSubmitted.substring(0, 15) + timeSubmitted.substring(timeSubmitted.length - 11, timeSubmitted.length);
         }
 
-        isAnswered = (isFeedback && item.item.answered);
-
     } else {
         title = "title";
         mediaPath = "https://i.imgur.com/GfkNpVG.jpg";
 
     }
-
     useEffect(() => {
         let mounted = true;
         let commentsOrReplies = (isFeedback) ? "posts-getReplies" : "posts-getComments";
+        setAnswered(isFeedback && item.item.answered);
+
         var getReplies = functions.httpsCallable(commentsOrReplies);
         if (!comments && postID !== undefined) {
             getReplies({ postid: postID }).then((res) => {
@@ -83,7 +83,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         };
         return () => mounted = false;
     }, []);
-
     let collection = (isFeedback) ? "feedback_posts" : "general_posts";
 
     const [likedOrCommented, setLikedOrCommented] = useState({
@@ -321,8 +320,11 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     function renderAnsweredText() {
         return (
             <TouchableOpacity
-                style={{ ...styles.answered, backgroundColor: (isAnswered ? colors.blue : colors.darkGrey) }}
-                onPress={() => markPostAsAnswered({ docID: postID })}
+                style={{ ...styles.answered, backgroundColor: (answered ? colors.blue : colors.darkGrey) }}
+                onPress={() => {
+                    setAnswered(!answered);
+                    markPostAsAnswered({ docID: postID });
+                }}
             >
                 <Text style={{ fontWeight: 'bold' }}>
                     ANSWERED
@@ -333,10 +335,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function Header() {
         return (
-            <View style={showComments ? styles.postDetailsHeader : styles.postHeader}>
-                <TouchableOpacity
+            <TouchableOpacity
+                style={showComments ? styles.postDetailsHeader : styles.postHeader}
+                onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: name })}
+            >
+                <View
                     style={styles.displayImageContainer}
-                    onPress={() => console.log("Profile Image pressed")}
                     activeOpacity={0.8}
                 >
                     <Image
@@ -345,12 +349,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                             uri: "https://reactnative.dev/img/tiny_logo.png",
                         }}
                     />
-                </TouchableOpacity>
+                </View>
 
                 <View style={styles.nameAndImageContainer}>
-                    <TouchableOpacity
+                    <View
                         style={styles.avatarName}
-                        onPress={() => console.log("Profile pressed")}
+                        onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: name })}
                         activeOpacity={0.8}
                     >
                         <Text style={{ fontSize: 17 }}>{name}</Text>
@@ -359,7 +363,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                                 {timeSubmitted}
                             </Text>
                         </View>
-                    </TouchableOpacity>
+                    </View>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
@@ -368,7 +372,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 </View>
 
 
-            </View>
+            </TouchableOpacity>
         );
     }
 
@@ -388,11 +392,11 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                             onPress={() => navigate("ViewPost", { item })}
                             activeOpacity={1}
                         >
-                            {mediaPath ? (
+                            {isImage ? (
                                 <ImageElement image={mediaPath} title={title} />
                             ) : (
-                                    <VideoElement video={item} title={title} />
-                                )}
+                                <VideoElement video={mediaPath} title={title} />
+                            )}
                         </TouchableOpacity>
                     </View>
                     {likes}

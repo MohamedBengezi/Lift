@@ -12,8 +12,8 @@ import * as WebBrowser from "expo-web-browser";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import axios from "axios";
 
-const SettingsScreen = () => {
-  const { signout, saveFitbitToken, state, getFitbitInfo } = useContext(
+const SettingsScreen = ({ navigation }) => {
+  const { signout, saveFitbitToken, state, addProfilePicture } = useContext(
     AuthContext
   );
   const [image, setImage] = useState(null);
@@ -46,6 +46,14 @@ const SettingsScreen = () => {
       setImage(result.uri);
     }
   };
+
+  const saveUserInfo = () => {
+    if(image){
+      addProfilePicture({uri:image});
+    }
+    
+    navigation.goBack();
+  }
 
   WebBrowser.maybeCompleteAuthSession();
   let discovery = {
@@ -133,7 +141,7 @@ const SettingsScreen = () => {
       <Button
         title="Save"
         onPress={() => {
-          console.log("Saved settings");
+          saveUserInfo();
         }}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}
