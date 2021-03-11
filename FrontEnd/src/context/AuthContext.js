@@ -540,7 +540,6 @@ const searchWorkoutPlans = (dispatch) => {
     console.log("searching for plans: ", data.query);
     searchWorkoutPlans(data)
       .then((res) => {
-        console.log("found plans ", res);
         dispatch({
           type: "getPlans",
           plans: res.data.results,

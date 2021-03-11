@@ -21,7 +21,6 @@ const PlanList = ({ navigation }) => {
     const [plans, setPlans] = useState(state.plans);
     let count = 0;
     if (state.plans != plans) setPlans(state.plans)
-    console.log('planlist ', plans);
 
     function renderPlanItem(item) {
         if (!item || !item.item) return
