@@ -439,6 +439,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2,
+        height:"85%"
     },
     postDetailsContainer: {
         flexDirection: "column",
