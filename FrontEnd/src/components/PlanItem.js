@@ -18,7 +18,6 @@ const PlanItem = (props) => {
   let rating = plan.rating;
   let uid = firebaseApp.auth().currentUser.uid;
   const [isFollowing, setIsFollowing] = useState((plan.followers) ? plan.followers.includes(uid) : false);
-
   return (
     <TouchableOpacity
       style={
@@ -26,7 +25,7 @@ const PlanItem = (props) => {
       }
       onPress={() => navigation.navigate("ViewPlan", { plan: plan })}
     >
-      <View style={styles.textContainer}>
+      <View style={parentRoute==mainScreen ? {...styles.textContainer,marginTop:15} : styles.textContainer}>
         <Text style={styles.title}>{plan.name}</Text>
         <Text style={styles.author}>{plan.experience_level}</Text>
 
@@ -99,6 +98,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: "column",
     marginLeft: 10,
+    marginTop:0
   },
   title: {
     fontSize: 20,
