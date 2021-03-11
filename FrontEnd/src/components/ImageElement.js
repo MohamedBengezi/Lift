@@ -6,7 +6,7 @@ import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 const ImageElement = ({ title, image }) => {
     return (
         <View style={styles.post}>
-            <Text style={{ marginLeft: 50 }}>{title}</Text>
+            <Text >{title}</Text>
             <Image source={{ uri: image }} style={styles.image} />
         </View>
     );
@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     image: {
+        aspectRatio: 1.5,
         width: Dimensions.get('window').width - 20,
         height: 250,
     }

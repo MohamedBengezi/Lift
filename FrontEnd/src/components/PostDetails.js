@@ -20,6 +20,7 @@ import { KeyboardAvoidingView } from "react-native";
 import { Context as PostsContext } from '../context/AuthContext';
 import { functions } from "../../firebase";
 import * as ImagePicker from "expo-image-picker";
+import { SafeAreaView } from "react-native";
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
     const {
@@ -201,12 +202,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         );
     }
 
-    function displayComment(comment, index) {
+    function displayComment(comment) {
         return (
             <Comment
-                comment={comment}
-                key={index}
-                index={index}
+                comment={comment.item}
+                key={comment.index}
+                index={comment.index}
                 isFeedback={isFeedback}
             />
         );
@@ -214,12 +215,18 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function renderComments() {
         return (
-            <ScrollView>
+            <View>
                 <Text style={styles.sectionHeaderText}>{comments ? comments.data.count : 0} COMMENTS</Text>
-                {(comments) ? comments.data.replies.map((comment, index) => {
-                    return displayComment(comment, index);
-                }) : null}
-            </ScrollView>
+
+                {(comments) ?
+                    <FlatList
+                        data={comments.data.replies}
+                        renderItem={(item) => displayComment(item)}
+                        keyExtractor={(item) => item.id}
+                        scrollEnabled={true}
+                        contentContainerStyle={{ paddingBottom: "30%" }}
+                    /> : null}
+            </View>
         );
     }
 
@@ -383,35 +390,35 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            <View style={
-                showComments ? { flex: 1, marginTop: StatusBar.currentHeight + 40 } : { flex: 1, height: 400 }
-            }>
-                <View
-                    style={
-                        showComments ? styles.postDetailsContainer : styles.postContainer
-                    }
-                >
-                    <Header />
-                    <View style={showComments ? styles.postDetailsImageCaptionContainer : styles.postImageCaptionContainer}>
-                        <TouchableOpacity
-                            onPress={() => navigate("ViewPost", { item })}
-                            activeOpacity={1}
-                        >
-                            {isImage ? (
-                                <ImageElement image={mediaPath} title={title} />
-                            ) : (
-                                <VideoElement video={mediaPath} title={title} />
-                            )}
-                        </TouchableOpacity>
+        <SafeAreaView style={{ flex: 1 }}>
+            <ScrollView>
+                <View style={{ flex: 1 }}>
+                    <View
+                        style={
+                            showComments ? styles.postDetailsContainer : styles.postContainer
+                        }
+                    >
+                        <Header />
+                        <View style={showComments ? styles.postDetailsImageCaptionContainer : styles.postImageCaptionContainer}>
+                            <TouchableOpacity
+                                onPress={() => navigate("ViewPost", { item })}
+                                activeOpacity={1}
+                            >
+                                {isImage ? (
+                                    <ImageElement image={mediaPath} title={title} />
+                                ) : (
+                                    <VideoElement video={mediaPath} title={title} />
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {likes}
                     </View>
-                    {likes}
-                </View>
 
-                {showComments ? renderComments() : null}
-            </View>
+                    {showComments ? renderComments() : null}
+                </View>
+            </ScrollView>
             {showComments ? renderAddComment() : null}
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -440,12 +447,12 @@ const styles = StyleSheet.create({
         backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2,
-        height: "56%"
+        height: 450
     },
     postDetailsHeader: {
         height: 70,
         flexDirection: "row",
-        marginBottom: -40,
+        marginBottom: -80,
         justifyContent: "center",
         alignItems: "center"
 
@@ -528,7 +535,7 @@ const styles = StyleSheet.create({
     addComment: {
         height: 50,
         position: "absolute",
-        bottom: 0,
+        bottom: -0,
         width: "100%",
     },
     answered: {

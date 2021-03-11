@@ -25,6 +25,7 @@ import AddWorkoutScreen from "./src/screens/Plans/AddWorkoutScreen";
 import AddTestimonialScreen from "./src/screens/Plans/AddTestiomonialScreen";
 
 import ViewProfileScreen from "./src/screens/Feeds/ViewProfileIndex";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -79,6 +80,12 @@ export default function RouteScreen() {
       justifyContent: "center",
       alignSelf: "center",
       borderWidth: 2,
+    },
+    icon: {
+      color: colors.black,
+      fontWeight: "600",
+      fontSize: 50,
+      marginLeft: 5
     },
   });
 
@@ -221,12 +228,22 @@ export default function RouteScreen() {
         },
         ViewPost: {
           screen: ViewPostScreen,
-          navigationOptions: {
+          navigationOptions: ({ navigation }) => ({
             headerMode: 'none',
-            headerShown: false,
+            headerTitle: '',
+            headerLeft: () => (
+              <Ionicons
+                name="ios-arrow-round-back"
+                style={styles.icon}
+                onPress={() => {
+                  navigation.goBack();
+                }}
+              />
+            ),
+            headerShown: true,
             animationEnabled: true
 
-          },
+          }),
         },
         Post: PostScreen,
         ViewPlan: {
