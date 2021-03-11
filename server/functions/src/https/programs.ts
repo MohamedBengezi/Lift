@@ -131,6 +131,15 @@ export const addTestimonial = functions.https.onCall(async (data, context) => {
     .collection("testimonials");
 
   await replyRef.add(testimonialData);
+
+  const testimonials = (await replyRef.get()).docs;
+  const ratings = testimonials.map((e) => e.data().rating);
+  const score = Math.round(
+    ratings.reduce((total, value) => total + value) / testimonials.length
+  );
+  const planRef = admin.firestore().collection("workout_plans").doc(docID);
+  await planRef.update({ rating: score });
+  return { message: "Success" };
 });
 
 export const getTestimonials = functions.https.onCall(async (data, context) => {
@@ -172,15 +181,25 @@ export const getTestimonials = functions.https.onCall(async (data, context) => {
 export const deleteTestimonial = functions.https.onCall(
   async (data, context) => {
     const testimonialID = data.testimonialID;
+    const planID = data.planID;
 
     try {
       const testimonialRef = admin
         .firestore()
         .collection("workout_plans")
-        .doc(testimonialID)
-        .collection("testimonials")
-        .doc(testimonialID);
-      await testimonialRef.delete();
+        .doc(planID)
+        .collection("testimonials");
+      const testimonial = testimonialRef.doc(testimonialID);
+      await testimonial.delete();
+
+      const testimonials = (await testimonialRef.get()).docs;
+      const ratings = testimonials.map((e) => e.data().rating);
+      const score = Math.round(
+        ratings.reduce((total, value) => total + value) / testimonials.length
+      );
+      const planRef = admin.firestore().collection("workout_plans").doc(planID);
+      await planRef.update({ rating: score });
+      return { message: "Success" };
     } catch (err) {
       throw new functions.https.HttpsError(
         "internal",
@@ -203,14 +222,22 @@ export const editTestimonial = functions.https.onCall(async (data, context) => {
       .firestore()
       .collection("workout_plans")
       .doc(docID)
-      .collection("testimonials")
-      .doc(docID);
-    await testimonialRef.update({
+      .collection("testimonials");
+    const testimonialDoc = testimonialRef.doc(docID);
+    await testimonialDoc.update({
       text: text,
       beforeMediaPath: beforeMediaPath,
       afterMediaPath: afterMediaPath,
       rating: rating,
     });
+    const testimonials = (await testimonialRef.get()).docs;
+    const ratings = testimonials.map((e) => e.data().rating);
+    const score = Math.round(
+      ratings.reduce((total, value) => total + value) / testimonials.length
+    );
+    const planRef = admin.firestore().collection("workout_plans").doc(docID);
+    await planRef.update({ rating: score });
+    return { message: "Success" };
   } catch (err) {
     throw new functions.https.HttpsError(
       "internal",
