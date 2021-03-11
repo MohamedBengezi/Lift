@@ -500,11 +500,11 @@ const getFitbitInfo = (dispatch) => {
     var getFitbitInfo = functions.httpsCallable("user-getFitbitInfo");
     getFitbitInfo()
       .then((res) => {
-        console.log("Got fitbitInfo");
+        console.log("Got fitbitInfo ");
         dispatch({
           type: "updateFitbit",
           heartRate: res.data.heartRate,
-          calories: res.data.calories,
+          calories: res.data.caloriesBurned,
           isFitbitLinked: res.data.isLinked,
         });
       })
