@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
-    paddingBottom: "20%"
   }
 
 });

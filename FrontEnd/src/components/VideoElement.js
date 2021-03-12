@@ -15,7 +15,7 @@ const VideoElement = ({ title, video }) => {
                 }}
                 rate={1.0}
                 volume={1.0}
-                isMuted={false}
+                isMuted={true}
                 resizeMode="contain"
                 shouldPlay
                 isLooping

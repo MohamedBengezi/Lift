@@ -6,7 +6,7 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
-    StatusBar
+    Alert
 } from "react-native";
 import { Input } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -250,7 +250,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             <KeyboardAvoidingView
                 style={styles.addComment}
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
-                keyboardVerticalOffset={Platform.OS == "ios" ? 10 : 20}
+                keyboardVerticalOffset={Platform.OS == "ios" ? 75 : 0}
                 enabled={true}
             >
                 <View
@@ -286,6 +286,21 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function postComment() {
         if (newComment === "") return;
+        if (!image) {
+            return Alert.alert(
+                "Photo Required!",
+                "Feedback posts require an image",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ],
+                { cancelable: false }
+              );
+        }
 
         if (isFeedback) {
             addReply({ docID: postID, comment: newComment, media: image, isFeedback: isFeedback })
@@ -390,7 +405,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{flex: 1}}>
             <ScrollView>
                 <View style={{ flex: 1 }}>
                     <View
@@ -536,7 +551,7 @@ const styles = StyleSheet.create({
     addComment: {
         height: 50,
         position: "absolute",
-        bottom: -0,
+        bottom: 0,
         width: "100%",
     },
     answered: {
