@@ -45,13 +45,13 @@ const authReducer = (state, action) => {
         userInfo: action.userInfo,
         profilePicture: action.userInfo.profilePicture
       };
-      case 'updateOtherUserInfo':
-        return{
-          ...state,
-          otherUserInfo:action.userInfo,
-          otherUsername:action.username,
-          otherProfilePicture: action.userInfo.profilePicture,
-        }
+    case 'updateOtherUserInfo':
+      return {
+        ...state,
+        otherUserInfo: action.userInfo,
+        otherUsername: action.username,
+        otherProfilePicture: action.userInfo.profilePicture,
+      }
     default:
       return state;
   }
@@ -301,8 +301,8 @@ const getUserInfo = (dispatch) => {
     var getUserInfo = functions.httpsCallable("user-getUserInfo");
     getUserInfo(data)
       .then((res) => {
-        if(res.data.profilePicture === "undefined"){
-          res.data.profilePicture=undefined;
+        if (res.data.profilePicture === "undefined") {
+          res.data.profilePicture = undefined;
         }
         dispatch({
           type: "updateUserInfo",
@@ -315,18 +315,31 @@ const getUserInfo = (dispatch) => {
   };
 };
 
+const modifyUserInfo = (dispatch) => {
+  return async (data) => {
+    var modifyUser = functions.httpsCallable("user-modifyUser");
+    modifyUser(data)
+      .then((res) => {
+        console.log("success updating user info!");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
 const getOtherUserInfo = (dispatch) => {
   return async (data) => {
     var getUserInfo = functions.httpsCallable("user-getUserInfo");
     getUserInfo(data)
       .then((res) => {
-        if(res.data.profilePicture === "undefined"){
-          res.data.profilePicture=undefined;
+        if (res.data.profilePicture === "undefined") {
+          res.data.profilePicture = undefined;
         }
         dispatch({
           type: "updateOtherUserInfo",
           userInfo: res.data,
-          username:data.username
+          username: data.username
         });
       })
       .catch((error) => {
@@ -665,6 +678,7 @@ export const { Provider, Context } = createDataContext(
     tryLocalSignin,
     uploadPost,
     getUserInfo,
+    modifyUserInfo,
     getUserPost,
     getFeedbackPosts,
     getGeneralPosts,

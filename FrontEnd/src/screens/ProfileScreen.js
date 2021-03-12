@@ -143,7 +143,7 @@ const Profile = (props) => {
             }}
           />
           <View style={styles.userNameRow}>
-            <Text style={styles.userNameText}>{name}</Text>
+            <Text style={styles.userNameText}>{state.username}</Text>
           </View>
           <View style={styles.userBioRow}>
             <Text style={styles.userBioText}>
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "right",
     marginRight: "5%",
-    width:"68%",
+    width: "68%",
   },
   userImage: {
     borderRadius: 60,

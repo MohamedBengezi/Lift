@@ -62,12 +62,18 @@ export const getUserName = functions.https.onCall((data, context) => {
 });
 
 export const modifyUser = functions.https.onCall(async (data, context) => {
-  const uid = data.uid;
+  const uid = context.auth!.uid;
   const updatedUsername = data.updatedUsername;
-
-  await admin.firestore().collection("users").doc(uid).update({
-    username: updatedUsername,
-  });
+  const bio = data.bio;
+  let info = {};
+  if (updatedUsername == "") {
+    info = { bio: bio }
+  } else if (bio == "") {
+    info = { username: updatedUsername }
+  } else {
+    info = { username: updatedUsername, bio: bio }
+  }
+  await admin.firestore().collection("users").doc(uid).update(info);
 });
 
 export const deleteAccount = functions.https.onCall(async (data, context) => {
@@ -184,9 +190,8 @@ async function getCaloriesBurned(token: string) {
     },
   });
   const date = new Date();
-  const fitbitDate = `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()}`;
+  const fitbitDate = `${date.getFullYear()}-${date.getMonth() + 1
+    }-${date.getDate()}`;
   await api
     .get(`/${fitbitDate}.json`)
     .then((res) => {
