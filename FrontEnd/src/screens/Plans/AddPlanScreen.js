@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.lightGrey,
         padding: 20,
         margin: 20,
-        width: "60%"
+        width: "65%"
     }
 });
 

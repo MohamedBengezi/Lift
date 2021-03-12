@@ -66,7 +66,7 @@ const AddTestimonialScreen = ({ navigation }) => {
         ],
         { cancelable: true }
       );
-    } else if(!afterImage){
+    } else if (!afterImage) {
       Alert.alert(
         "After Image",
         "Please pick an after image!",
@@ -79,10 +79,11 @@ const AddTestimonialScreen = ({ navigation }) => {
         { cancelable: true }
       );
     }
-    testimonial.afterMediaPath=afterImage;
-    testimonial.beforeMediaPath=beforeImage;
-    testimonial.text= reviewText;
+    testimonial.afterMediaPath = afterImage;
+    testimonial.beforeMediaPath = beforeImage;
+    testimonial.text = reviewText;
     addTestimonial(testimonial);
+    navigation.goBack()
   };
   return (
     <ScrollView
@@ -103,7 +104,7 @@ const AddTestimonialScreen = ({ navigation }) => {
       <Spacer />
       <TextInput
         style={styles.titleInput}
-        onChangeText={(text) => {setReviewText(text);}}
+        onChangeText={(text) => { setReviewText(text); }}
         placeholder="Enter your review here"
       />
 

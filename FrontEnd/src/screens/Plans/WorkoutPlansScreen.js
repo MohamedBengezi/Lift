@@ -20,7 +20,7 @@ const WorkoutPlansScreen = ({ navigation }) => {
 
     useEffect(() => {
         console.log('getting plans')
-        searchDatabase({ query: "" })
+        if (!state.plans) searchDatabase({ query: "" })
     }, [navigation])
 
     const onSwipeDown = (gestureState) => {
