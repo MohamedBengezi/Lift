@@ -346,7 +346,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             <TouchableOpacity
                 style={{ ...styles.answered, backgroundColor: (answered ? colors.blue : colors.darkGrey) }}
                 onPress={() => {
-                    if (state.username !== name) return;
+                    if (!isUsersPost) return;
                     setAnswered(!answered);
                     markPostAsAnswered({ docID: postID });
                 }}
@@ -363,7 +363,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             <TouchableOpacity
                 style={showComments ? styles.postDetailsHeader : styles.postHeader}
                 onPress={() => {
-                    if (state.username == name) navigate('Profile')
+                    if (isUsersPost) navigate('Profile')
                     else navigate('ViewProfile', { isHeaderShow: true, username: name, uid: uid })
                 }}
             >
@@ -374,7 +374,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                     <Image
                         style={styles.avatar}
                         source={{
-                            uri: "https://reactnative.dev/img/tiny_logo.png",
+                            uri: (isUsersPost && state.profilePicture) ? state.profilePicture : "https://reactnative.dev/img/tiny_logo.png",
                         }}
                     />
                 </View>
