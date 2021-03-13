@@ -18,7 +18,7 @@ const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and tit
     }
 
     return (
-        <View style={styles.container}>
+        <View style={{ ...styles.container, height: isFeedback ? 300 : "70%" }}>
             <View style={styles.commentContainer} key={index}>
                 <TouchableOpacity activeOpacity={0.8}
                     onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: username })}>
@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         borderColor: colors.darkGrey,
         flexDirection: 'column',
-        height: 300
     },
     commentContainer: {
         flexDirection: 'row',

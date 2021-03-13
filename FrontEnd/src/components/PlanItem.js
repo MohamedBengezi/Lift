@@ -25,7 +25,7 @@ const PlanItem = (props) => {
       }
       onPress={() => navigation.navigate("ViewPlan", { plan: plan })}
     >
-      <View style={parentRoute==mainScreen ? {...styles.textContainer,marginTop:15} : styles.textContainer}>
+      <View style={parentRoute == mainScreen ? { ...styles.textContainer, marginTop: 15 } : styles.textContainer}>
         <Text style={styles.title}>{plan.name}</Text>
         <Text style={styles.author}>{plan.experience_level}</Text>
 
@@ -68,6 +68,7 @@ const PlanItem = (props) => {
             color={colors.yellow}
             type="ionicon"
             size={STAR_SIZE}
+            key={i}
           />
         ))}
       </View>
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: "column",
     marginLeft: 10,
-    marginTop:0
+    marginTop: 0
   },
   title: {
     fontSize: 20,

@@ -286,23 +286,23 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function postComment() {
         if (newComment === "") return;
-        if (!image) {
-            return Alert.alert(
-                "Photo Required!",
-                "Feedback posts require an image",
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                  },
-                  { text: "OK", onPress: () => console.log("OK Pressed") }
-                ],
-                { cancelable: false }
-              );
-        }
 
         if (isFeedback) {
+            if (!image) {
+                return Alert.alert(
+                    "Photo Required!",
+                    "Feedback posts require an image",
+                    [
+                        {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                    ],
+                    { cancelable: false }
+                );
+            }
             addReply({ docID: postID, comment: newComment, media: image, isFeedback: isFeedback })
         } else {
             addComment({ docID: postID, comment: newComment });
@@ -315,7 +315,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 "id": "",
                 "liked_by": [],
                 "likes": 0,
-                "mediaPath": (image.uri) ? image.uri : null,
+                "mediaPath": (image) ? image.uri : null,
                 "username": state.username,
             })
             comments.data.count++
@@ -405,7 +405,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     }
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{ flex: 1 }}>
             <ScrollView>
                 <View style={{ flex: 1 }}>
                     <View
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2,
-        height:"85%"
+        height: "85%"
     },
     postDetailsContainer: {
         flexDirection: "column",
