@@ -30,7 +30,7 @@ const CreatePlanScreen = ({ navigation }) => {
   plan = (navigation.getParam('plan')) ? navigation.getParam('plan') : plan;
 
 
-  console.log('PLAN ', plan);
+  
 
   const onSubmit = () => {
     plan.tags = plan.tags.split(',');
