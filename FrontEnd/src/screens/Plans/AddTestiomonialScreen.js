@@ -13,13 +13,6 @@ import { Context as AuthContext } from "../../context/AuthContext";
 const AddTestimonialScreen = ({ navigation }) => {
   let plan = navigation.getParam("plan");
   let planID = plan.id;
-  let testimonial = {
-    beforeMediaPath: "",
-    afterMediaPath: "",
-    text: "",
-    rating: 1,
-    docID: planID,
-  };
 
   const { addTestimonial } = useContext(AuthContext);
 
@@ -30,6 +23,13 @@ const AddTestimonialScreen = ({ navigation }) => {
   const [beforeImage, setBeforeImage] = useState(null);
   const [afterImage, setAfterImage] = useState(null);
   const [reviewText, setReviewText] = useState("");
+  const [testimonial, setTestimonial] = useState( {
+    beforeMediaPath: "",
+    afterMediaPath: "",
+    text: "",
+    rating: 1,
+    docID: planID,
+  });
   const pickBeforeImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -79,6 +79,7 @@ const AddTestimonialScreen = ({ navigation }) => {
         { cancelable: true }
       );
     }
+    
     testimonial.afterMediaPath = afterImage;
     testimonial.beforeMediaPath = beforeImage;
     testimonial.text = reviewText;
@@ -119,7 +120,7 @@ const AddTestimonialScreen = ({ navigation }) => {
             color: colors.black,
           }}
           labelStyle={{ color: colors.black }}
-          onChangeItem={(item) => (testimonial.rating = item.value)}
+          onChangeItem={(item) => {setTestimonial({...testimonial,rating:item.value}) }}
         />
       </View>
       <View style={{ ...styles.labelAndDropView, marginTop: "15%" }}>
