@@ -64,7 +64,7 @@ const ViewPlanScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   button: {
-    width: '35%',
+    width: 120,
     borderRadius: 5,
     backgroundColor: colors.yellow,
     marginBottom:5
