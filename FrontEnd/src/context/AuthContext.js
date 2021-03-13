@@ -43,15 +43,20 @@ const authReducer = (state, action) => {
       return {
         ...state,
         userInfo: action.userInfo,
-        profilePicture: action.userInfo.profilePicture
+        profilePicture: action.userInfo.profilePicture,
       };
-    case 'updateOtherUserInfo':
+    case "updateOtherUserInfo":
       return {
         ...state,
         otherUserInfo: action.userInfo,
         otherUsername: action.username,
         otherProfilePicture: action.userInfo.profilePicture,
-      }
+      }; 
+    case "getTestimonials":
+      return {
+        ...state,
+        testimonials: action.testimonials
+      };
     default:
       return state;
   }
@@ -229,7 +234,6 @@ const upload = (dispatch) => async ({ image, video }) => {
     });
 
     const response = await sendXmlHttpRequest(body);
-    console.log(response);
   } catch (err) {
     console.log(err);
     dispatch({
@@ -261,28 +265,29 @@ function sendXmlHttpRequest(data) {
 }
 
 const uploadPost = (dispatch) => async ({ caption, type, media, isVideo }) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, type).then((path) => {
-    const data = {
-      caption: caption,
-      mediaPath: path,
-      isVideo: isVideo
-    };
-    let uploadPost;
-    if (type === "feedback") {
-      uploadPost = functions.httpsCallable("posts-createFeedbackPost");
-    } else if (type === "regular") {
-      //route for regular posts
-      uploadPost = functions.httpsCallable("posts-createGeneralPost");
-    }
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, type).then(
+    (path) => {
+      const data = {
+        caption: caption,
+        mediaPath: path,
+        isVideo: isVideo,
+      };
+      let uploadPost;
+      if (type === "feedback") {
+        uploadPost = functions.httpsCallable("posts-createFeedbackPost");
+      } else if (type === "regular") {
+        //route for regular posts
+        uploadPost = functions.httpsCallable("posts-createGeneralPost");
+      }
 
-    uploadPost(data)
-      .then(() => {
-        console.log("Uploaded post details to db");
-      })
-      .catch((error) => {
-        showError(error, dispatch);
-      });
-  }
+      uploadPost(data)
+        .then(() => {
+          console.log("Uploaded post details to db");
+        })
+        .catch((error) => {
+          showError(error, dispatch);
+        });
+    }
   );
 };
 
@@ -306,7 +311,7 @@ const getUserInfo = (dispatch) => {
         }
         dispatch({
           type: "updateUserInfo",
-          userInfo: res.data
+          userInfo: res.data,
         });
       })
       .catch((error) => {
@@ -339,7 +344,7 @@ const getOtherUserInfo = (dispatch) => {
         dispatch({
           type: "updateOtherUserInfo",
           userInfo: res.data,
-          username: data.username
+          username: data.username,
         });
       })
       .catch((error) => {
@@ -348,10 +353,9 @@ const getOtherUserInfo = (dispatch) => {
   };
 };
 
-
 const getUserPost = () => {
   return async (setPosts, userid) => {
-    let uid = (userid) ? userid : firebaseApp.auth().currentUser.uid;
+    let uid = userid ? userid : firebaseApp.auth().currentUser.uid;
     var getUserPosts = functions.httpsCallable("posts-getUserPosts");
     getUserPosts({ uid: uid })
       .then((data) => {
@@ -459,7 +463,7 @@ const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
     addComment(data)
-      .then((res) => { })
+      .then((res) => {})
       .catch((error) => {
         console.error(error);
       });
@@ -471,7 +475,7 @@ const archivePost = () => {
     var archivePost = functions.httpsCallable("posts-archiveFeedbackPost");
     console.log("archiving", data.docID);
     archivePost(data)
-      .then((res) => { })
+      .then((res) => {})
       .catch((error) => {
         console.error(error);
       });
@@ -481,13 +485,14 @@ const archivePost = () => {
 const markPostAsAnswered = () => {
   return async (data) => {
     var archivePost = functions.httpsCallable("posts-markPostAsAnswered");
-    console.log('marking post as answered', data.docID)
-    archivePost(data).then((res) => {
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    console.log("marking post as answered", data.docID);
+    archivePost(data)
+      .then((res) => {})
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
@@ -550,12 +555,29 @@ const searchWorkoutPlans = (dispatch) => {
     var searchWorkoutPlans = functions.httpsCallable(
       "programs-searchWorkoutPlans"
     );
-    console.log("searching for plans: ", data.query);
     searchWorkoutPlans(data)
       .then((res) => {
         dispatch({
           type: "getPlans",
           plans: res.data.results,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getTestimonials = (dispatch) => {
+  return async (data) => {
+    var getTestimonials = functions.httpsCallable("programs-getTestimonials");
+    console.log('getting testimonials');
+    getTestimonials(data)
+      .then((res) => {
+        console.log('got testimonials');
+        dispatch({
+          type: "getTestimonials",
+          testimonials: res.data,
         });
       })
       .catch((error) => {
@@ -571,7 +593,7 @@ const followWorkoutPlan = () => {
     );
     console.log("following plan ", data.planID);
     followWorkoutPlan(data)
-      .then((res) => { })
+      .then((res) => {})
       .catch((error) => {
         console.error(error);
       });
@@ -638,7 +660,7 @@ const addTestimonial = () => {
 
 const updateUserInfo = (dispatch, data) => {
   //code to update userInfo on save button in settings page
-}
+};
 
 const addProfilePicture = (dispatch) => {
   return async (data) => {
@@ -697,7 +719,8 @@ export const { Provider, Context } = createDataContext(
     unfollowWorkoutPlan,
     addTestimonial,
     addProfilePicture,
-    getOtherUserInfo
+    getOtherUserInfo,
+    getTestimonials
   },
   { token: null, errorMessage: "", posts: {} }
 );

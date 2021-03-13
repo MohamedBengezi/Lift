@@ -238,7 +238,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             quality: 1,
         });
 
-        console.log(result);
 
         if (!result.cancelled) {
             setImage(result);
