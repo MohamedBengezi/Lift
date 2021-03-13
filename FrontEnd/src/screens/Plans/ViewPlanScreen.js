@@ -35,18 +35,17 @@ const ViewPlanScreen = ({ navigation }) => {
       <ScrollView
         contentContainerStyle={{
           backgroundColor: colors.white,
-          height: "100%",
-          
+          height: "100%"
         }}
       >
-        <View style={{ flex: 1, alignItems: "center"}}>
+        <View style={{ flex: 1, alignItems: "center" }}>
           <PlanItem plan={plan} navigation={navigation} />
           <FlatList
             data={plan.days}
             renderItem={(item) => renderPlan(item)}
             keyExtractor={(item) => item.week_number + item.dayoftheweek + ""}
-            scrollEnabled={false}
-            contentContainerStyle={{  marginTop: 5}}
+            scrollEnabled={true}
+            contentContainerStyle={{ marginTop: 5, paddingBottom: "20%" }}
           />
           <Button
             title={"See Reviews"}
@@ -67,7 +66,7 @@ const styles = StyleSheet.create({
     width: 120,
     borderRadius: 5,
     backgroundColor: colors.yellow,
-    marginBottom:5
+    marginVertical: 5
   },
   buttonText: {
     color: colors.black,
