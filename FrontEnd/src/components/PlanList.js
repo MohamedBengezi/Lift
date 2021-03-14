@@ -37,6 +37,7 @@ const PlanList = ({ navigation }) => {
                     data={plans}
                     renderItem={(item) => renderPlanItem(item)}
                     keyExtractor={(item) => item.id + " " + count++}
+                    contentContainerStyle={{ paddingBottom: "100%" }}
                 /> : null
 
             }
