@@ -10,6 +10,7 @@ import { navigate } from '../../navigationRef';
 import { Context as AuthContext } from "../../context/AuthContext";
 import { SafeAreaView } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler';
 
 
 const WorkoutPlansScreen = ({ navigation }) => {
@@ -35,10 +36,13 @@ const WorkoutPlansScreen = ({ navigation }) => {
         <SafeAreaView style={styles.background}>
             <ScrollView
             >
-                <GestureRecognizer
-                    onSwipeDown={() => onSwipeDown()}
-                    style={{ flex: 1 }}
-                >
+                <FlingGestureHandler
+                    direction={Directions.DOWN}
+                    onHandlerStateChange={({ nativeEvent }) => {
+                        if (nativeEvent.state === State.ACTIVE) {
+                            onSwipeDown()
+                        }
+                    }}>
                     <View>
                         <SearchBar
                             term={search}
@@ -74,7 +78,7 @@ const WorkoutPlansScreen = ({ navigation }) => {
                         </View>
                         <PlanList navigation={navigation} />
                     </View>
-                </GestureRecognizer>
+                </FlingGestureHandler>
             </ScrollView>
         </SafeAreaView>
     );
