@@ -3,14 +3,12 @@ import {
     StyleSheet,
     Text,
     View,
-    Image,
     TouchableOpacity,
-    FlatList,
-    Alert
+    Alert,
+    Platform
 } from "react-native";
 import { Input } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Comment from "./Comment";
 import VideoElement from "./VideoElement";
 import ImageElement from "./ImageElement";
 import colors from "../hooks/colors";
@@ -21,6 +19,9 @@ import { Context as PostsContext } from '../context/AuthContext';
 import { functions } from "../../firebase";
 import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native";
+import Header from '../components/Header';
+import LikeAndComment from '../components/LikeAndComment'
+import Comments from '../components/Comments';
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
     const {
@@ -106,12 +107,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 manageLikes({ postID: postID, like: true, collection: collection });
                 likes++;
             }
-            setLikedOrCommented({ liked: true, unliked: false });
+            setLikedOrCommented({ ...likedOrCommented, liked: true, unliked: false });
             setLikes({ ...likesAndComments, likes: likes + 1 });
             manageLikes({ postID: postID, like: true, collection: collection });
 
         } else {
-            setLikedOrCommented({ liked: false });
+            setLikedOrCommented({ ...likedOrCommented, liked: false });
             setLikes({ ...likesAndComments, likes: likes - 1 });
             manageLikes({ postID: postID, like: false, collection: collection });
 
@@ -126,12 +127,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 manageLikes({ postID: postID, like: false, collection: collection });
                 likes--;
             }
-            setLikedOrCommented({ liked: false, unliked: true });
+            setLikedOrCommented({ ...likedOrCommented, liked: false, unliked: true });
             setLikes({ ...likesAndComments, likes: likes - 1 });
             manageLikes({ postID: postID, like: false, collection: collection });
 
         } else {
-            setLikedOrCommented({ unliked: false });
+            setLikedOrCommented({ ...likedOrCommented, unliked: false });
             setLikes({ ...likesAndComments, likes: likes + 1 });
             manageLikes({ postID: postID, like: true, collection: collection });
 
@@ -139,96 +140,8 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     };
 
     const onPressComment = () => {
-        setLikedOrCommented({ commented: !likedOrCommented.commented });
+        setLikedOrCommented({ ...likedOrCommented, commented: !likedOrCommented.commented });
     };
-
-    function LikeAndComment() {
-        const { liked, unliked, commented } = likedOrCommented;
-        const { likes } = likesAndComments;
-        return (
-            <View style={styles.postActionView}>
-                <View style={{ flexDirection: 'column', alignItems: 'center', marginRight: 5 }}>
-                    <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                        <TouchableOpacity style={styles.icons}>
-                            <Ionicons
-                                name="md-thumbs-up"
-                                color={liked ? colors.blue : colors.black}
-                                type="ionicon"
-                                size={25}
-                                onPress={() => onPressLike(liked)}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.icons}>
-                            <Ionicons
-                                name="md-thumbs-down"
-                                color={unliked ? colors.yellow : colors.black}
-                                type="ionicon"
-                                size={25}
-                                onPress={() => onPressUnlike(unliked)}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={{ color: colors.reallyDarkGrey, fontSize: 15, fontWeight: "bold" }}>
-                        {/*!!item.likes && item.likes.length ||*/ likes}
-                    </Text>
-                </View>
-
-
-
-                <TouchableOpacity style={styles.icons}>
-                    <Ionicons
-                        name={commented ? "md-chatbubbles" : "md-chatboxes"}
-                        color={commented ? colors.black : colors.black}
-                        type="ionicon"
-                        size={25}
-                        style={{ marginRight: 5 }}
-                        onPress={() => onPressComment()}
-                    />
-                    <Text style={styles.postActionText}>
-                        {comments ? comments.data.count : 0}
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.icons}>
-                    <Ionicons
-                        name="md-share"
-                        type="ionicon"
-                        size={25}
-                        onPress={() => console.log("share pressed")}
-                    />
-                    <Text style={styles.postActionText}></Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
-
-    function displayComment(comment) {
-        return (
-            <Comment
-                comment={comment.item}
-                key={comment.index}
-                index={comment.index}
-                isFeedback={isFeedback}
-            />
-        );
-    }
-
-    function renderComments() {
-        return (
-            <View>
-                <Text style={styles.sectionHeaderText}>{comments ? comments.data.count : 0} COMMENTS</Text>
-
-                {(comments) ?
-                    <FlatList
-                        data={comments.data.replies}
-                        renderItem={(item) => displayComment(item)}
-                        keyExtractor={(item) => item.id}
-                        scrollEnabled={true}
-                        contentContainerStyle={{ paddingBottom: "30%" }}
-                    /> : null}
-            </View>
-        );
-    }
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -274,7 +187,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                         placeholderTextColor="gray"
                         inputStyle={{ color: colors.black, fontSize: 14 }}
                         onSubmitEditing={() => {
-                            setLikedOrCommented({ commented: true })
+                            setLikedOrCommented({ ...likedOrCommented, commented: true })
                             postComment();
                         }}
                     />
@@ -322,12 +235,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         setNewComment("");
     }
 
-    const likes = (
-        <View style={styles.postLogs}>
-            <LikeAndComment />
-        </View>
-    );
-
     function renderArchiveButton() {
         return (
             <Ionicons
@@ -357,52 +264,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         );
     }
 
-    function Header() {
-        return (
-            <TouchableOpacity
-                style={showComments ? styles.postDetailsHeader : styles.postHeader}
-                onPress={() => {
-                    if (isUsersPost) navigate('Profile')
-                    else navigate('ViewProfile', { isHeaderShow: true, username: name, uid: uid })
-                }}
-            >
-                <View
-                    style={styles.displayImageContainer}
-                    activeOpacity={0.8}
-                >
-                    <Image
-                        style={styles.avatar}
-                        source={{
-                            uri: (isUsersPost && state.profilePicture) ? state.profilePicture : "https://reactnative.dev/img/tiny_logo.png",
-                        }}
-                    />
-                </View>
-
-                <View style={styles.nameAndImageContainer}>
-                    <View
-                        style={styles.avatarName}
-                        onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: name })}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={{ fontSize: 17 }}>{name}</Text>
-                        <View style={styles.postDate}>
-                            <Text style={{ fontSize: 11, color: colors.reallyDarkGrey }}>
-                                {timeSubmitted}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                    {isFeedback ? renderAnsweredText() : null}
-                    {isUsersPost ? renderArchiveButton() : null}
-                </View>
-
-
-            </TouchableOpacity>
-        );
-    }
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView>
@@ -412,23 +273,25 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                             showComments ? styles.postDetailsContainer : styles.postContainer
                         }
                     >
-                        <Header />
+                        <Header {...{ isFeedback, isUsersPost, showComments, name, timeSubmitted, uid, renderArchiveButton, renderAnsweredText }} />
                         <View style={showComments ? styles.postDetailsImageCaptionContainer : styles.postImageCaptionContainer}>
                             <TouchableOpacity
                                 onPress={() => navigate("ViewPost", { item })}
                                 activeOpacity={1}
                             >
                                 {isImage ? (
-                                    <ImageElement image={mediaPath} title={title} />
+                                    <ImageElement image={mediaPath} title={title} route={"ViewPost"} />
                                 ) : (
                                     <VideoElement video={mediaPath} title={title} />
                                 )}
                             </TouchableOpacity>
                         </View>
-                        {likes}
+                        <View style={styles.postLogs}>
+                            <LikeAndComment {...{ likedOrCommented, likesAndComments, comments, onPressLike, onPressUnlike, onPressComment }} />
+                        </View>
                     </View>
 
-                    {showComments ? renderComments() : null}
+                    {showComments ? <Comments {...{ isFeedback, comments }} /> : null}
                 </View>
             </ScrollView>
             {showComments ? renderAddComment() : null}
@@ -437,12 +300,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 };
 
 const styles = StyleSheet.create({
-    icons: {
-        flexDirection: "column",
-        fontSize: 200,
-        fontWeight: "bold",
-        marginRight: 10,
-    },
     mainContent: {
         flex: 1,
     },
@@ -464,21 +321,6 @@ const styles = StyleSheet.create({
         marginRight: 2,
         height: 450
     },
-    postDetailsHeader: {
-        height: 70,
-        flexDirection: "row",
-        marginBottom: -80,
-        justifyContent: "center",
-        alignItems: "center"
-
-    },
-    postHeader: {
-        height: 70,
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center"
-
-    },
     postImageCaptionContainer: {
         alignItems: "center",
         height: "50%",
@@ -493,59 +335,6 @@ const styles = StyleSheet.create({
         height: 50,
         flexDirection: "row",
         marginTop: 80,
-    },
-    displayImageContainer: {
-        flex: 2,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    nameAndImageContainer: {
-        flex: 9,
-    },
-    avatar: {
-        height: 50,
-        width: 50,
-        borderRadius: 25,
-        marginLeft: 10,
-    },
-    avatarName: {
-        flex: 2,
-        justifyContent: "center",
-        marginLeft: 10
-    },
-    location: {
-        flex: 1,
-        justifyContent: "center",
-        marginLeft: 5,
-    },
-    postImage: {
-        width: "100%",
-        height: 250,
-    },
-    postDate: {
-        justifyContent: "center",
-    },
-    postActionView: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        marginLeft: 30,
-    },
-    postActionText: {
-        marginLeft: 10,
-        color: colors.reallyDarkGrey,
-        fontSize: 15,
-        fontWeight: "bold",
-    },
-    postLocationView: {
-        flex: 1,
-        justifyContent: "center",
-    },
-    sectionHeaderText: {
-        fontSize: 13,
-        color: colors.darkGrey,
-        marginVertical: 10,
-        marginLeft: 10,
     },
     addComment: {
         height: 50,
