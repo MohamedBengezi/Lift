@@ -10,6 +10,7 @@ import { navigate } from '../../navigationRef';
 import { Context as AuthContext } from "../../context/AuthContext";
 import { SafeAreaView } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler';
 
 
 const WorkoutPlansScreen = ({ navigation }) => {
@@ -33,49 +34,49 @@ const WorkoutPlansScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.background}>
-            <ScrollView
-            >
-                <GestureRecognizer
-                    onSwipeDown={() => onSwipeDown()}
-                    style={{ flex: 1 }}
-                >
-                    <View>
-                        <SearchBar
-                            term={search}
-                            onTermChange={setSearch}
-                            onTermSubmit={searchDatabase}
-                            style={styles.searchBar}
+            <FlingGestureHandler
+                direction={Directions.DOWN}
+                onHandlerStateChange={({ nativeEvent }) => {
+                    if (nativeEvent.state === State.ACTIVE) {
+                        onSwipeDown()
+                    }
+                }}>
+                <View>
+                    <SearchBar
+                        term={search}
+                        onTermChange={setSearch}
+                        onTermSubmit={searchDatabase}
+                        style={styles.searchBar}
+                    />
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Ionicons
+                            name="md-add-circle"
+                            color={colors.blue}
+                            type="ionicon"
+                            size={35}
+                            style={{ marginLeft: '5%', marginTop: '1%' }}
+                            onPress={() => navigate('CreatePlan')}
                         />
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Ionicons
-                                name="md-add-circle"
-                                color={colors.blue}
-                                type="ionicon"
-                                size={35}
-                                style={{ marginLeft: '5%', marginTop: '1%' }}
-                                onPress={() => navigate('CreatePlan')}
-                            />
-                            <DropDownPicker
-                                items={[
-                                    { label: 'Highest Rated', value: 'rating', hidden: true },
-                                    { label: 'Relevance', value: 'relevance' },
-                                    { label: 'Most Popular', value: 'popular' },
-                                ]}
-                                defaultValue={filter}
-                                containerStyle={{ height: 40, width: 160, alignSelf: 'flex-end', marginRight: 10 }}
-                                style={{ backgroundColor: colors.lightGrey }}
-                                itemStyle={{
-                                    justifyContent: 'flex-start', color: colors.black
-                                }}
-                                labelStyle={{ color: colors.black }}
-                                dropDownStyle={{ backgroundColor: '#fafafa' }}
-                                onChangeItem={item => setFilter(item.value)}
-                            />
-                        </View>
-                        <PlanList navigation={navigation} />
+                        <DropDownPicker
+                            items={[
+                                { label: 'Highest Rated', value: 'rating', hidden: true },
+                                { label: 'Relevance', value: 'relevance' },
+                                { label: 'Most Popular', value: 'popular' },
+                            ]}
+                            defaultValue={filter}
+                            containerStyle={{ height: 40, width: 160, alignSelf: 'flex-end', marginRight: 10 }}
+                            style={{ backgroundColor: colors.lightGrey }}
+                            itemStyle={{
+                                justifyContent: 'flex-start', color: colors.black
+                            }}
+                            labelStyle={{ color: colors.black }}
+                            dropDownStyle={{ backgroundColor: '#fafafa' }}
+                            onChangeItem={item => setFilter(item.value)}
+                        />
                     </View>
-                </GestureRecognizer>
-            </ScrollView>
+                    <PlanList navigation={navigation} />
+                </View>
+            </FlingGestureHandler>
         </SafeAreaView>
     );
 };
