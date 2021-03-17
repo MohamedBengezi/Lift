@@ -2,17 +2,11 @@ import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
   FlatList
 } from "react-native";
-import PlanItem from "../../components/PlanItem";
-import DayWorkout from "../../components/DayWorkout";
 import Testimonial from "../../components/Testimonial";
 import colors from "../../hooks/colors";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { ScrollView  } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView, RefreshControl } from "react-native";
 import { Context as AuthContext } from "../../context/AuthContext";
 

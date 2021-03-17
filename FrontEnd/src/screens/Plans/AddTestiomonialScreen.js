@@ -1,11 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
 import { Button } from "react-native-elements";
 import colors from "../../hooks/colors";
 import DropDownPicker from "react-native-dropdown-picker";
 import Spacer from "../../components/Spacer";
-import { navigate } from "../../navigationRef";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Context as AuthContext } from "../../context/AuthContext";
@@ -23,7 +22,7 @@ const AddTestimonialScreen = ({ navigation }) => {
   const [beforeImage, setBeforeImage] = useState(null);
   const [afterImage, setAfterImage] = useState(null);
   const [reviewText, setReviewText] = useState("");
-  const [testimonial, setTestimonial] = useState( {
+  const [testimonial, setTestimonial] = useState({
     beforeMediaPath: "",
     afterMediaPath: "",
     text: "",
@@ -79,7 +78,7 @@ const AddTestimonialScreen = ({ navigation }) => {
         { cancelable: true }
       );
     }
-    
+
     testimonial.afterMediaPath = afterImage;
     testimonial.beforeMediaPath = beforeImage;
     testimonial.text = reviewText;
@@ -120,7 +119,7 @@ const AddTestimonialScreen = ({ navigation }) => {
             color: colors.black,
           }}
           labelStyle={{ color: colors.black }}
-          onChangeItem={(item) => {setTestimonial({...testimonial,rating:item.value}) }}
+          onChangeItem={(item) => { setTestimonial({ ...testimonial, rating: item.value }) }}
         />
       </View>
       <View style={{ ...styles.labelAndDropView, marginTop: "15%" }}>
