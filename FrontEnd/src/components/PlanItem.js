@@ -54,7 +54,7 @@ const PlanItem = (props) => {
             buttonStyle={{
               ...styles.button,
               backgroundColor: colors.yellow,
-              width: 100,
+              width: 110,
             }}
             titleStyle={styles.buttonText}
           />
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 5,
-    width: 80,
+    width: 90,
     borderRadius: 5,
   },
   containerStyle: {

@@ -5,6 +5,7 @@ import FormData from "form-data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firebase from "firebase/app";
 import { firebaseApp, functions, uploadMedia } from "../../firebase";
+import { State } from "react-native-gesture-handler";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -34,6 +35,11 @@ const authReducer = (state, action) => {
         ...state,
         plans: action.plans,
       };
+    case "getUserPlans":
+      return {
+        ...state,
+        userPlans: action.plans,
+      };
     case "profilePicture":
       return {
         ...state,
@@ -51,7 +57,7 @@ const authReducer = (state, action) => {
         otherUserInfo: action.userInfo,
         otherUsername: action.username,
         otherProfilePicture: action.userInfo.profilePicture,
-      }; 
+      };
     case "getTestimonials":
       return {
         ...state,
@@ -304,10 +310,20 @@ function getUserName(dispatch) {
 const getUserInfo = (dispatch) => {
   return async (data) => {
     var getUserInfo = functions.httpsCallable("user-getUserInfo");
+    var getWorkoutPlan = functions.httpsCallable(
+      "programs-getWorkoutPlan"
+    );
     getUserInfo(data)
-      .then((res) => {
+      .then(async (res) => {
         if (res.data.profilePicture === "undefined") {
           res.data.profilePicture = undefined;
+        }
+        console.log(`userinfo: ${res.data}`)
+        let workout_plans = (res.data.workout_plans) ? res.data.workout_plans : [];
+        for (var i = 0; i < workout_plans.length; i++) {
+          await getWorkoutPlan({ planID: workout_plans[i] }).then((plan) => {
+            workout_plans[i] = plan.data;
+          })
         }
         dispatch({
           type: "updateUserInfo",
@@ -463,7 +479,7 @@ const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
     addComment(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -475,7 +491,7 @@ const archivePost = () => {
     var archivePost = functions.httpsCallable("posts-archiveFeedbackPost");
     console.log("archiving", data.docID);
     archivePost(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -487,7 +503,7 @@ const markPostAsAnswered = () => {
     var archivePost = functions.httpsCallable("posts-markPostAsAnswered");
     console.log("marking post as answered", data.docID);
     archivePost(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -593,7 +609,7 @@ const followWorkoutPlan = () => {
     );
     console.log("following plan ", data.planID);
     followWorkoutPlan(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
