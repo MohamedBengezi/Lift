@@ -12,7 +12,7 @@ import { navigate } from "../navigationRef";
 import PostDetails from "./PostDetails";
 
 
-const Feed = ({ posts, isFeedback }) => {
+const Feed = ({ posts }) => {
   const [listOfPosts, setList] = useState(null);
 
   useEffect(() => {
@@ -27,13 +27,13 @@ const Feed = ({ posts, isFeedback }) => {
 
     return (
       <TouchableOpacity style={{ margin: 10, borderRadius: 4 }} onPress={() => onPress(item)}>
-        <PostDetails item={item} showComments={false} isFeedback={isFeedback} />
+        <PostDetails item={item} showComments={false} />
       </TouchableOpacity>
     )
   }
 
   const onPress = (item) => {
-    navigate("ViewPost", { item, isFeedback })
+    navigate("ViewPost", { item })
   }
 
   function ListOfPosts() {

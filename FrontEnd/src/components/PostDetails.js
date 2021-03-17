@@ -23,7 +23,7 @@ import Header from '../components/Header';
 import LikeAndComment from '../components/LikeAndComment'
 import Comments from '../components/Comments';
 
-const PostDetails = ({ item, showComments, isFeedback }) => {
+const PostDetails = ({ item, showComments }) => {
     const {
         state,
         manageLikes,
@@ -37,7 +37,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     const [image, setImage] = useState(null);
     const [answered, setAnswered] = useState(false);
 
-    let title, mediaPath, name, uid, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
+    let title, mediaPath, name, uid, postID, isUsersPost, isAnswered, timeSubmitted, isImage, isFeedback;
     if (item) {
         postID = item.item.id;
         name = item.item.username;

@@ -4,15 +4,15 @@ import colors from "../hooks/colors";
 import ImageElement from "./ImageElement";
 import Spacer from "../components/Spacer";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { navigate }  from "../navigationRef";
+import { navigate } from "../navigationRef";
 
 const STAR_SIZE = 45;
 const Testimonial = ({ reviewInfo, route }) => {
   const goFullScreen_beforePicture = () => {
-    navigate('ViewImage',{uri:reviewInfo.beforeMediaPath});
+    navigate('ViewImage', { uri: reviewInfo.beforeMediaPath });
   }
   const goFullScreen_afterPicture = () => {
-    navigate('ViewImage',{uri:reviewInfo.afterMediaPath});
+    navigate('ViewImage', { uri: reviewInfo.afterMediaPath });
   }
   return (
     <View style={styles.plans}>
@@ -23,7 +23,6 @@ const Testimonial = ({ reviewInfo, route }) => {
             <Ionicons
               name="md-star"
               color={colors.yellow}
-              type="ionicon"
               size={STAR_SIZE}
             />
           ))}
@@ -38,8 +37,6 @@ const Testimonial = ({ reviewInfo, route }) => {
             image={reviewInfo.beforeMediaPath}
             route={route}
             title={"Before picture:"}
-            route={route}
-            style={{ with: 20 }}
           />
         </TouchableOpacity>
         <Spacer />
@@ -96,7 +93,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginRight:5
+    marginRight: 5
   },
 });
 export default Testimonial;
