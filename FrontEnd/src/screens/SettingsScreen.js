@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, Image, Alert, Platform } from "react-native";
 import { Input, Button } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -7,10 +7,8 @@ import { navigate } from "../navigationRef";
 import colors from "../hooks/colors";
 import { Context as AuthContext } from "../context/AuthContext";
 import property from "../property.json";
-import qs from "qs";
 import * as WebBrowser from "expo-web-browser";
-import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
-import axios from "axios";
+import { useAuthRequest } from "expo-auth-session";
 
 const SettingsScreen = ({ navigation }) => {
   const { signout, saveFitbitToken, state, addProfilePicture, modifyUserInfo } = useContext(
@@ -145,7 +143,6 @@ const SettingsScreen = ({ navigation }) => {
           <Ionicons
             name="md-add-circle"
             color={colors.black}
-            type="ionicon"
             size={35}
             style={{ marginLeft: 10 }}
             onPress={pickImage}

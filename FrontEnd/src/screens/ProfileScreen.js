@@ -1,8 +1,7 @@
-import React, { Component, useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Animated,
   Image,
-  Platform,
   ScrollView,
   SafeAreaView,
   RefreshControl,
@@ -12,12 +11,9 @@ import {
   LogBox,
   StatusBar,
 } from "react-native";
-import { Icon } from "react-native-elements";
 import {
   TabView,
-  TabBar,
-  TabViewPagerScroll,
-  TabViewPagerPan,
+  TabBar
 } from "react-native-tab-view";
 import PropTypes from "prop-types";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -157,7 +153,6 @@ const Profile = (props) => {
                 <Ionicons
                   name="md-heart"
                   color={colors.red}
-                  type="ionicon"
                   size={15}
                 />
               </Text>
@@ -167,7 +162,6 @@ const Profile = (props) => {
                 <Ionicons
                   name="ios-flame"
                   color={colors.red}
-                  type="ionicon"
                   size={15}
                 />
               </Text>
@@ -194,7 +188,6 @@ const Profile = (props) => {
               <Ionicons
                 name="md-settings"
                 color="#505050"
-                type="ionicon"
                 size={35}
               />
             </TouchableOpacity>

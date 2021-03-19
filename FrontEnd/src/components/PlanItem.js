@@ -70,7 +70,6 @@ const PlanItem = (props) => {
           <Ionicons
             name="md-star"
             color={colors.yellow}
-            type="ionicon"
             size={STAR_SIZE}
             key={i}
           />

@@ -80,7 +80,7 @@ const PostScreen = ({ navigation }) => {
           defaultValue={postType}
           style={{ width: 150, borderWidth: 1 }}
           itemStyle={{
-            justifyContent: 'flex-start', color: colors.black
+            justifyContent: 'flex-start'
           }}
           labelStyle={{ color: colors.black }}
           onChangeItem={item => setPostType(item.value)}

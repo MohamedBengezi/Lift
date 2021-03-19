@@ -2,23 +2,19 @@ import React from 'react';
 import PostDetails from '../components/PostDetails';
 import {
     StyleSheet,
-    Text,
-    View,
     StatusBar,
     ScrollView
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import colors from '../hooks/colors'
 const ViewPostScreen = ({ navigation }) => {
 
     const item = navigation.getParam('item');
-    const isFeedback = navigation.getParam('isFeedback');
 
     return (
         <ScrollView keyboardShouldPersistTaps='never' contentContainerStyle={{ flex: 1 }}>
 
 
-            <PostDetails item={item} showComments={true} isFeedback={isFeedback} />
+            <PostDetails item={item} showComments={true} />
 
         </ScrollView>
     );

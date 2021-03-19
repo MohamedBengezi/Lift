@@ -1,15 +1,12 @@
-import React, { useReducer } from "react";
+import React from "react";
 import {
   View,
-  Text,
   StyleSheet,
-  TouchableOpacity,
   StatusBar,
 } from "react-native";
 import PlanItem from "../../components/PlanItem";
 import DayWorkout from "../../components/DayWorkout";
 import colors from "../../hooks/colors";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native";
 import { Button } from "react-native-elements";

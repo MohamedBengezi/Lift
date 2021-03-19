@@ -368,7 +368,6 @@ const styles = StyleSheet.create({
     top: "5%",
     width: "10%",
     height: "15%",
-    backgroundColor: "transparent",
     flexDirection: "column",
     backgroundColor: colors.lightGrey,
     justifyContent: "center",
