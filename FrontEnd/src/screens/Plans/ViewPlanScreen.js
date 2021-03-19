@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-} from "react-native";
+import { View, StyleSheet } from "react-native";
 import PlanItem from "../../components/PlanItem";
 import DayWorkout from "../../components/DayWorkout";
 import colors from "../../hooks/colors";
@@ -68,18 +64,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.black,
     flex: 1,
-  },
-  icon: {
-    color: colors.black,
-    fontWeight: "600",
-    fontSize: 50,
-  },
-  cancel: {
-    width: 50,
-    height: 50,
-    paddingTop: StatusBar.currentHeight,
-    marginBottom: 50,
-  },
+  }
 });
 
 export default ViewPlanScreen;

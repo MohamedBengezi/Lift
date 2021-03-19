@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../hooks/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -120,11 +120,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: 90,
     borderRadius: 5,
-  },
-  containerStyle: {
-    justifyContent: "center",
-    flex: 0.25,
-    alignItems: "center",
   },
   buttonText: {
     color: colors.black,

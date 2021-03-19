@@ -52,7 +52,7 @@ const AddPlanScreen = ({ navigation }) => {
                     defaultValue={'Monday'}
                     style={{ width: 100, borderWidth: 1 }}
                     itemStyle={{
-                        justifyContent: 'flex-start', color: colors.black
+                        justifyContent: 'flex-start'
                     }}
                     labelStyle={{ color: colors.black }}
                     onChangeItem={item => day.dayoftheweek = item.value}
@@ -66,7 +66,7 @@ const AddPlanScreen = ({ navigation }) => {
                     defaultValue={1}
                     style={{ width: 100, borderWidth: 1 }}
                     itemStyle={{
-                        justifyContent: 'flex-start', color: colors.black
+                        justifyContent: 'flex-start'
                     }}
                     labelStyle={{ color: colors.black }}
                     onChangeItem={item => day.week_number = item.value}

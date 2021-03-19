@@ -1,9 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList
-} from "react-native";
+import { View, Text, FlatList } from "react-native";
 import Testimonial from "../../components/Testimonial";
 import colors from "../../hooks/colors";
 import { ScrollView } from "react-native-gesture-handler";

@@ -1,13 +1,10 @@
-import React, { useReducer, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Context as AuthContext } from '../context/AuthContext';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import colors from '../hooks/colors';
-import { navigate } from '../navigationRef';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 
 const LikeAndComment = ({ likedOrCommented, likesAndComments, comments, onPressLike, onPressUnlike, onPressComment }) => {
-    const { state } = useContext(AuthContext);
     const { liked, unliked, commented } = likedOrCommented;
     const { likes } = likesAndComments;
 

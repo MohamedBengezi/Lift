@@ -29,7 +29,6 @@ const SettingsScreen = ({ navigation }) => {
       }
     };
   });
-  // getFitbitInfo();
 
 
 

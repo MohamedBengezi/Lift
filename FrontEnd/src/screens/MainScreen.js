@@ -127,17 +127,8 @@ const MainScreen = ({ navigation }) => {
     }));
   };
 
-  // const getRawMedia = async (mediaUri) => {
-  //   const media = await fetch(mediaUri);
-  //   return await media.blob();
-  // };
-
   const onSwipeUp = (gestureState) => {
     console.log('swiped up')
-    navigation.navigate('WorkoutPlans');
-  }
-
-  const swipeHack = () => {
     navigation.navigate('WorkoutPlans');
   }
 
@@ -300,12 +291,6 @@ MainScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.black,
-  },
   preview: {
     alignItems: "center",
     height: Dimensions.get("window").height,

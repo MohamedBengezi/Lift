@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import colors from '../hooks/colors';
 import { Table, Row, Rows } from 'react-native-table-component';
 
-const DayWorkout = ({ navigation, weekday, program }) => {
+const DayWorkout = ({ weekday, program }) => {
     const [tableHead, setTableHead] = useState(['Workout', 'Length', 'Reps']);
     return (
         <View style={styles.plans}>

@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TextInput, Image, Keyboard, ScrollView } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { View, Text, StyleSheet, TextInput, Image, ScrollView } from "react-native";
 import { Button } from "react-native-elements";
 import { Video } from "expo-av";
 import { Context as AuthContext } from "../context/AuthContext";
