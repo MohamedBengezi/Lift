@@ -1,14 +1,19 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler';
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { Context as AuthContext } from "../../context/AuthContext";
 import PlanList from '../../components/PlanList';
+import colors from '../../hooks/colors';
 
 
 const FollowedPlansScreen = ({ navigation }) => {
     const { state } = useContext(AuthContext);
-    let userPlans = (state.userInfo && state.userInfo.workout_plans) ? (state.userInfo.workout_plans) : []
+    const [count, setCount] = useState(0)
 
+    const refreshPlans = () => {
+        setCount(count + 1);
+    }
 
     const onSwipeDown = (gestureState) => {
         navigation.navigate('Main');
@@ -22,7 +27,14 @@ const FollowedPlansScreen = ({ navigation }) => {
                 }
             }}>
             <View>
-                <PlanList navigation={navigation} plans={userPlans} />
+                <Ionicons
+                    name='md-refresh'
+                    size={25}
+                    color={colors.black}
+                    style={{ alignSelf: 'center', marginTop: '1%' }}
+                    onPress={refreshPlans}
+                />
+                <PlanList navigation={navigation} plans={state.workout_plans} />
 
             </View>
         </FlingGestureHandler>

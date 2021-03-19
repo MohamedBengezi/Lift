@@ -11,9 +11,7 @@ const PlanItem = (props) => {
   let { plan, navigation } = props;
   let parentRoute = navigation.state.routeName;
   let mainScreen = "ViewPlan";
-  const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(
-    AuthContext
-  );
+  const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(AuthContext);
   let planID = plan.id;
   let rating = plan.rating;
   let uid = firebaseApp.auth().currentUser.uid;
@@ -33,9 +31,15 @@ const PlanItem = (props) => {
           title={!isFollowing ? "Follow" : "Unfollow"}
           onPress={() => {
             console.log("followed plan");
-            !isFollowing
-              ? followWorkoutPlan({ planID: planID })
-              : unfollowWorkoutPlan({ planID: planID });
+            if (!isFollowing) {
+              followWorkoutPlan({ planID: planID })
+              plan.followers.push(uid)
+              state.workout_plans.push(plan)
+            } else {
+              unfollowWorkoutPlan({ planID: planID });
+              plan.followers = plan.followers.filter(e => e !== uid);
+              state.workout_plans = state.workout_plans.filter(e => e.id !== planID)
+            }
             setIsFollowing(!isFollowing);
           }}
           buttonStyle={{

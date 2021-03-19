@@ -38,7 +38,7 @@ const authReducer = (state, action) => {
     case "getUserPlans":
       return {
         ...state,
-        userPlans: action.plans,
+        workout_plans: action.workout_plans,
       };
     case "profilePicture":
       return {
@@ -310,20 +310,10 @@ function getUserName(dispatch) {
 const getUserInfo = (dispatch) => {
   return async (data) => {
     var getUserInfo = functions.httpsCallable("user-getUserInfo");
-    var getWorkoutPlan = functions.httpsCallable(
-      "programs-getWorkoutPlan"
-    );
     getUserInfo(data)
-      .then(async (res) => {
+      .then((res) => {
         if (res.data.profilePicture === "undefined") {
           res.data.profilePicture = undefined;
-        }
-        console.log(`userinfo: ${res.data}`)
-        let workout_plans = (res.data.workout_plans) ? res.data.workout_plans : [];
-        for (var i = 0; i < workout_plans.length; i++) {
-          await getWorkoutPlan({ planID: workout_plans[i] }).then((plan) => {
-            workout_plans[i] = plan.data;
-          })
         }
         dispatch({
           type: "updateUserInfo",
@@ -333,6 +323,22 @@ const getUserInfo = (dispatch) => {
       .catch((error) => {
         console.error(error);
       });
+  };
+};
+
+const getUserPlans = (dispatch) => {
+  return async (workout_plans) => {
+    var getWorkoutPlan = functions.httpsCallable("programs-getWorkoutPlan");
+    for (var i = 0; i < workout_plans.length; i++) {
+      if (typeof workout_plans[i] !== 'string') continue;
+      await getWorkoutPlan({ planID: workout_plans[i] }).then((plan) => {
+        workout_plans[i] = plan.data;
+      })
+      dispatch({
+        type: "getUserPlans",
+        workout_plans: workout_plans,
+      });
+    }
   };
 };
 
@@ -456,7 +462,7 @@ const addReply = () => async ({ docID, comment, media, isFeedback }) => {
           console.log("Uploaded reply details to db");
         })
         .catch((error) => {
-          showError(error, dispatch);
+          showError(error);
         });
     }
   );
@@ -717,6 +723,7 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserInfo,
     modifyUserInfo,
+    getUserPlans,
     getUserPost,
     getFeedbackPosts,
     getGeneralPosts,
@@ -738,5 +745,5 @@ export const { Provider, Context } = createDataContext(
     getOtherUserInfo,
     getTestimonials
   },
-  { token: null, errorMessage: "", posts: {} }
+  { token: null, errorMessage: "", posts: {}, workout_plans: [] }
 );

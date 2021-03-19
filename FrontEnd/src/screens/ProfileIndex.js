@@ -7,7 +7,7 @@ import Profile from "./ProfileScreen";
 import { Context as AuthContext } from "../context/AuthContext";
 
 const ProfileScreen = ({ navigation }) => {
-  const { state, getUserPost, getUserInfo } = useContext(AuthContext);
+  const { state, getUserPost, getUserInfo, getUserPlans } = useContext(AuthContext);
 
   useEffect(() => {
     getUserInfo({ username: state.username })
@@ -15,6 +15,7 @@ const ProfileScreen = ({ navigation }) => {
   }, [navigation])
   contactData.userInfo = state.userInfo;
   contactData.name = state.username;
+  if (state.userInfo && state.userInfo.workout_plans) getUserPlans(state.userInfo.workout_plans);
   return <Profile {...contactData} />;
 };
 
