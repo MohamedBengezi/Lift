@@ -27,10 +27,8 @@ const Header = ({ isFeedback, showComments, isUsersPost, name, uid, timeSubmitte
             </View>
 
             <View style={styles.nameAndImageContainer}>
-                <TouchableOpacity
+                <View
                     style={styles.avatarName}
-                    onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: name })}
-                    activeOpacity={0.8}
                 >
                     <Text style={{ fontSize: 17 }}>{name}</Text>
                     <View style={styles.postDate}>
@@ -38,7 +36,7 @@ const Header = ({ isFeedback, showComments, isUsersPost, name, uid, timeSubmitte
                             {timeSubmitted}
                         </Text>
                     </View>
-                </TouchableOpacity>
+                </View>
             </View>
 
             <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>

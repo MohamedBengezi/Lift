@@ -46,7 +46,8 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const saveUserInfo = () => {
-    if (!image || userInfo.updatedUsername == "" && userInfo.bio == "" || userInfo.updatedUsername.trim() == state.username.trim()) {
+    console.log("userInfo bio", userInfo.bio)
+    if (userInfo.updatedUsername.length == 0 && userInfo.bio.length == 0 || userInfo.updatedUsername.length > 0 && userInfo.updatedUsername.trim() == state.username.trim()) {
       return Alert.alert(
         "Must input a new username or bio",
         "At least one input field can't be empty! If updating username it must be different from current one",
@@ -61,7 +62,7 @@ const SettingsScreen = ({ navigation }) => {
         { cancelable: false }
       );
     } else {
-      addProfilePicture({ uri: image });
+      if (image) addProfilePicture({ uri: image });
       state.username = userInfo.updatedUsername;
       modifyUserInfo(userInfo);
       navigation.goBack();
