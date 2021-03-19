@@ -16,8 +16,9 @@ import { Directions, FlingGestureHandler, State } from 'react-native-gesture-han
 const WorkoutPlansScreen = ({ navigation }) => {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('');
-
     const { state, searchWorkoutPlans } = useContext(AuthContext);
+    const [plans, setPlans] = useState(state.plans);
+    if (state.plans != plans) setPlans(state.plans)
 
     useEffect(() => {
         console.log('getting plans')
@@ -74,7 +75,7 @@ const WorkoutPlansScreen = ({ navigation }) => {
                             onChangeItem={item => setFilter(item.value)}
                         />
                     </View>
-                    <PlanList navigation={navigation} />
+                    <PlanList navigation={navigation} plans={plans} />
                 </View>
             </FlingGestureHandler>
         </SafeAreaView>

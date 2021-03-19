@@ -30,6 +30,7 @@ import ViewTestimonialScreen from "./src/screens/Plans/ViewTestimonialScreen";
 import ViewImageScreen from "./src/screens/ViewImageScreen";
 
 import ViewProfileScreen from "./src/screens/Feeds/ViewProfileIndex";
+import FollowedPlansScreen from "./src/screens/Plans/FollowedPlansScreen";
 
 export default function RouteScreen() {
   const styleTab = {
@@ -60,6 +61,26 @@ export default function RouteScreen() {
     showLabel: true,
     tabStyle: {
       height: 50,
+      marginTop: StatusBar.currentHeight + 15,
+      fontSize: 10,
+      backgroundColor: colors.white,
+      borderRightWidth: 1,
+    },
+  };
+
+
+  const planStyleTab = {
+    upperCaseLabel: false,
+    inactiveTintColor: colors.black,
+
+    activeTintColor: colors.black,
+    labelStyle: {
+      fontSize: 10,
+      fontWeight: "bold"
+    },
+    showLabel: true,
+    tabStyle: {
+      height: 35,
       marginTop: StatusBar.currentHeight + 15,
       fontSize: 10,
       backgroundColor: colors.white,
@@ -133,6 +154,53 @@ export default function RouteScreen() {
       tabBarOptions: {
         showLabel: true,
         labelStyle: { color: colors.black, fontSize: 12 },
+      },
+    }
+  );
+
+  const PlanStack = createMaterialTopTabNavigator(
+    {
+      WorkoutPlans: {
+        screen: WorkoutPlansScreen,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: ({ tintColor, focused, item }) => {
+            return focused ? (
+              <Text style={{ fontWeight: "bold" }}>Plans</Text>
+            ) : (
+              <Text style={{ fontWeight: "normal", fontSize: 15 }}>
+                Plans
+              </Text>
+            );
+          },
+          tabBarOptions: planStyleTab,
+        },
+      },
+      FollowedPlans: {
+        screen: FollowedPlansScreen,
+        navigationOptions: {
+          tabBarVisible: true,
+          tabBarLabel: ({ tintColor, focused, item }) => {
+            return focused ? (
+              <Text style={{ fontWeight: "bold" }}>Followed Plans</Text>
+            ) : (
+              <Text style={{ fontWeight: "normal", fontSize: 15 }}>
+                Followed Plans
+              </Text>
+            );
+          },
+          tabBarOptions: planStyleTab,
+        },
+      },
+    },
+    {
+      tabBarOptions: planStyleTab,
+      navigationOptions: {
+        headerMode: "none",
+        headerShown: false,
+        animationEnabled: true,
+        cardStyleInterpolator:
+          CardStyleInterpolators.forRevealFromBottomAndroid,
       },
     }
   );
@@ -218,16 +286,7 @@ export default function RouteScreen() {
           headerShown: false,
         },
       },
-      WorkoutPlans: {
-        screen: WorkoutPlansScreen,
-        navigationOptions: {
-          headerMode: "none",
-          headerShown: false,
-          animationEnabled: true,
-          cardStyleInterpolator:
-            CardStyleInterpolators.forRevealFromBottomAndroid,
-        },
-      },
+      WorkoutPlans: PlanStack,
       Settings: {
         screen: SettingsScreen,
         navigationOptions: {

@@ -67,11 +67,11 @@ export const modifyUser = functions.https.onCall(async (data, context) => {
   const bio = data.bio;
   let info = {};
   if (updatedUsername == "") {
-    info = { bio: bio }
+    info = { bio: bio };
   } else if (bio == "") {
-    info = { username: updatedUsername }
+    info = { username: updatedUsername };
   } else {
-    info = { username: updatedUsername, bio: bio }
+    info = { username: updatedUsername, bio: bio };
   }
   await admin.firestore().collection("users").doc(uid).update(info);
 });
@@ -115,6 +115,7 @@ export const getUserInfo = functions.https.onCall(async (data, context) => {
         console.log("Found 1 user ");
         const docData = doc.data();
         returnData = {
+          ...docData,
           id: doc.id,
           bio: docData.bio,
           followers: docData.followers,
@@ -190,8 +191,9 @@ async function getCaloriesBurned(token: string) {
     },
   });
   const date = new Date();
-  const fitbitDate = `${date.getFullYear()}-${date.getMonth() + 1
-    }-${date.getDate()}`;
+  const fitbitDate = `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()}`;
   await api
     .get(`/${fitbitDate}.json`)
     .then((res) => {

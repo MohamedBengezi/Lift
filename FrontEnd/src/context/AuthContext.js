@@ -5,6 +5,7 @@ import FormData from "form-data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firebase from "firebase/app";
 import { firebaseApp, functions, uploadMedia } from "../../firebase";
+import { State } from "react-native-gesture-handler";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -34,6 +35,11 @@ const authReducer = (state, action) => {
         ...state,
         plans: action.plans,
       };
+    case "getUserPlans":
+      return {
+        ...state,
+        workout_plans: action.workout_plans,
+      };
     case "profilePicture":
       return {
         ...state,
@@ -51,7 +57,7 @@ const authReducer = (state, action) => {
         otherUserInfo: action.userInfo,
         otherUsername: action.username,
         otherProfilePicture: action.userInfo.profilePicture,
-      }; 
+      };
     case "getTestimonials":
       return {
         ...state,
@@ -320,6 +326,22 @@ const getUserInfo = (dispatch) => {
   };
 };
 
+const getUserPlans = (dispatch) => {
+  return async (workout_plans) => {
+    var getWorkoutPlan = functions.httpsCallable("programs-getWorkoutPlan");
+    for (var i = 0; i < workout_plans.length; i++) {
+      if (typeof workout_plans[i] !== 'string') continue;
+      await getWorkoutPlan({ planID: workout_plans[i] }).then((plan) => {
+        workout_plans[i] = plan.data;
+      })
+      dispatch({
+        type: "getUserPlans",
+        workout_plans: workout_plans,
+      });
+    }
+  };
+};
+
 const modifyUserInfo = (dispatch) => {
   return async (data) => {
     var modifyUser = functions.httpsCallable("user-modifyUser");
@@ -440,7 +462,7 @@ const addReply = () => async ({ docID, comment, media, isFeedback }) => {
           console.log("Uploaded reply details to db");
         })
         .catch((error) => {
-          showError(error, dispatch);
+          showError(error);
         });
     }
   );
@@ -463,7 +485,7 @@ const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
     addComment(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -475,7 +497,7 @@ const archivePost = () => {
     var archivePost = functions.httpsCallable("posts-archiveFeedbackPost");
     console.log("archiving", data.docID);
     archivePost(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -487,7 +509,7 @@ const markPostAsAnswered = () => {
     var archivePost = functions.httpsCallable("posts-markPostAsAnswered");
     console.log("marking post as answered", data.docID);
     archivePost(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -593,7 +615,7 @@ const followWorkoutPlan = () => {
     );
     console.log("following plan ", data.planID);
     followWorkoutPlan(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -701,6 +723,7 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserInfo,
     modifyUserInfo,
+    getUserPlans,
     getUserPost,
     getFeedbackPosts,
     getGeneralPosts,
@@ -722,5 +745,5 @@ export const { Provider, Context } = createDataContext(
     getOtherUserInfo,
     getTestimonials
   },
-  { token: null, errorMessage: "", posts: {} }
+  { token: null, errorMessage: "", posts: {}, workout_plans: [] }
 );
