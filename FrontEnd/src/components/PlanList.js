@@ -16,11 +16,8 @@ const reducer = (state, action) => {
 }
 
 const STAR_SIZE = 45;
-const PlanList = ({ navigation }) => {
-    const { state } = useContext(AuthContext);
-    const [plans, setPlans] = useState(state.plans);
+const PlanList = ({ navigation, plans }) => {
     let count = 0;
-    if (state.plans != plans) setPlans(state.plans)
 
     function renderPlanItem(item) {
         if (!item || !item.item) return
