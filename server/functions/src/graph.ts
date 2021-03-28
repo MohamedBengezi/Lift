@@ -1,6 +1,3 @@
-import './NodeList';
-import NodeList from './NodeList';
-
 class Graph {
 
     private adj : number[][];

@@ -1,4 +1,3 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import Graph from '../graph';
 
@@ -6,45 +5,34 @@ import Graph from '../graph';
 async function buildGeneralPostNodes() {
     
 
-        // Get fake users
-        try {
+            const getDocuments = function (ref: FirebaseFirestore.QuerySnapshot) {
+              return ref.docs.map((doc) => {
+                console.log("Data: " + doc.data());
+                return {
+                  id: doc.id,
+                  ...doc.data(),
+                };
+              }
+              );
+            };
 
-            // Query fake users
-            const usersRef =  admin
-                .firestore()
-                .collection("users")
-                .where("fake", "==", true)
-                .get();
-        
-            var users = await usersRef.get();
-
-          } catch (error) {
-            throw new functions.https.HttpsError(
-              "not-found",
-              `Error: ${error}`
-            );
-          }
+           // Query fake users
+           const usersRef =  await admin
+              .firestore()
+              .collection("users")
+              .where("fake", "==", true)
+              .get();
+      
+            const users = getDocuments(usersRef);
 
 
-          // Get fake general posts
-          try {
+            const postsRef =  await admin
+              .firestore()
+              .collection("general_posts")
+              .where("fake", "==", true)
+              .get();
 
-            // Query fake posts
-            const postsRef =  admin
-                .firestore()
-                .collection("general_posts")
-                .where("fake", "==", true)
-                .get();
-        
-            var posts = await postsRef.get();
-
-          } catch (error) {
-            throw new functions.https.HttpsError(
-              "not-found",
-              `Error: ${error}`
-            );
-          }
-
+            const posts = getDocuments(postsRef);
 
 
           // Create hashmap of unique ID's to array indices
@@ -53,7 +41,7 @@ async function buildGeneralPostNodes() {
 
           for (let i = 0; i < users.length + posts.length; i++) {
             if (i < users.length) {
-              vertices.set(users[i].id, i);
+              vertices.set(users[i], i);
             }
             else {
               vertices.set(posts[i-users.length].id, i);
@@ -68,10 +56,10 @@ async function buildGeneralPostNodes() {
           for (let i = 0; i < users.length; i++) {
             for (let j = 0; j < posts.length; j++) {
               
-              let creator = posts[j].data().uid;
-              let following = users[i].data().following;
-              let topic = posts[j].data().topic;
-              let topics = posts[i].data().topics;
+              let creator = posts[j]!.uid;
+              let following = users[i]!.following;
+              let topic = posts[j]!.topic;
+              let topics = posts[i]!.topics;
 
               if (following.includes(creator) || topics.includes(topic)) {
                 generalPostsGraph.addEdge(vertices.get(users[i].id), vertices.get(posts[j].id));
@@ -79,8 +67,5 @@ async function buildGeneralPostNodes() {
 
             }
           }
-
-
-
 
 }
