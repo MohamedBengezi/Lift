@@ -73,10 +73,10 @@ export const deleteAccount = functions.https.onCall(async (data, context) => {
   await admin.firestore().collection("users").doc(uid).delete();
 });
 
-export const modifyFollowing = functions.https.onRequest(
-  async (request, response) => {
-    const following = request.body.following;
-    const uid = request.body.uid;
+export const modifyFollowing = functions.https.onCall(
+  async (data, context) => {
+    const following = data.following;
+    const uid = data.uid;
 
     await admin.firestore().collection("users").doc(uid).update({
       following: following,
