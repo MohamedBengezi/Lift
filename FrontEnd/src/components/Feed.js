@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
 
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import colors from '../hooks/colors'
 import { navigate } from "../navigationRef";
 import PostDetails from "./PostDetails";
@@ -47,9 +48,9 @@ const Feed = ({ posts, isFeedback }) => {
   };
 
   return (
-    <View style={styles.background}>
+    <ScrollView contentContainerStyle={styles.background}>
       <ListOfPosts />
-    </View >
+    </ScrollView >
 
   );
 };

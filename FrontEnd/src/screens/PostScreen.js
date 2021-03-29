@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TextInput, Image } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, Keyboard, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Button } from "react-native-elements";
 import { Video } from "expo-av";
@@ -22,7 +22,7 @@ const PostScreen = ({ navigation }) => {
   const renderCapture = () => {
     if (video != null) {
       return (
-        <View>
+        <View style={styles.previewContainer}>
           <Video
             source={{
               uri: video.uri,
@@ -62,7 +62,7 @@ const PostScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: "5%" }}>
+    <ScrollView contentContainerStyle={{ flex: 1, alignItems: "center", flexDirection: "column", marginTop: "5%" }} keyboardShouldPersistTaps='never'>
       {renderCapture()}
       <TextInput
         style={styles.titleInput}
@@ -96,7 +96,7 @@ const PostScreen = ({ navigation }) => {
         titleStyle={styles.buttonText}
         containerStyle={styles.containerStyle}
       />
-    </View>
+    </ScrollView>
   );
 };
 

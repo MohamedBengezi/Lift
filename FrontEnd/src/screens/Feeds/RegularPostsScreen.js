@@ -48,9 +48,9 @@ const RegularPostsScreen = ({ navigation }) => {
         <SafeAreaView style={styles.background}>
             <ScrollView
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-                {posts ? (
-                    <Feed posts={posts} isFeedback={false} />
-                ) : <PostDetail item={dummyInfo} showComments={false} />}
+                {!posts || posts.length === 0 ? (
+                    <PostDetail item={dummyInfo} showComments={false} />
+                ) : <Feed posts={posts} isFeedback={false} />}
             </ScrollView>
         </SafeAreaView>
 
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default RegularPostsScreen; 
+export default RegularPostsScreen;

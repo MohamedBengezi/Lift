@@ -12,11 +12,12 @@ import * as WebBrowser from "expo-web-browser";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import axios from "axios";
 
-const SettingsScreen = () => {
-  const { signout, saveFitbitToken, state, getFitbitInfo } = useContext(
+const SettingsScreen = ({ navigation }) => {
+  const { signout, saveFitbitToken, state, addProfilePicture, modifyUserInfo } = useContext(
     AuthContext
   );
   const [image, setImage] = useState(null);
+  const [userInfo, setUserInfo] = useState({ updatedUsername: "", bio: "" });
 
   useEffect(() => {
     async () => {
@@ -31,9 +32,8 @@ const SettingsScreen = () => {
     };
   });
   // getFitbitInfo();
-  
 
-  
+
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -46,6 +46,29 @@ const SettingsScreen = () => {
       setImage(result.uri);
     }
   };
+
+  const saveUserInfo = () => {
+    if (!image || userInfo.updatedUsername == "" && userInfo.bio == "" || userInfo.updatedUsername.trim() == state.username.trim()) {
+      return Alert.alert(
+        "Must input a new username or bio",
+        "At least one input field can't be empty! If updating username it must be different from current one",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ],
+        { cancelable: false }
+      );
+    } else {
+      addProfilePicture({ uri: image });
+      state.username = userInfo.updatedUsername;
+      modifyUserInfo(userInfo);
+      navigation.goBack();
+    }
+  }
 
   WebBrowser.maybeCompleteAuthSession();
   let discovery = {
@@ -100,7 +123,11 @@ const SettingsScreen = () => {
       />
       <View style={styles.usernameContainer}>
         <Text style={{ marginBottom: 5, marginLeft: 10 }}>Username: </Text>
-        <Input style={styles.username} />
+        <Input style={styles.username}
+          value={userInfo.updatedUsername}
+          onChangeText={(username) => setUserInfo({ ...userInfo, updatedUsername: username })}
+          placeholder="Enter new username"
+        />
       </View>
       <View>
         <Text style={{}}>Profile Picture: </Text>
@@ -127,13 +154,18 @@ const SettingsScreen = () => {
       </View>
       <View style={styles.usernameContainer}>
         <Text style={{ marginBottom: 5, marginLeft: 10 }}>Bio: </Text>
-        <Input style={styles.username} />
+        <Input
+          style={styles.username}
+          value={userInfo.bio}
+          onChangeText={(bio) => setUserInfo({ ...userInfo, bio: bio })}
+          placeholder="Enter new bio"
+        />
       </View>
 
       <Button
         title="Save"
         onPress={() => {
-          console.log("Saved settings");
+          saveUserInfo();
         }}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}

@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
+import * as storageUtils from "../util/storage";
 
 export const addUserToDB = functions.https.onCall((data, context) => {
   const username = data.username;
@@ -19,6 +20,7 @@ export const addUserToDB = functions.https.onCall((data, context) => {
       following: 0,
       followers: 0,
       fitbitInfo: fitbitInfo,
+      workout_plans: [],
     })
     .then(() => {
       return { message: "success" };
@@ -29,7 +31,7 @@ export const addUserToDB = functions.https.onCall((data, context) => {
 export const userNameExists = functions.https.onCall((data, context) => {
   const username = data.username;
   const usersRef = admin.firestore().collection("users");
-
+  console.log("Searching for username ", username);
   const query = usersRef
     .where("username", "==", username)
     .get()
@@ -60,12 +62,18 @@ export const getUserName = functions.https.onCall((data, context) => {
 });
 
 export const modifyUser = functions.https.onCall(async (data, context) => {
-  const uid = data.uid;
+  const uid = context.auth!.uid;
   const updatedUsername = data.updatedUsername;
-
-  await admin.firestore().collection("users").doc(uid).update({
-    username: updatedUsername,
-  });
+  const bio = data.bio;
+  let info = {};
+  if (updatedUsername == "") {
+    info = { bio: bio };
+  } else if (bio == "") {
+    info = { username: updatedUsername };
+  } else {
+    info = { username: updatedUsername, bio: bio };
+  }
+  await admin.firestore().collection("users").doc(uid).update(info);
 });
 
 export const deleteAccount = functions.https.onCall(async (data, context) => {
@@ -84,21 +92,40 @@ export const modifyFollowing = functions.https.onCall(
   }
 );
 
-export const getUserInfo = functions.https.onCall(async (data, contxt) => {
+async function getStreamablePicture(path: string) {
+  const result = (await storageUtils.getDownloadURL(path)?.downloadURL)?.[0];
+  return result;
+}
+
+export const getUserInfo = functions.https.onCall(async (data, context) => {
   const username = data.username;
-  const query = await admin
-    .firestore()
-    .collection("users")
+  const usersRef = admin.firestore().collection("users");
+  let returnData = {
+    id: "",
+    bio: "",
+    followers: 0,
+    following: 0,
+    profilePicture: "",
+  };
+  await usersRef
     .where("username", "==", username)
     .get()
-    .then((querySnapShot) => {
-      let result;
-      let dId;
-      querySnapShot.forEach(function (doc) {
-        result = doc.data();
-        dId = doc.id;
+    .then(function (res) {
+      res.forEach((doc) => {
+        console.log("Found 1 user ");
+        const docData = doc.data();
+        returnData = {
+          ...docData,
+          id: doc.id,
+          bio: docData.bio,
+          followers: docData.followers,
+          following: docData.following,
+          profilePicture: docData.profilePicture,
+        };
+        console.log("Leaving foreach ", returnData);
+        return;
       });
-      return { dId, result };
+      return returnData;
     })
     .catch((err) => {
       throw new functions.https.HttpsError(
@@ -106,8 +133,33 @@ export const getUserInfo = functions.https.onCall(async (data, contxt) => {
         `Something went wrong when accessing the database. Reason ${err}`
       );
     });
-  return query;
+  returnData = {
+    ...returnData,
+    profilePicture:
+      (await getStreamablePicture(returnData.profilePicture)) + "",
+  };
+  console.log("Result: ", returnData);
+  return returnData;
 });
+
+export const addProfilePicture = functions.https.onCall(
+  async (data, context) => {
+    const uid = context.auth!.uid;
+    const query = admin
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .update({ profilePicture: data.path })
+      .then(async (res) => {
+        return {
+          profilePicture: (
+            await storageUtils.getDownloadURL(data.path)?.downloadURL
+          )?.[0],
+        };
+      });
+    return query;
+  }
+);
 
 async function getRestingHeartRate(token: string) {
   let restingHeartRate = 0;

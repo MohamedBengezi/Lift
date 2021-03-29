@@ -5,6 +5,7 @@ import FormData from "form-data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firebase from "firebase/app";
 import { firebaseApp, functions, uploadMedia } from "../../firebase";
+import { State } from "react-native-gesture-handler";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -28,6 +29,39 @@ const authReducer = (state, action) => {
         heartRate: action.heartRate,
         calories: action.calories,
         isFitbitLinked: action.isFitbitLinked,
+      };
+    case "getPlans":
+      return {
+        ...state,
+        plans: action.plans,
+      };
+    case "getUserPlans":
+      return {
+        ...state,
+        workout_plans: action.workout_plans,
+      };
+    case "profilePicture":
+      return {
+        ...state,
+        profilePicture: action.profilePicture,
+      };
+    case "updateUserInfo":
+      return {
+        ...state,
+        userInfo: action.userInfo,
+        profilePicture: action.userInfo.profilePicture,
+      };
+    case "updateOtherUserInfo":
+      return {
+        ...state,
+        otherUserInfo: action.userInfo,
+        otherUsername: action.username,
+        otherProfilePicture: action.userInfo.profilePicture,
+      };
+    case "getTestimonials":
+      return {
+        ...state,
+        testimonials: action.testimonials
       };
     default:
       return state;
@@ -206,7 +240,6 @@ const upload = (dispatch) => async ({ image, video }) => {
     });
 
     const response = await sendXmlHttpRequest(body);
-    console.log(response);
   } catch (err) {
     console.log(err);
     dispatch({
@@ -238,28 +271,30 @@ function sendXmlHttpRequest(data) {
 }
 
 const uploadPost = (dispatch) => async ({ caption, type, media, isVideo }) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid,type).then((path) => {
-    const data = {
-      caption: caption,
-      mediaPath: path,
-      isVideo: isVideo
-    };
-    let uploadPost;
-    if (type === "feedback") {
-      uploadPost = functions.httpsCallable("posts-createFeedbackPost");
-    } else if (type === "regular") {
-      //route for regular posts
-      uploadPost = functions.httpsCallable("posts-createGeneralPost");
-    }
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, type).then(
+    (path) => {
+      const data = {
+        caption: caption,
+        mediaPath: path,
+        isVideo: isVideo,
+      };
+      let uploadPost;
+      if (type === "feedback") {
+        uploadPost = functions.httpsCallable("posts-createFeedbackPost");
+      } else if (type === "regular") {
+        //route for regular posts
+        uploadPost = functions.httpsCallable("posts-createGeneralPost");
+      }
 
-    uploadPost(data)
-      .then(() => {
-        console.log("Uploaded post details to db");
-      })
-      .catch((error) => {
-        showError(error, dispatch);
-      });
-  });
+      uploadPost(data)
+        .then(() => {
+          console.log("Uploaded post details to db");
+        })
+        .catch((error) => {
+          showError(error, dispatch);
+        });
+    }
+  );
 };
 
 function getUserName(dispatch) {
@@ -272,9 +307,77 @@ function getUserName(dispatch) {
   });
 }
 
+const getUserInfo = (dispatch) => {
+  return async (data) => {
+    var getUserInfo = functions.httpsCallable("user-getUserInfo");
+    getUserInfo(data)
+      .then((res) => {
+        if (res.data.profilePicture === "undefined") {
+          res.data.profilePicture = undefined;
+        }
+        dispatch({
+          type: "updateUserInfo",
+          userInfo: res.data,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getUserPlans = (dispatch) => {
+  return async (workout_plans) => {
+    var getWorkoutPlan = functions.httpsCallable("programs-getWorkoutPlan");
+    for (var i = 0; i < workout_plans.length; i++) {
+      if (typeof workout_plans[i] !== 'string') continue;
+      await getWorkoutPlan({ planID: workout_plans[i] }).then((plan) => {
+        workout_plans[i] = plan.data;
+      })
+      dispatch({
+        type: "getUserPlans",
+        workout_plans: workout_plans,
+      });
+    }
+  };
+};
+
+const modifyUserInfo = (dispatch) => {
+  return async (data) => {
+    var modifyUser = functions.httpsCallable("user-modifyUser");
+    modifyUser(data)
+      .then((res) => {
+        console.log("success updating user info!");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getOtherUserInfo = (dispatch) => {
+  return async (data) => {
+    var getUserInfo = functions.httpsCallable("user-getUserInfo");
+    getUserInfo(data)
+      .then((res) => {
+        if (res.data.profilePicture === "undefined") {
+          res.data.profilePicture = undefined;
+        }
+        dispatch({
+          type: "updateOtherUserInfo",
+          userInfo: res.data,
+          username: data.username,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
 const getUserPost = () => {
-  return async (setPosts) => {
-    let uid = firebaseApp.auth().currentUser.uid;
+  return async (setPosts, userid) => {
+    let uid = userid ? userid : firebaseApp.auth().currentUser.uid;
     var getUserPosts = functions.httpsCallable("posts-getUserPosts");
     getUserPosts({ uid: uid })
       .then((data) => {
@@ -342,73 +445,76 @@ const getReplies = () => {
   };
 };
 
-const addReply = () => async ({
-  docID, comment, media, isFeedback
-}) => {
-  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, 'feedback').then((path) => {
+const addReply = () => async ({ docID, comment, media, isFeedback }) => {
+  uploadMedia(media.uri, firebaseApp.auth().currentUser.uid, "feedback").then(
+    (path) => {
+      const data = {
+        docID: docID,
+        isFeedback: isFeedback,
+        comment: comment,
+        mediaPath: path,
+      };
 
-    const data = {
-      docID: docID,
-      isFeedback: isFeedback,
-      comment: comment,
-      mediaPath: path,
-    };
+      var addReply = functions.httpsCallable("posts-addReply");
 
-    var addReply = functions.httpsCallable("posts-addReply");
-
-
-    addReply(data)
-      .then(() => {
-        console.log("Uploaded reply details to db");
-      })
-      .catch((error) => {
-        showError(error, dispatch);
-      });
-  });
-}
+      addReply(data)
+        .then(() => {
+          console.log("Uploaded reply details to db");
+        })
+        .catch((error) => {
+          showError(error);
+        });
+    }
+  );
+};
 
 const getComments = () => {
   return async (data, setComments) => {
     var getComments = functions.httpsCallable("posts-getComments");
-    getComments(data).then((res) => {
-      setComments(res);
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    getComments(data)
+      .then((res) => {
+        setComments(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
-    addComment(data).then((res) => {
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    addComment(data)
+      .then((res) => { })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const archivePost = () => {
   return async (data) => {
     var archivePost = functions.httpsCallable("posts-archiveFeedbackPost");
-    console.log('archiving', data.docID)
-    archivePost(data).then((res) => {
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    console.log("archiving", data.docID);
+    archivePost(data)
+      .then((res) => { })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const markPostAsAnswered = () => {
   return async (data) => {
     var archivePost = functions.httpsCallable("posts-markPostAsAnswered");
-    console.log('marking post as answered', data.docID)
-    archivePost(data).then((res) => {
-    }).catch((error) => {
-      console.error(error);
-    });
-  }
-}
+    console.log("marking post as answered", data.docID);
+    archivePost(data)
+      .then((res) => { })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
 
 const saveFitbitToken = (dispatch) => {
   return async (access_token) => {
@@ -434,16 +540,173 @@ const getFitbitInfo = (dispatch) => {
     var getFitbitInfo = functions.httpsCallable("user-getFitbitInfo");
     getFitbitInfo()
       .then((res) => {
-        console.log("Got fitbitInfo");
+        console.log("Got fitbitInfo ");
         dispatch({
           type: "updateFitbit",
           heartRate: res.data.heartRate,
-          calories: res.data.calories,
+          calories: res.data.caloriesBurned,
           isFitbitLinked: res.data.isLinked,
         });
       })
       .catch((error) => {
         console.error(error);
+      });
+  };
+};
+
+// Workout Plan functions
+
+const createWorkoutPlan = () => {
+  return async (data) => {
+    var createWorkoutPlan = functions.httpsCallable(
+      "programs-createWorkoutPlan"
+    );
+    console.log("uploading plan ", data);
+    createWorkoutPlan(data)
+      .then((res) => {
+        console.log("plan uploaded");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const searchWorkoutPlans = (dispatch) => {
+  return async (data) => {
+    var searchWorkoutPlans = functions.httpsCallable(
+      "programs-searchWorkoutPlans"
+    );
+    searchWorkoutPlans(data)
+      .then((res) => {
+        dispatch({
+          type: "getPlans",
+          plans: res.data.results,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const getTestimonials = (dispatch) => {
+  return async (data) => {
+    var getTestimonials = functions.httpsCallable("programs-getTestimonials");
+    console.log('getting testimonials');
+    getTestimonials(data)
+      .then((res) => {
+        console.log('got testimonials');
+        dispatch({
+          type: "getTestimonials",
+          testimonials: res.data,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const followWorkoutPlan = () => {
+  return async (data) => {
+    var followWorkoutPlan = functions.httpsCallable(
+      "programs-followWorkoutPlan"
+    );
+    console.log("following plan ", data.planID);
+    followWorkoutPlan(data)
+      .then((res) => { })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const unfollowWorkoutPlan = () => {
+  return async (data) => {
+    var followWorkoutPlan = functions.httpsCallable(
+      "programs-unfollowWorkoutPlan"
+    );
+    followWorkoutPlan(data)
+      .then((res) => {
+        console.log("unfollowed plan ", data.planID);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const addTestimonial = () => {
+  return async (data) => {
+    const firebaseData = {
+      beforeMediaPath: "",
+      afterMediaPath: "",
+      text: data.text,
+      rating: data.rating,
+      docID: data.docID,
+    };
+    const uid = firebaseApp.auth().currentUser.uid;
+    //first upload the before image.
+    uploadMedia(data.beforeMediaPath, uid, "testimonial")
+      .then((res) => {
+        firebaseData.beforeMediaPath = res;
+        console.log("Uploaded before image with path ", res);
+        //now upload the after image.
+        uploadMedia(data.afterMediaPath, uid, "testimonial")
+          .then((res) => {
+            console.log("Uploaded after image with path ", res);
+            firebaseData.afterMediaPath = res;
+            //finally upload data to addTestimonial database
+            var addTestimonial = functions.httpsCallable(
+              "programs-addTestimonial"
+            );
+
+            addTestimonial(firebaseData)
+              .then((res) => {
+                console.log("Added review to db");
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          })
+          .catch((err) => {
+            console.error("error in uploading after image ", err);
+          });
+      })
+      .catch((err) => {
+        console.error("error in uploading before image ", err);
+      });
+  };
+};
+
+const updateUserInfo = (dispatch, data) => {
+  //code to update userInfo on save button in settings page
+};
+
+const addProfilePicture = (dispatch) => {
+  return async (data) => {
+    let uid = firebaseApp.auth().currentUser.uid;
+    uploadMedia(data.uri, uid, "profilePicture")
+      .then((res) => {
+        console.log("Uploaded profile picture to firestore");
+        var addProfilePicture = functions.httpsCallable(
+          "user-addProfilePicture"
+        );
+        addProfilePicture({ path: res })
+          .then((res) => {
+            dispatch({
+              type: "profilePicture",
+              profilePicture: res.data.profilePicture,
+            });
+            console.log("Saved profile picture path to user db ");
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      })
+      .catch((err) => {
+        console.error(err);
       });
   };
 };
@@ -458,6 +721,9 @@ export const { Provider, Context } = createDataContext(
     clearErrorMessage,
     tryLocalSignin,
     uploadPost,
+    getUserInfo,
+    modifyUserInfo,
+    getUserPlans,
     getUserPost,
     getFeedbackPosts,
     getGeneralPosts,
@@ -469,7 +735,15 @@ export const { Provider, Context } = createDataContext(
     archivePost,
     markPostAsAnswered,
     saveFitbitToken,
-    getFitbitInfo
+    getFitbitInfo,
+    createWorkoutPlan,
+    searchWorkoutPlans,
+    followWorkoutPlan,
+    unfollowWorkoutPlan,
+    addTestimonial,
+    addProfilePicture,
+    getOtherUserInfo,
+    getTestimonials
   },
-  { token: null, errorMessage: "", posts: {} }
+  { token: null, errorMessage: "", posts: {}, workout_plans: [] }
 );

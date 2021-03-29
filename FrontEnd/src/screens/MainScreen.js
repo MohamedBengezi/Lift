@@ -9,7 +9,6 @@ import {
   TouchableHighlight,
   Alert
 } from "react-native";
-import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import { Video } from "expo-av";
 import { Camera } from "expo-camera";
 import * as Permissions from "expo-permissions";
@@ -17,6 +16,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
 import * as MediaLibrary from 'expo-media-library';
 import colors from "../hooks/colors";
+import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler';
 
 const MainScreen = ({ navigation }) => {
   const [camera, setCamera] = useState({
@@ -137,6 +137,10 @@ const MainScreen = ({ navigation }) => {
     navigation.navigate('WorkoutPlans');
   }
 
+  const swipeHack = () => {
+    navigation.navigate('WorkoutPlans');
+  }
+
   const saveToCameraRoll = () => {
     var media = (image != null) ? image : video;
     MediaLibrary.saveToLibraryAsync(media.uri).then(() => {
@@ -229,66 +233,61 @@ const MainScreen = ({ navigation }) => {
       );
     } else {
       return (
-
-        <View style={{ flex: 1 }}>
-          <Camera
-            style={{ flex: 1 }}
-            type={camera.type}
-            flashMode={camera.flashMode}
-            ref={(ref) => {
-              this.camera = ref;
-            }}
-          >
-            <View style={styles.menu}>
-              <View style={styles.subMenu}>
-                <TouchableOpacity onPress={() => toggleCamera()}>
-                  <Text style={styles.button}>
-                    <Ionicons name="md-reverse-camera" style={styles.button} />
-                  </Text>
-                </TouchableOpacity>
+        <Camera
+          style={{ flex: 1 }}
+          type={camera.type}
+          flashMode={camera.flashMode}
+          ref={(ref) => {
+            this.camera = ref;
+          }}
+        >
+          <FlingGestureHandler
+            direction={Directions.UP}
+            onHandlerStateChange={({ nativeEvent }) => {
+              if (nativeEvent.state === State.ACTIVE) {
+                onSwipeUp()
+              }
+            }}>
+            <View style={{ flex: 1 }}>
+              <View style={styles.menu}>
+                <View style={styles.subMenu}>
+                  <TouchableOpacity onPress={() => toggleCamera()}>
+                    <Text style={styles.button}>
+                      <Ionicons name="md-reverse-camera" style={styles.button} />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.subMenu}>
+                  <TouchableOpacity onPress={() => toggleFlashLight()}>
+                    <Text style={styles.button}>
+                      <Ionicons
+                        name="md-flash"
+                        style={{
+                          ...styles.button,
+                          color:
+                            camera.flashMode === "on"
+                              ? colors.white
+                              : colors.black,
+                        }}
+                      />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={styles.subMenu}>
-                <TouchableOpacity onPress={() => toggleFlashLight()}>
-                  <Text style={styles.button}>
-                    <Ionicons
-                      name="md-flash"
-                      style={{
-                        ...styles.button,
-                        color:
-                          camera.flashMode === "on"
-                            ? colors.white
-                            : colors.black,
-                      }}
-                    />
-                  </Text>
-                </TouchableOpacity>
+              <View style={styles.cameraButton}>
+                <TouchableHighlight
+                  style={styles.capture}
+                  onPress={takePicture}
+                  onLongPress={takeVideo}
+                  onPressOut={stopRecording}
+                  underlayColor="rgba(255, 255, 255, 0.5)"
+                >
+                  <View />
+                </TouchableHighlight>
               </View>
             </View>
-            <View style={styles.cameraButton}>
-              <TouchableHighlight
-                style={styles.capture}
-                onPress={takePicture}
-                onLongPress={takeVideo}
-                onPressOut={stopRecording}
-                underlayColor="rgba(255, 255, 255, 0.5)"
-              >
-                <View />
-              </TouchableHighlight>
-            </View>
-            <GestureRecognizer
-              onSwipeUp={() => onSwipeUp()}
-              style={{ position: 'absolute', bottom: 0, left: "48%" }}
-            >
-              <Ionicons
-                name="md-arrow-up"
-                style={{
-                  ...styles.button,
-                  color: colors.white
-                }}
-              />
-            </GestureRecognizer>
-          </Camera>
-        </View>
+          </FlingGestureHandler>
+        </Camera>
 
       );
     }

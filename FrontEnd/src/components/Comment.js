@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 import colors from '../hooks/colors';
+import { Video } from "expo-av";
 
 
 const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and title properties from prop
@@ -11,24 +12,43 @@ const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and tit
     let profile_image = "https://reactnative.dev/img/tiny_logo.png";
     let username = comment.username;
     let cmt = comment.comment;
+    let isImage = (typeof comment.isImage !== 'undefined') ? comment.isImage : true;
     let mediaPath = (comment.mediaPath) ? comment.mediaPath : "https://www.mensjournal.com/wp-content/uploads/2018/02/squats-mens-journal-february-2018.jpg";
 
     const onPressLike = () => {
         setLiked(!liked);
     }
 
-    console.log('comment', mediaPath)
+    function renderMedia() {
+        if (!isFeedback) return null;
+        if (isImage) {
+            return <Image source={{ uri: mediaPath }} style={styles.image} />
+        } else {
+            return (<Video
+                source={{
+                    uri: mediaPath,
+                }}
+                rate={1.0}
+                volume={1.0}
+                isMuted={true}
+                resizeMode="contain"
+                shouldPlay
+                isLooping
+                style={styles.video}
+            />);
+        }
+    }
 
     return (
-        <View style={styles.container}>
+        <View style={{ ...styles.container, height: isFeedback ? 300 : "70%" }}>
             <View style={styles.commentContainer} key={index}>
                 <TouchableOpacity activeOpacity={0.8}
-                    onPress={() => navigate('Profile', { isHeaderShow: true, username: username })}>
+                    onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: username })}>
                     <Image source={{ uri: profile_image || '' }} style={styles.commentAvatar} />
                 </TouchableOpacity>
                 <View style={styles.postUsernameLocationContainer}>
                     <TouchableOpacity style={styles.postUsernameView}
-                        onPress={() => navigate('Profile', { isHeaderShow: true, userId: comment.user.id })}>
+                        onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: username })}>
                         <Text style={styles.commentUsernameLabel}>{username}</Text>
                     </TouchableOpacity>
                     <View style={styles.postLocationView}>
@@ -43,7 +63,8 @@ const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and tit
                     />
                 </View>
             </View>
-            {isFeedback ? <Image source={{ uri: mediaPath }} style={styles.image} /> : null}
+            {renderMedia()}
+
 
         </View>
 
@@ -55,7 +76,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         borderColor: colors.darkGrey,
         flexDirection: 'column',
-        height: 300
     },
     commentContainer: {
         flexDirection: 'row',
@@ -91,6 +111,10 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         marginBottom: 10,
         marginTop: 10
+    },
+    video: {
+        flex: 1,
+        margin: 10
     }
 
 });

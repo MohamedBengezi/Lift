@@ -4,8 +4,8 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableOpacity,
-    StatusBar
+    StatusBar,
+    ScrollView
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import colors from '../hooks/colors'
@@ -15,23 +15,12 @@ const ViewPostScreen = ({ navigation }) => {
     const isFeedback = navigation.getParam('isFeedback');
 
     return (
-        <View style={{ flex: 1 }}>
-            <TouchableOpacity
-                onPress={() => {
-                    navigation.goBack();
-                }}
-                style={styles.cancel}
+        <ScrollView keyboardShouldPersistTaps='never' contentContainerStyle={{ flex: 1 }}>
 
-            >
-                <Ionicons
-                    name="ios-arrow-round-back"
-                    style={styles.icon}
-                />
-            </TouchableOpacity>
 
             <PostDetails item={item} showComments={true} isFeedback={isFeedback} />
 
-        </View>
+        </ScrollView>
     );
 };
 const styles = StyleSheet.create({
@@ -45,7 +34,8 @@ const styles = StyleSheet.create({
         left: 20,
         top: StatusBar.currentHeight,
         width: 50,
-        height: 50
+        height: 50,
+        backgroundColor: "red"
     }
 });
 

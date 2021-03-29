@@ -8,15 +8,15 @@ import { Video } from "expo-av";
 const VideoElement = ({ title, video }) => {
     return (
         <View style={styles.post}>
-            <Text style={{ marginLeft: 50 }}>{title}</Text>
+            <Text>{title}</Text>
             <Video
                 source={{
                     uri: video,
                 }}
                 rate={1.0}
                 volume={1.0}
-                isMuted={false}
-                resizeMode="cover"
+                isMuted={true}
+                resizeMode="contain"
                 shouldPlay
                 isLooping
                 style={styles.video}
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     post: {
         flex: 1,
         flexDirection: "column",
-        justifyContent: "flex-start",
         width: "70%",
         height: "50%"
     },

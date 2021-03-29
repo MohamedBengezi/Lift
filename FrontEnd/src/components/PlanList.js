@@ -1,9 +1,8 @@
-import React, { useReducer } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import colors from '../hooks/colors';
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { createPortal } from 'react-dom';
+import React, { useContext, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import PlanItem from './PlanItem';
+import { Context as AuthContext } from "../context/AuthContext";
+import { FlatList } from 'react-native-gesture-handler';
 
 const reducer = (state, action) => {
     //state object and the change to make to it. 
@@ -17,13 +16,27 @@ const reducer = (state, action) => {
 }
 
 const STAR_SIZE = 45;
-const PlanList = ({ navigation }) => {
+const PlanList = ({ navigation, plans }) => {
+    let count = 0;
+
+    function renderPlanItem(item) {
+        if (!item || !item.item) return
+        return (
+            <PlanItem plan={item.item} navigation={navigation} key={item.index} />
+        );
+    }
+
     return (
 
         <View style={styles.plans}>
-            <PlanItem title="POWERBUILDING" author="Jeff Bezos" navigation={navigation} />
-            <PlanItem title="GAINMUSCLES" author="Mark Z" navigation={navigation} />
-            <PlanItem title="WEIGHTLOSS" author="Jordy H" navigation={navigation} />
+            {(plans) ?
+                <FlatList
+                    data={plans}
+                    renderItem={(item) => renderPlanItem(item)}
+                    keyExtractor={(item) => item.id + " " + count++}
+                /> : null
+
+            }
 
         </View>
     );

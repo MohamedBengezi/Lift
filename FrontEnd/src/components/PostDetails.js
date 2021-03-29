@@ -6,7 +6,7 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
-    StatusBar
+    Alert
 } from "react-native";
 import { Input } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -20,6 +20,7 @@ import { KeyboardAvoidingView } from "react-native";
 import { Context as PostsContext } from '../context/AuthContext';
 import { functions } from "../../firebase";
 import * as ImagePicker from "expo-image-picker";
+import { SafeAreaView } from "react-native";
 
 const PostDetails = ({ item, showComments, isFeedback }) => {
     const {
@@ -33,8 +34,9 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     const [comments, setComments] = useState(null);
     const [image, setImage] = useState(null);
+    const [answered, setAnswered] = useState(false);
 
-    let title, mediaPath, name, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
+    let title, mediaPath, name, uid, postID, isUsersPost, isAnswered, timeSubmitted, isImage;
     if (item) {
         postID = item.item.id;
         name = item.item.username;
@@ -44,12 +46,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         isFeedback = item.item.isFeedback;
         isImage = item.item.isImage;
         timeSubmitted = "";
+        uid = item.item.uid;
+
         if (item.item.timeSubmitted) {
             timeSubmitted = item.item.timeSubmitted;
             timeSubmitted = timeSubmitted.substring(0, 15) + timeSubmitted.substring(timeSubmitted.length - 11, timeSubmitted.length);
         }
-
-        isAnswered = (isFeedback && item.item.answered);
 
     } else {
         title = "title";
@@ -59,6 +61,8 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     useEffect(() => {
         let mounted = true;
         let commentsOrReplies = (isFeedback) ? "posts-getReplies" : "posts-getComments";
+        setAnswered(isFeedback && item.item.answered);
+
         var getReplies = functions.httpsCallable(commentsOrReplies);
         if (!comments && postID !== undefined) {
             getReplies({ postid: postID }).then((res) => {
@@ -198,12 +202,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         );
     }
 
-    function displayComment(comment, index) {
+    function displayComment(comment) {
         return (
             <Comment
-                comment={comment}
-                key={index}
-                index={index}
+                comment={comment.item}
+                key={comment.index}
+                index={comment.index}
                 isFeedback={isFeedback}
             />
         );
@@ -211,12 +215,18 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function renderComments() {
         return (
-            <ScrollView>
+            <View>
                 <Text style={styles.sectionHeaderText}>{comments ? comments.data.count : 0} COMMENTS</Text>
-                {(comments) ? comments.data.replies.map((comment, index) => {
-                    return displayComment(comment, index);
-                }) : null}
-            </ScrollView>
+
+                {(comments) ?
+                    <FlatList
+                        data={comments.data.replies}
+                        renderItem={(item) => displayComment(item)}
+                        keyExtractor={(item) => item.id}
+                        scrollEnabled={true}
+                        contentContainerStyle={{ paddingBottom: "30%" }}
+                    /> : null}
+            </View>
         );
     }
 
@@ -228,7 +238,6 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             quality: 1,
         });
 
-        console.log(result);
 
         if (!result.cancelled) {
             setImage(result);
@@ -240,7 +249,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
             <KeyboardAvoidingView
                 style={styles.addComment}
                 behavior={Platform.OS == "ios" ? "padding" : "height"}
-                keyboardVerticalOffset={Platform.OS == "ios" ? 10 : 20}
+                keyboardVerticalOffset={Platform.OS == "ios" ? 75 : 0}
                 enabled={true}
             >
                 <View
@@ -278,6 +287,21 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
         if (newComment === "") return;
 
         if (isFeedback) {
+            if (!image) {
+                return Alert.alert(
+                    "Photo Required!",
+                    "Feedback posts require an image",
+                    [
+                        {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                        },
+                        { text: "OK", onPress: () => console.log("OK Pressed") }
+                    ],
+                    { cancelable: false }
+                );
+            }
             addReply({ docID: postID, comment: newComment, media: image, isFeedback: isFeedback })
         } else {
             addComment({ docID: postID, comment: newComment });
@@ -290,7 +314,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 "id": "",
                 "liked_by": [],
                 "likes": 0,
-                "mediaPath": (image.uri) ? image.uri : null,
+                "mediaPath": (image) ? image.uri : null,
                 "username": state.username,
             })
             comments.data.count++
@@ -319,8 +343,12 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
     function renderAnsweredText() {
         return (
             <TouchableOpacity
-                style={{ ...styles.answered, backgroundColor: (isAnswered ? colors.blue : colors.darkGrey) }}
-                onPress={() => markPostAsAnswered({ docID: postID })}
+                style={{ ...styles.answered, backgroundColor: (answered ? colors.blue : colors.darkGrey) }}
+                onPress={() => {
+                    if (!isUsersPost) return;
+                    setAnswered(!answered);
+                    markPostAsAnswered({ docID: postID });
+                }}
             >
                 <Text style={{ fontWeight: 'bold' }}>
                     ANSWERED
@@ -331,24 +359,29 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
 
     function Header() {
         return (
-            <View style={showComments ? styles.postDetailsHeader : styles.postHeader}>
-                <TouchableOpacity
+            <TouchableOpacity
+                style={showComments ? styles.postDetailsHeader : styles.postHeader}
+                onPress={() => {
+                    if (isUsersPost) navigate('Profile')
+                    else navigate('ViewProfile', { isHeaderShow: true, username: name, uid: uid })
+                }}
+            >
+                <View
                     style={styles.displayImageContainer}
-                    onPress={() => console.log("Profile Image pressed")}
                     activeOpacity={0.8}
                 >
                     <Image
                         style={styles.avatar}
                         source={{
-                            uri: "https://reactnative.dev/img/tiny_logo.png",
+                            uri: (isUsersPost && state.profilePicture) ? state.profilePicture : "https://reactnative.dev/img/tiny_logo.png",
                         }}
                     />
-                </TouchableOpacity>
+                </View>
 
                 <View style={styles.nameAndImageContainer}>
-                    <TouchableOpacity
+                    <View
                         style={styles.avatarName}
-                        onPress={() => console.log("Profile pressed")}
+                        onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: name })}
                         activeOpacity={0.8}
                     >
                         <Text style={{ fontSize: 17 }}>{name}</Text>
@@ -357,7 +390,7 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                                 {timeSubmitted}
                             </Text>
                         </View>
-                    </TouchableOpacity>
+                    </View>
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
@@ -366,40 +399,40 @@ const PostDetails = ({ item, showComments, isFeedback }) => {
                 </View>
 
 
-            </View>
+            </TouchableOpacity>
         );
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            <View style={
-                showComments ? { flex: 1, marginTop: StatusBar.currentHeight + 40 } : { flex: 1, height: 400 }
-            }>
-                <View
-                    style={
-                        showComments ? styles.postDetailsContainer : styles.postContainer
-                    }
-                >
-                    <Header />
-                    <View style={showComments ? styles.postDetailsImageCaptionContainer : styles.postImageCaptionContainer}>
-                        <TouchableOpacity
-                            onPress={() => navigate("ViewPost", { item })}
-                            activeOpacity={1}
-                        >
-                            {isImage ? (
-                                <ImageElement image={mediaPath} title={title} />
-                            ) : (
-                                <VideoElement video={mediaPath} title={title} />
-                            )}
-                        </TouchableOpacity>
+        <SafeAreaView style={{ flex: 1 }}>
+            <ScrollView>
+                <View style={{ flex: 1 }}>
+                    <View
+                        style={
+                            showComments ? styles.postDetailsContainer : styles.postContainer
+                        }
+                    >
+                        <Header />
+                        <View style={showComments ? styles.postDetailsImageCaptionContainer : styles.postImageCaptionContainer}>
+                            <TouchableOpacity
+                                onPress={() => navigate("ViewPost", { item })}
+                                activeOpacity={1}
+                            >
+                                {isImage ? (
+                                    <ImageElement image={mediaPath} title={title} />
+                                ) : (
+                                    <VideoElement video={mediaPath} title={title} />
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {likes}
                     </View>
-                    {likes}
-                </View>
 
-                {showComments ? renderComments() : null}
-            </View>
+                    {showComments ? renderComments() : null}
+                </View>
+            </ScrollView>
             {showComments ? renderAddComment() : null}
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -420,6 +453,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2,
+        height: "85%"
     },
     postDetailsContainer: {
         flexDirection: "column",
@@ -428,12 +462,12 @@ const styles = StyleSheet.create({
         backgroundColor: colors.grey,
         borderRadius: 10,
         marginRight: 2,
-        height: "56%"
+        height: 450
     },
     postDetailsHeader: {
         height: 70,
         flexDirection: "row",
-        marginBottom: -40,
+        marginBottom: -80,
         justifyContent: "center",
         alignItems: "center"
 
