@@ -140,6 +140,7 @@ export const deleteFakeData = functions.https.onRequest(async (req, res) => {
 
 export const createGraphs = functions.https.onRequest(async (req, res) => {
   buildGeneralPostNodes();
+  buildWorkoutPlanNodes()
 });
 
 async function buildGeneralPostNodes() {
@@ -208,7 +209,7 @@ async function buildGeneralPostNodes() {
   console.log(generalPostsGraph.getAdjacent(vertices.get(users[57].id)));
 }
 
-/*async function buildWorkoutPlanNodes() {
+async function buildWorkoutPlanNodes() {
   const getDocuments = function (ref: FirebaseFirestore.QuerySnapshot): any {
     return ref.docs.map((doc) => {
       return {
@@ -251,25 +252,42 @@ async function buildGeneralPostNodes() {
 
   // Build users-to-workout plans graph
 
-  let generalPostsGraph = new Graph(vertices.size);
+  let plansGraph = new Graph(vertices.size);
 
   for (let i = 0; i < users.length; i++) {
-    for (let j = 0; j < posts.length; j++) {
+    for (let j = 0; j < plans.length; j++) {
       
-      let creator = posts[j]!.uid;
-      let following = users[i]!.following;
-      //let topic = posts[j]!.topic;
-      //let topics = posts[i]!.topics;
-
-      if (following.includes(creator)) {
-        generalPostsGraph.addEdge(
+      let userFollowedPlans = users[i]!.workout_plans;
+      if(userFollowedPlans.includes(plans[i]!.id)) {
+        plansGraph.addEdge(
           vertices.get(users[i].id),
-          vertices.get(posts[j].id)
+          vertices.get(plans[i].id)
         );
       }
+
+      let categories = users[i]!.categories;
+      let tags = plans[j]!.tags;
+      if(checkTags(categories, tags)) {
+        plansGraph.addEdge(vertices.get(users[i].id), vertices.get(plans[j].id));
+      }
+
     }
   }
+  console.log(plansGraph.getAdjacent(vertices.get(users[57].id)));
+  console.log("Done graph 2");
+}
 
-  console.log("Done graph");
-}*/
+function checkTags(cats: string[], tags: string[]) {
+  
+  let b = false;
+
+  cats.forEach(c => {
+    if (tags.includes(c)) {
+      b = true;
+    }
+  });
+  return b;
+}
+
+
 
