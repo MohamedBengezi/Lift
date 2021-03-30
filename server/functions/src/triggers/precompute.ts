@@ -162,6 +162,14 @@ function buildWorkoutPlanNodes(users : any, plans : any) {
     }
 
 
+    // Write to database
+    const uid = users[u]!.id;
+    let info = {recommendedPlans: recIDs};
+    admin.firestore().collection("users").doc(uid).update(info);
+  
+
+
+
   }
 
   function getDegree(s : Stack) {
@@ -246,5 +254,11 @@ function buildWorkoutPlanNodes(users : any, plans : any) {
         recIDs.push(planID);
     }
 
+
+    // Write to database
+    const uid = users[u]!.id;
+    let info = {recommendedPosts: recIDs};
+    admin.firestore().collection("users").doc(uid).update(info);
+    
 
   }
