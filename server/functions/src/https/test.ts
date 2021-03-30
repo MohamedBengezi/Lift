@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import Graph from "../graph"
 const runtimeOpts = {
   timeoutSeconds: 300,
 };
@@ -136,3 +137,139 @@ export const deleteFakeData = functions.https.onRequest(async (req, res) => {
   await Promise.all(promises);
   res.send("Completed deleting fake data");
 });
+
+export const createGraphs = functions.https.onRequest(async (req, res) => {
+  buildGeneralPostNodes();
+});
+
+async function buildGeneralPostNodes() {
+  const getDocuments = function (ref: FirebaseFirestore.QuerySnapshot): any {
+    return ref.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    });
+  };
+
+  // Query fake users
+  const usersRef = await admin
+    .firestore()
+    .collection("users")
+    .where("fake", "==", true)
+    .get();
+
+  const users = getDocuments(usersRef);
+
+  const postsRef = await admin
+    .firestore()
+    .collection("general_posts")
+    .where("fake", "==", true)
+    .get();
+
+  const posts = getDocuments(postsRef);
+
+  // Create hashmap of unique ID's to array indices
+
+  let vertices = new Map();
+
+  for (let i = 0; i < users.length + posts.length; i++) {
+    if (i < users.length) {
+      vertices.set(users[i].id, i);
+    } else {
+      vertices.set(posts[i - users.length].id, i);
+    }
+  }
+
+  console.log("Done hashmap");
+
+  // Build users-to-general posts graph
+
+  let generalPostsGraph = new Graph(vertices.size);
+
+  for (let i = 0; i < users.length; i++) {
+    for (let j = 0; j < posts.length; j++) {
+      
+      let creator = posts[j]!.uid;
+      let following = users[i]!.following;
+      //let topic = posts[j]!.topic;
+      //let topics = posts[i]!.topics;
+
+      if (following.includes(creator)) {
+        generalPostsGraph.addEdge(
+          vertices.get(users[i].id),
+          vertices.get(posts[j].id)
+        );
+      }
+    }
+  }
+
+  console.log("Done graph");
+  console.log(generalPostsGraph.getAdjacent(vertices.get(users[57].id)));
+}
+
+/*async function buildWorkoutPlanNodes() {
+  const getDocuments = function (ref: FirebaseFirestore.QuerySnapshot): any {
+    return ref.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    });
+  };
+
+  // Query fake users
+  const usersRef = await admin
+    .firestore()
+    .collection("users")
+    .where("fake", "==", true)
+    .get();
+
+  const users = getDocuments(usersRef);
+
+  const plansRef = await admin
+    .firestore()
+    .collection("workout_plans")
+    .where("fake", "==", true)
+    .get();
+
+  const plans = getDocuments(plansRef);
+
+  // Create hashmap of unique ID's to array indices
+
+  let vertices = new Map();
+
+  for (let i = 0; i < users.length + plans.length; i++) {
+    if (i < users.length) {
+      vertices.set(users[i].id, i);
+    } else {
+      vertices.set(plans[i - users.length].id, i);
+    }
+  }
+
+  console.log("Done hashmap");
+
+  // Build users-to-workout plans graph
+
+  let generalPostsGraph = new Graph(vertices.size);
+
+  for (let i = 0; i < users.length; i++) {
+    for (let j = 0; j < posts.length; j++) {
+      
+      let creator = posts[j]!.uid;
+      let following = users[i]!.following;
+      //let topic = posts[j]!.topic;
+      //let topics = posts[i]!.topics;
+
+      if (following.includes(creator)) {
+        generalPostsGraph.addEdge(
+          vertices.get(users[i].id),
+          vertices.get(posts[j].id)
+        );
+      }
+    }
+  }
+
+  console.log("Done graph");
+}*/
+

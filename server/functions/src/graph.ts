@@ -14,6 +14,10 @@ class Graph {
         this.adj[v].push(w);
         this.adj[w].push(v);
     }
+
+    getAdjacent(v : number) {
+        return this.adj[v];
+    }
     
 
 }
