@@ -12,7 +12,28 @@ export const createFakeData = functions
     const userRef = admin.firestore().collection("users");
     const feedbackPostsRef = admin.firestore().collection("feedback_posts");
     const generalPostsRef = admin.firestore().collection("general_posts");
-    // const plansRef = admin.firestore().collection("workout_plans");
+    const plansRef = admin.firestore().collection("workout_plans");
+
+    const topics = [
+      "Chest",
+      "Shoulders",
+      "Back",
+      "Arms",
+      "Legs",
+      "Core",
+      "Squat",
+      "Deadlift",
+    ];
+
+    const categories = [
+      "Strength",
+      "Bodybuilding",
+      "Powerbuilding",
+      "Endurance",
+      "Weight Loss",
+    ];
+
+    const experience_levels = ["Beginner", "Intermediate", "Advanced"];
 
     // Create fake users
     let userIds: Array<
@@ -32,14 +53,46 @@ export const createFakeData = functions
           isLinked: false,
         },
         workout_plans: [],
+        topics: getRandom(topics, 3),
+        categories: getRandom(categories, 3),
         fake: true,
       });
       userIds.push([docRef, username]);
     }
 
+    // Generate fake workout plans
+    const planPromises = [];
+    for (let i = 0; i < 100; i++) {
+      const name = `Demo workout plan ${i}`;
+      const category = getRandom(categories, 1);
+
+      planPromises.push(
+        plansRef.add({
+          creatorid:
+            userIds[Math.floor(Math.random() * (userIds.length - 1))][0].id,
+          name: name,
+          duration: "4 days",
+          experience_level:
+            experience_levels[
+              Math.floor(Math.random() * (experience_levels.length - 1))
+            ],
+          goal: category,
+          tags: category,
+          days: [],
+          followers: [],
+          rating: Math.random() * 5,
+          testimonials: [],
+          tokenized: name.toLowerCase().split(" "),
+          fake: true,
+        })
+      );
+    }
+    const workout_plans = await Promise.all(planPromises);
+
     const feedbackPostPromises = [];
     const generalPostPromises = [];
     const userUpdates = [];
+    const planUpdates = [];
     for (const user of userIds) {
       const date = admin.firestore.Timestamp.now().toDate();
       const time = admin.firestore.Timestamp.now()
@@ -80,8 +133,27 @@ export const createFakeData = functions
             disliked_by: [],
             isImage: true,
             isFeedback: false,
+            topic: getRandom(topics, 1),
             fake: true,
           })
+        );
+
+        // Pick 2 random workout plans for the user to follow
+        planUpdates.push(
+          (async () => {
+            const user_plans = getRandom(workout_plans, 2).map((e) => e.id);
+            await user[0].update({
+              workout_plans: admin.firestore.FieldValue.arrayUnion(
+                ...user_plans
+              ),
+            });
+
+            for (const plan of user_plans) {
+              await plansRef.doc(plan).update({
+                followers: admin.firestore.FieldValue.arrayUnion(user[0].id),
+              });
+            }
+          })()
         );
 
         // Make each user follow 10 random users
@@ -106,6 +178,7 @@ export const createFakeData = functions
     await Promise.all(feedbackPostPromises);
     await Promise.all(generalPostPromises);
     await Promise.all(userUpdates);
+    // await Promise.all(planUpdates);
     res.send("Completed creating fake data");
   });
 
@@ -113,7 +186,7 @@ export const deleteFakeData = functions.https.onRequest(async (req, res) => {
   const userRef = admin.firestore().collection("users");
   const feedbackPostsRef = admin.firestore().collection("feedback_posts");
   const generalPostsRef = admin.firestore().collection("general_posts");
-  // const plansRef = admin.firestore().collection("workout_plans");
+  const plansRef = admin.firestore().collection("workout_plans");
 
   const promises = [];
   const userSnapshot = await userRef.where("fake", "==", true).get();
@@ -133,6 +206,26 @@ export const deleteFakeData = functions.https.onRequest(async (req, res) => {
     promises.push(doc.ref.delete());
   }
 
+  const planSnapshot = await plansRef.where("fake", "==", true).get();
+  for (const doc of planSnapshot.docs) {
+    promises.push(doc.ref.delete());
+  }
+
   await Promise.all(promises);
   res.send("Completed deleting fake data");
 });
+
+// Helper functions
+
+const getRandom = (array: any[], n: number) => {
+  let remaining = array;
+  const picked: any[] = [];
+  for (let i = 0; i < n; i++) {
+    const random =
+      remaining[Math.floor(Math.random() * (remaining.length - 1))];
+
+    picked.push(random);
+    remaining = remaining.filter((e) => e !== random);
+  }
+  return picked;
+};

@@ -6,11 +6,12 @@ import * as user from "./https/user";
 import * as programs from "./https/programs";
 import * as test from "./https/test";
 
-const serviceAccount = require("../uplift-e96ab-firebase-adminsdk-fxouf-8b4d87f004.json");
+// const serviceAccount = require("../uplift-e96ab-firebase-adminsdk-fxouf-69af8f0d07.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
+admin.initializeApp();
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
