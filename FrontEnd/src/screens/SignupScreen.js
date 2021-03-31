@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TextInput,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Text, Button } from "react-native-elements";
 import Spacer from "../components/Spacer";

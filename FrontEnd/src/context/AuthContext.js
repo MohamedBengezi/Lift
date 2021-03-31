@@ -5,6 +5,7 @@ import FormData from "form-data";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firebase from "firebase/app";
 import { firebaseApp, functions, uploadMedia } from "../../firebase";
+import { State } from "react-native-gesture-handler";
 
 const apiLink = serverApi.defaults.baseURL;
 
@@ -33,6 +34,11 @@ const authReducer = (state, action) => {
       return {
         ...state,
         plans: action.plans,
+      };
+    case "getUserPlans":
+      return {
+        ...state,
+        workout_plans: action.workout_plans,
       };
     case "profilePicture":
       return {
@@ -330,6 +336,22 @@ const getUserInfo = (dispatch) => {
   };
 };
 
+const getUserPlans = (dispatch) => {
+  return async (workout_plans) => {
+    var getWorkoutPlan = functions.httpsCallable("programs-getWorkoutPlan");
+    for (var i = 0; i < workout_plans.length; i++) {
+      if (typeof workout_plans[i] !== 'string') continue;
+      await getWorkoutPlan({ planID: workout_plans[i] }).then((plan) => {
+        workout_plans[i] = plan.data;
+      })
+      dispatch({
+        type: "getUserPlans",
+        workout_plans: workout_plans,
+      });
+    }
+  };
+};
+
 const modifyUserInfo = (dispatch) => {
   return async (data) => {
     var modifyUser = functions.httpsCallable("user-modifyUser");
@@ -450,7 +472,7 @@ const addReply = () => async ({ docID, comment, media, isFeedback }) => {
           console.log("Uploaded reply details to db");
         })
         .catch((error) => {
-          showError(error, dispatch);
+          showError(error);
         });
     }
   );
@@ -711,6 +733,7 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserInfo,
     modifyUserInfo,
+    getUserPlans,
     getUserPost,
     getFeedbackPosts,
     getGeneralPosts,

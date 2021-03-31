@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TextInput, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TextInput } from "react-native";
 import { Button } from "react-native-elements";
 import colors from "../../hooks/colors";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -40,7 +40,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                         defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
-                            justifyContent: 'flex-start', color: colors.black
+                            justifyContent: 'flex-start'
                         }}
                         labelStyle={{ color: colors.black, textAlign: 'center' }}
                         onChangeItem={item => setWorkout({ ...workout, duration: item.value + ' sets ' })}
@@ -54,7 +54,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                         defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
-                            justifyContent: 'flex-start', color: colors.black
+                            justifyContent: 'flex-start'
                         }}
                         labelStyle={{ color: colors.black, textAlign: 'center' }}
                         onChangeItem={item => setWorkout({ ...workout, subduration: item.value + " reps" })}
@@ -80,7 +80,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                         defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
-                            justifyContent: 'flex-start', color: colors.black
+                            justifyContent: 'flex-start'
                         }}
                         labelStyle={{ color: colors.black, textAlign: 'center' }}
                         onChangeItem={item => setWorkout({ ...workout, duration: item.value + ' hour(s) ' })}
@@ -94,7 +94,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                         defaultValue={1}
                         style={{ width: 100, borderWidth: 1 }}
                         itemStyle={{
-                            justifyContent: 'flex-start', color: colors.black
+                            justifyContent: 'flex-start'
                         }}
                         labelStyle={{ color: colors.black, textAlign: 'center' }}
                         onChangeItem={item => setWorkout({ ...workout, subduration: item.value + " mins" })}
@@ -124,7 +124,7 @@ const AddWorkoutScreen = ({ navigation }) => {
                     defaultValue={workout.duration_type}
                     style={{ width: 100, borderWidth: 1 }}
                     itemStyle={{
-                        justifyContent: 'flex-start', color: colors.black
+                        justifyContent: 'flex-start'
                     }}
                     labelStyle={{ color: colors.black }}
                     onChangeItem={item => setWorkout({ ...workout, duration_type: item.value })}
@@ -171,11 +171,6 @@ const styles = StyleSheet.create({
         width: "80%",
         borderRadius: 5,
     },
-    button: {
-        backgroundColor: colors.darkGrey,
-        width: "30%",
-        borderRadius: 5,
-    },
     containerStyle: {
         position: 'absolute',
         top: 5,
@@ -192,11 +187,6 @@ const styles = StyleSheet.create({
         color: colors.black,
         flex: 1,
         fontSize: 15,
-    },
-    previewContainer: {
-        borderWidth: 1,
-        flex: 0.5,
-        marginTop: "5%",
     },
     labelAndDropView: {
         justifyContent: "center",

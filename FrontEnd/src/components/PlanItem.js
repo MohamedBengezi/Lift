@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../hooks/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -11,9 +11,7 @@ const PlanItem = (props) => {
   let { plan, navigation } = props;
   let parentRoute = navigation.state.routeName;
   let mainScreen = "ViewPlan";
-  const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(
-    AuthContext
-  );
+  const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(AuthContext);
   let planID = plan.id;
   let rating = plan.rating;
   let uid = firebaseApp.auth().currentUser.uid;
@@ -62,7 +60,7 @@ const PlanItem = (props) => {
             buttonStyle={{
               ...styles.button,
               backgroundColor: colors.yellow,
-              width: 100,
+              width: 110,
             }}
             titleStyle={styles.buttonText}
           />
@@ -74,7 +72,6 @@ const PlanItem = (props) => {
           <Ionicons
             name="md-star"
             color={colors.yellow}
-            type="ionicon"
             size={STAR_SIZE}
             key={i}
           />
@@ -123,13 +120,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 5,
-    width: 80,
+    width: 90,
     borderRadius: 5,
-  },
-  containerStyle: {
-    justifyContent: "center",
-    flex: 0.25,
-    alignItems: "center",
   },
   buttonText: {
     color: colors.black,

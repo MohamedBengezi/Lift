@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TextInput, Image, Keyboard, ScrollView } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { View, Text, StyleSheet, TextInput, Image, ScrollView } from "react-native";
 import { Button } from "react-native-elements";
 import { Video } from "expo-av";
 import { Context as AuthContext } from "../context/AuthContext";
@@ -80,7 +79,7 @@ const PostScreen = ({ navigation }) => {
           defaultValue={postType}
           style={{ width: 150, borderWidth: 1 }}
           itemStyle={{
-            justifyContent: 'flex-start', color: colors.black
+            justifyContent: 'flex-start'
           }}
           labelStyle={{ color: colors.black }}
           onChangeItem={item => setPostType(item.value)}

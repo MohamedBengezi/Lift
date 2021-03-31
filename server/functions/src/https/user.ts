@@ -122,6 +122,7 @@ export const getUserInfo = functions.https.onCall(async (data, context) => {
         console.log("Found 1 user ");
         const docData = doc.data();
         returnData = {
+          ...docData,
           id: doc.id,
           bio: docData.bio,
           followers: docData.followers,

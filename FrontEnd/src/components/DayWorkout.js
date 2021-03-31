@@ -1,9 +1,7 @@
-import React, { useReducer, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import colors from '../hooks/colors';
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
-import { DrawerLayoutAndroidComponent } from 'react-native';
+import { Table, Row, Rows } from 'react-native-table-component';
 
 const DayWorkout = ({ weekday, program, id, currentDay, isFollowing }) => {
     const [tableHead, setTableHead] = useState(['Workout', 'Length', 'Reps']);

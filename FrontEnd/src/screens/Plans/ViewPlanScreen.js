@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import PlanItem from "../../components/PlanItem";
 import DayWorkout from "../../components/DayWorkout";
 import colors from "../../hooks/colors";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native";
 import { Button } from "react-native-elements";
@@ -87,18 +86,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.black,
     flex: 1,
-  },
-  icon: {
-    color: colors.black,
-    fontWeight: "600",
-    fontSize: 50,
-  },
-  cancel: {
-    width: 50,
-    height: 50,
-    paddingTop: StatusBar.currentHeight,
-    marginBottom: 50,
-  },
+  }
 });
 
 export default ViewPlanScreen;
