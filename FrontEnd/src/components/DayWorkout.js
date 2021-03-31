@@ -5,12 +5,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 import { DrawerLayoutAndroidComponent } from 'react-native';
 
-
-const STAR_SIZE = 45;
-const DayWorkout = ({ navigation, weekday, program }) => {
+const DayWorkout = ({ weekday, program, id, currentDay, isFollowing }) => {
     const [tableHead, setTableHead] = useState(['Workout', 'Length', 'Reps']);
     return (
-        <View style={styles.plans}>
+        <View style={[styles.plans, { backgroundColor: (id == currentDay && isFollowing) ? colors.blue : colors.lighterGrey }]}>
             <Text style={styles.weekday}>{weekday}</Text>
             <View style={styles.container}>
                 <Table style={styles.tableStyle} borderStyle={{ borderWidth: 2 }}>
@@ -19,7 +17,6 @@ const DayWorkout = ({ navigation, weekday, program }) => {
                 </Table>
             </View>
         </View>
-
 
     );
 };

@@ -23,7 +23,7 @@ const PlanItem = (props) => {
       style={
         parentRoute == mainScreen ? styles.viewPlanContainer : styles.container
       }
-      onPress={() => navigation.navigate("ViewPlan", { plan: plan })}
+      onPress={() => navigation.navigate("ViewPlan", { plan: plan, isFollowing: isFollowing })}
     >
       <View style={parentRoute == mainScreen ? { ...styles.textContainer, marginTop: 15 } : styles.textContainer}>
         <Text style={styles.title}>{plan.name}</Text>
@@ -33,9 +33,17 @@ const PlanItem = (props) => {
           title={!isFollowing ? "Follow" : "Unfollow"}
           onPress={() => {
             console.log("followed plan");
-            !isFollowing
-              ? followWorkoutPlan({ planID: planID })
-              : unfollowWorkoutPlan({ planID: planID });
+            if (!isFollowing) {
+              followWorkoutPlan({ planID: planID })
+              plan.followers.push(uid)
+              state.workout_plans.push(plan)
+              state.plan_tracker = { ...state.plan_tracker, planID: 0 };
+            } else {
+              unfollowWorkoutPlan({ planID: planID });
+              plan.followers = plan.followers.filter(e => e !== uid);
+              state.workout_plans = state.workout_plans.filter(e => e.id !== planID)
+              delete state.plan_tracker.planID
+            }
             setIsFollowing(!isFollowing);
           }}
           buttonStyle={{

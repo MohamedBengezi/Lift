@@ -21,6 +21,7 @@ export const addUserToDB = functions.https.onCall((data, context) => {
       followers: 0,
       fitbitInfo: fitbitInfo,
       workout_plans: [],
+      plan_tracker: {},
     })
     .then(() => {
       return { message: "success" };
@@ -65,13 +66,19 @@ export const modifyUser = functions.https.onCall(async (data, context) => {
   const uid = context.auth!.uid;
   const updatedUsername = data.updatedUsername;
   const bio = data.bio;
+  const plan_tracker = data.plan_tracker;
+
   let info = {};
-  if (updatedUsername == "") {
-    info = { bio: bio }
-  } else if (bio == "") {
-    info = { username: updatedUsername }
-  } else {
-    info = { username: updatedUsername, bio: bio }
+
+  if (updatedUsername === "" && bio !== "") {
+    info = { bio: bio, plan_tracker: plan_tracker };
+  } else if (bio === "" && updatedUsername !== "") {
+    info = { username: updatedUsername, plan_tracker: plan_tracker };
+  } else if (bio !== "" && updatedUsername !== "") {
+    info = { username: updatedUsername, bio: bio, plan_tracker: plan_tracker };
+  }
+  else {
+    info = { plan_tracker: plan_tracker };
   }
   await admin.firestore().collection("users").doc(uid).update(info);
 });

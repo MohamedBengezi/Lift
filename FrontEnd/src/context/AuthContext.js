@@ -51,7 +51,12 @@ const authReducer = (state, action) => {
         otherUserInfo: action.userInfo,
         otherUsername: action.username,
         otherProfilePicture: action.userInfo.profilePicture,
-      }; 
+      };
+    case "updatePlanTracker":
+      return {
+        ...state,
+        plan_tracker: action.plan_tracker
+      };
     case "getTestimonials":
       return {
         ...state,
@@ -309,6 +314,11 @@ const getUserInfo = (dispatch) => {
         if (res.data.profilePicture === "undefined") {
           res.data.profilePicture = undefined;
         }
+        console.log(res.data);
+        dispatch({
+          type: "updatePlanTracker",
+          plan_tracker: res.data.plan_tracker,
+        });
         dispatch({
           type: "updateUserInfo",
           userInfo: res.data,
@@ -463,7 +473,7 @@ const addComment = () => {
   return async (data) => {
     var addComment = functions.httpsCallable("posts-addComment");
     addComment(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -475,7 +485,7 @@ const archivePost = () => {
     var archivePost = functions.httpsCallable("posts-archiveFeedbackPost");
     console.log("archiving", data.docID);
     archivePost(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -487,7 +497,7 @@ const markPostAsAnswered = () => {
     var archivePost = functions.httpsCallable("posts-markPostAsAnswered");
     console.log("marking post as answered", data.docID);
     archivePost(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -593,7 +603,7 @@ const followWorkoutPlan = () => {
     );
     console.log("following plan ", data.planID);
     followWorkoutPlan(data)
-      .then((res) => {})
+      .then((res) => { })
       .catch((error) => {
         console.error(error);
       });
@@ -722,5 +732,5 @@ export const { Provider, Context } = createDataContext(
     getOtherUserInfo,
     getTestimonials
   },
-  { token: null, errorMessage: "", posts: {} }
+  { token: null, errorMessage: "", posts: {}, workout_plans: [], plan_tracker: {} }
 );

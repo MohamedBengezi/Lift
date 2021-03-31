@@ -1,11 +1,5 @@
-import React, { useReducer } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
+import React, { useContext, useState } from "react";
+import { View, StyleSheet } from "react-native";
 import PlanItem from "../../components/PlanItem";
 import DayWorkout from "../../components/DayWorkout";
 import colors from "../../hooks/colors";
@@ -13,9 +7,18 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native";
 import { Button } from "react-native-elements";
+import { TouchableOpacity } from "react-native";
+import { Context as AuthContext } from "../../context/AuthContext";
+
 
 const ViewPlanScreen = ({ navigation }) => {
   let plan = navigation.getParam("plan");
+  const { state, modifyUserInfo } = useContext(AuthContext);
+  let isFollowing = navigation.getParam("isFollowing");
+  console.log('state: ', state)
+  let [currentDay, setCurrentDay] = useState(plan.id in state.plan_tracker ? state.plan_tracker[plan.id] : 0);
+
+
   function renderPlan(item) {
     if (!item) return null;
 
@@ -27,7 +30,20 @@ const ViewPlanScreen = ({ navigation }) => {
         workouts[i].splice(1, 1);
       }
     }
-    return <DayWorkout weekday={item.item.dayoftheweek} program={workouts} />;
+    return (
+      <TouchableOpacity onPress={() => onPress(item.index)}>
+        <DayWorkout weekday={item.item.dayoftheweek} program={workouts} id={item.index} currentDay={currentDay} isFollowing={isFollowing} />
+      </TouchableOpacity>
+    );
+  }
+
+  const onPress = (index) => {
+    console.log('Pressed!')
+    if (currentDay != index) {
+      setCurrentDay(index);
+      state.plan_tracker[plan.id] = index;
+      modifyUserInfo({ updatedUsername: "", bio: "", plan_tracker: state.plan_tracker })
+    }
   }
 
   return (
