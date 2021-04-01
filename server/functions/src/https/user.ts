@@ -83,11 +83,35 @@ export const deleteAccount = functions.https.onCall(async (data, context) => {
 
 export const modifyFollowing = functions.https.onCall(
   async (data, context) => {
-    const following = data.following;
-    const uid = data.uid;
+    // a user follows another person
+    // updated following list of the user
+    // update follower list of the followed person
+    const uidFollowing = context.auth!.uid; // user performing the follow action
+    const uidBeingFollowed = data.uidBeingFollowed;
 
-    await admin.firestore().collection("users").doc(uid).update({
-      following: following,
+    const usersRef = admin.firestore().collection("users");
+    const query1 = await usersRef
+      .doc(uidFollowing)
+      .get()
+      .then((doc) => {
+        return{ following: doc.get("following") };
+      });
+      const query2 = await usersRef
+      .doc(uidBeingFollowed)
+      .get()
+      .then((doc) => {
+        return { followers: doc.get("followers") };
+      });
+
+    query1.following.push(uidBeingFollowed);
+    query2.followers.push(uidFollowing);
+
+    await admin.firestore().collection("users").doc(uidFollowing).update({
+      following: query1.following,
+    });
+
+    await admin.firestore().collection("users").doc(uidBeingFollowed).update({
+      followers: query2.followers,
     });
   }
 );
