@@ -16,6 +16,9 @@ const PlanItem = (props) => {
   let rating = plan.rating;
   let uid = firebaseApp.auth().currentUser.uid;
   const [isFollowing, setIsFollowing] = useState((plan.followers) ? plan.followers.includes(uid) : false);
+
+  if (!plan.id || !plan.rating || !plan.followers) return null;
+
   return (
     <TouchableOpacity
       style={

@@ -320,7 +320,6 @@ const getUserInfo = (dispatch) => {
         if (res.data.profilePicture === "undefined") {
           res.data.profilePicture = undefined;
         }
-        console.log(res.data);
         dispatch({
           type: "updatePlanTracker",
           plan_tracker: res.data.plan_tracker,

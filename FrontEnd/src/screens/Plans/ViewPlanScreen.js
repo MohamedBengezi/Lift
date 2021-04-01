@@ -14,7 +14,6 @@ const ViewPlanScreen = ({ navigation }) => {
   let plan = navigation.getParam("plan");
   const { state, modifyUserInfo } = useContext(AuthContext);
   let isFollowing = navigation.getParam("isFollowing");
-  console.log('state: ', state)
   let [currentDay, setCurrentDay] = useState(plan.id in state.plan_tracker ? state.plan_tracker[plan.id] : 0);
 
 

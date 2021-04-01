@@ -113,6 +113,7 @@ export const getUserInfo = functions.https.onCall(async (data, context) => {
     followers: 0,
     following: 0,
     profilePicture: "",
+    plan_tracker: {},
   };
   await usersRef
     .where("username", "==", username)
@@ -128,6 +129,7 @@ export const getUserInfo = functions.https.onCall(async (data, context) => {
           followers: docData.followers,
           following: docData.following,
           profilePicture: docData.profilePicture,
+          plan_tracker: docData.plan_tracker,
         };
         console.log("Leaving foreach ", returnData);
         return;
