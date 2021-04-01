@@ -31,8 +31,10 @@ export const createFeedbackPost = functions.https.onCall(
         "Something unexpected happened."
       );
     }
-    var date = admin.firestore.Timestamp.now().toDate()
-    var time = admin.firestore.Timestamp.now().toDate().toLocaleTimeString('en-US')
+    var date = admin.firestore.Timestamp.now().toDate();
+    var time = admin.firestore.Timestamp.now()
+      .toDate()
+      .toLocaleTimeString("en-US");
 
     const query = feedBackPostsRef
       .add({
@@ -94,8 +96,10 @@ export const createGeneralPost = functions.https.onCall(
         "Something unexpected happened."
       );
     }
-    var date = admin.firestore.Timestamp.now().toDate()
-    var time = admin.firestore.Timestamp.now().toDate().toLocaleTimeString('en-US')
+    var date = admin.firestore.Timestamp.now().toDate();
+    var time = admin.firestore.Timestamp.now()
+      .toDate()
+      .toLocaleTimeString("en-US");
     const query = generalPostsRef
       .add({
         uid: uid,
@@ -103,7 +107,7 @@ export const createGeneralPost = functions.https.onCall(
         caption: caption,
         likes: 0,
         comments_number: 0,
-        timeSubmitted: date + ' at ' + time,
+        timeSubmitted: date + " at " + time,
         mediaPath: mediaPath,
         liked_by: [],
         disliked_by: [],
@@ -236,12 +240,17 @@ export const getFeedbackPosts = functions.https.onCall(
         "Failed to fetch posts. Please pass in a userID. Expected body param: 'uid'"
       );
     }
-    const ref = await admin.firestore().collection("feedback_posts").where('archived', '==', false).get();
+    const ref = await admin
+      .firestore()
+      .collection("feedback_posts")
+      .where("archived", "==", false)
+      .get();
 
-    const docs = await Promise.all(
+    const docs: any[] = await Promise.all(
       ref.docs.map(async (doc) => {
         return {
           id: doc.id,
+          time: doc.createTime,
           ...doc.data(),
           mediaPath: (
             await storageUtils.getDownloadURL(doc.data().mediaPath)?.downloadURL
@@ -251,9 +260,62 @@ export const getFeedbackPosts = functions.https.onCall(
         };
       })
     );
-    return { message: "success", count: docs.length, posts: docs };
+    const unanswered = docs
+      .filter((e) => e.answered === false)
+      .sort((a, b) => a.time.toDate().getTime() - b.time.toDate().getTime());
+    const answered = docs
+      .filter((e) => e.answered == true)
+      .sort((a, b) => a.time.toDate().getTime() - b.time.toDate().getTime());
+    return {
+      message: "success",
+      count: docs.length,
+      posts: unanswered.concat(answered),
+    };
   }
 );
+
+export const getFeedbackPosts1 = functions.https.onRequest(async (req, res) => {
+  const userID = req.body.uid;
+  // const userID = data.body.uid;
+
+  if (userID === null || userID === undefined) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Failed to fetch posts. Please pass in a userID. Expected body param: 'uid'"
+    );
+  }
+  const ref = await admin
+    .firestore()
+    .collection("feedback_posts")
+    .where("archived", "==", false)
+    .get();
+
+  const docs: any[] = await Promise.all(
+    ref.docs.map(async (doc) => {
+      return {
+        id: doc.id,
+        time: doc.createTime,
+        ...doc.data(),
+        mediaPath: (
+          await storageUtils.getDownloadURL(doc.data().mediaPath)?.downloadURL
+        )?.[0],
+        isLikedByUser: doc.data().liked_by?.includes(userID),
+        isDislikedByUser: doc.data().disliked_by?.includes(userID),
+      };
+    })
+  );
+  const unanswered = docs
+    .filter((e) => e.answered === false)
+    .sort((a, b) => a.time.toDate().getTime() - b.time.toDate().getTime());
+  const answered = docs
+    .filter((e) => e.answered == true)
+    .sort((a, b) => a.time.toDate().getTime() - b.time.toDate().getTime());
+  res.send({
+    message: "success",
+    count: docs.length,
+    posts: unanswered.concat(answered),
+  });
+});
 
 export const getGeneralPosts = functions.https.onCall(async (data, context) => {
   const userID = context.auth!.uid;
