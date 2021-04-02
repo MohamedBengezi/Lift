@@ -58,6 +58,11 @@ const authReducer = (state, action) => {
         otherUsername: action.username,
         otherProfilePicture: action.userInfo.profilePicture,
       };
+    case "updatePlanTracker":
+      return {
+        ...state,
+        plan_tracker: action.plan_tracker
+      };
     case "getTestimonials":
       return {
         ...state,
@@ -315,6 +320,10 @@ const getUserInfo = (dispatch) => {
         if (res.data.profilePicture === "undefined") {
           res.data.profilePicture = undefined;
         }
+        dispatch({
+          type: "updatePlanTracker",
+          plan_tracker: res.data.plan_tracker,
+        });
         dispatch({
           type: "updateUserInfo",
           userInfo: res.data,
@@ -745,5 +754,5 @@ export const { Provider, Context } = createDataContext(
     getOtherUserInfo,
     getTestimonials
   },
-  { token: null, errorMessage: "", posts: {}, workout_plans: [] }
+  { token: null, errorMessage: "", posts: {}, workout_plans: [], plan_tracker: {} }
 );

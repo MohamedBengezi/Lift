@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../hooks/colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -13,15 +13,18 @@ const PlanItem = (props) => {
   let mainScreen = "ViewPlan";
   const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(AuthContext);
   let planID = plan.id;
-  let rating = plan.rating;
+  let rating = (plan.rating) ? plan.rating : 0;
   let uid = firebaseApp.auth().currentUser.uid;
   const [isFollowing, setIsFollowing] = useState((plan.followers) ? plan.followers.includes(uid) : false);
+
+  if (!plan.id || !plan.followers) return null;
+
   return (
     <TouchableOpacity
       style={
         parentRoute == mainScreen ? styles.viewPlanContainer : styles.container
       }
-      onPress={() => navigation.navigate("ViewPlan", { plan: plan })}
+      onPress={() => navigation.navigate("ViewPlan", { plan: plan, isFollowing: isFollowing })}
     >
       <View style={parentRoute == mainScreen ? { ...styles.textContainer, marginTop: 15 } : styles.textContainer}>
         <Text style={styles.title}>{plan.name}</Text>
@@ -35,10 +38,12 @@ const PlanItem = (props) => {
               followWorkoutPlan({ planID: planID })
               plan.followers.push(uid)
               state.workout_plans.push(plan)
+              state.plan_tracker = { ...state.plan_tracker, planID: 0 };
             } else {
               unfollowWorkoutPlan({ planID: planID });
               plan.followers = plan.followers.filter(e => e !== uid);
               state.workout_plans = state.workout_plans.filter(e => e.id !== planID)
+              delete state.plan_tracker.planID
             }
             setIsFollowing(!isFollowing);
           }}
@@ -70,7 +75,6 @@ const PlanItem = (props) => {
           <Ionicons
             name="md-star"
             color={colors.yellow}
-            type="ionicon"
             size={STAR_SIZE}
             key={i}
           />
@@ -121,11 +125,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: 90,
     borderRadius: 5,
-  },
-  containerStyle: {
-    justifyContent: "center",
-    flex: 0.25,
-    alignItems: "center",
   },
   buttonText: {
     color: colors.black,

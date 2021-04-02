@@ -1,8 +1,7 @@
-import React, { Component, useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Animated,
   Image,
-  Platform,
   ScrollView,
   SafeAreaView,
   RefreshControl,
@@ -12,24 +11,17 @@ import {
   LogBox,
   StatusBar,
 } from "react-native";
-import { Icon } from "react-native-elements";
 import {
   TabView,
-  TabBar,
-  TabViewPagerScroll,
-  TabViewPagerPan,
+  TabBar
 } from "react-native-tab-view";
-import PropTypes from "prop-types";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Spacer from "../components/Spacer";
-import Posts from "./helpers/Posts";
 import { navigate } from "../navigationRef";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Feed from "../components/Feed";
 import serverApi from "../api/server";
 import colors from "../hooks/colors";
 import { Context as PostsContext } from "../context/AuthContext";
-import { firebaseApp, functions } from "../../firebase";
 
 const wait = (timeout) => {
   return new Promise((resolve) => {
@@ -157,7 +149,6 @@ const Profile = (props) => {
                 <Ionicons
                   name="md-heart"
                   color={colors.red}
-                  type="ionicon"
                   size={15}
                 />
               </Text>
@@ -167,7 +158,6 @@ const Profile = (props) => {
                 <Ionicons
                   name="ios-flame"
                   color={colors.red}
-                  type="ionicon"
                   size={15}
                 />
               </Text>
@@ -194,7 +184,6 @@ const Profile = (props) => {
               <Ionicons
                 name="md-settings"
                 color="#505050"
-                type="ionicon"
                 size={35}
               />
             </TouchableOpacity>
@@ -231,16 +220,6 @@ const styles = StyleSheet.create({
   },
   scroll: {
     backgroundColor: colors.white,
-  },
-  sceneContainer: {
-    marginTop: 10,
-  },
-  socialIcon: {
-    marginLeft: 14,
-    marginRight: 14,
-  },
-  socialRow: {
-    flexDirection: "row",
   },
   tabBar: {
     backgroundColor: colors.lightGrey,

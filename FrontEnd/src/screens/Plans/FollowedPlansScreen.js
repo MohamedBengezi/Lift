@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Directions, FlingGestureHandler, State } from 'react-native-gesture-handler';
 import Ionicons from "react-native-vector-icons/Ionicons";

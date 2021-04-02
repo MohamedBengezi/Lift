@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, StatusBar } from 'react-native';
+import { View, TextInput, StyleSheet, StatusBar, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons'
 import colors from '../hooks/colors'
 
