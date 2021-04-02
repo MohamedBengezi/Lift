@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Image, SafeAreaView, StatusBar } from "react-native";
+import { StyleSheet, Image, SafeAreaView } from "react-native";
 import { Button } from "react-native-elements";
 import { navigate } from "../navigationRef";
 import colors from "../hooks/colors";

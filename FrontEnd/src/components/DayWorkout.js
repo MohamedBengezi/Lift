@@ -3,10 +3,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import colors from '../hooks/colors';
 import { Table, Row, Rows } from 'react-native-table-component';
 
-const DayWorkout = ({ navigation, weekday, program }) => {
+const DayWorkout = ({ weekday, program, id, currentDay, isFollowing }) => {
     const [tableHead, setTableHead] = useState(['Workout', 'Length', 'Reps']);
     return (
-        <View style={styles.plans}>
+        <View style={[styles.plans, { backgroundColor: (id == currentDay && isFollowing) ? colors.blue : colors.lighterGrey }]}>
             <Text style={styles.weekday}>{weekday}</Text>
             <View style={styles.container}>
                 <Table style={styles.tableStyle} borderStyle={{ borderWidth: 2 }}>
@@ -15,7 +15,6 @@ const DayWorkout = ({ navigation, weekday, program }) => {
                 </Table>
             </View>
         </View>
-
 
     );
 };

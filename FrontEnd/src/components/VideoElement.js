@@ -1,6 +1,5 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import { WebView } from "react-native-webview";
 import { Video } from "expo-av";
 
 

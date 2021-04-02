@@ -15,7 +15,7 @@ const SettingsScreen = ({ navigation }) => {
     AuthContext
   );
   const [image, setImage] = useState(null);
-  const [userInfo, setUserInfo] = useState({ updatedUsername: "", bio: "" });
+  const [userInfo, setUserInfo] = useState({ updatedUsername: "", bio: "", plan_tracker: state.plan_tracker });
 
   useEffect(() => {
     async () => {
@@ -29,7 +29,6 @@ const SettingsScreen = ({ navigation }) => {
       }
     };
   });
-  // getFitbitInfo();
 
 
 

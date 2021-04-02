@@ -15,17 +15,13 @@ import {
   TabView,
   TabBar
 } from "react-native-tab-view";
-import PropTypes from "prop-types";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Spacer from "../components/Spacer";
-import Posts from "./helpers/Posts";
 import { navigate } from "../navigationRef";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Feed from "../components/Feed";
 import serverApi from "../api/server";
 import colors from "../hooks/colors";
 import { Context as PostsContext } from "../context/AuthContext";
-import { firebaseApp, functions } from "../../firebase";
 
 const wait = (timeout) => {
   return new Promise((resolve) => {
@@ -224,16 +220,6 @@ const styles = StyleSheet.create({
   },
   scroll: {
     backgroundColor: colors.white,
-  },
-  sceneContainer: {
-    marginTop: 10,
-  },
-  socialIcon: {
-    marginLeft: 14,
-    marginRight: 14,
-  },
-  socialRow: {
-    flexDirection: "row",
   },
   tabBar: {
     backgroundColor: colors.lightGrey,

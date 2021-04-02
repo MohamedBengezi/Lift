@@ -116,7 +116,6 @@ const AddTestimonialScreen = ({ navigation }) => {
           style={{ width: 100, borderWidth: 1 }}
           itemStyle={{
             justifyContent: "flex-start",
-            color: colors.black,
           }}
           labelStyle={{ color: colors.black }}
           onChangeItem={(item) => { setTestimonial({ ...testimonial, rating: item.value }) }}
@@ -130,7 +129,6 @@ const AddTestimonialScreen = ({ navigation }) => {
         <Ionicons
           name="md-add-circle"
           color={colors.black}
-          type="ionicon"
           size={35}
           style={{ marginLeft: 10 }}
           onPress={pickBeforeImage}
@@ -147,7 +145,6 @@ const AddTestimonialScreen = ({ navigation }) => {
         <Ionicons
           name="md-add-circle"
           color={colors.black}
-          type="ionicon"
           size={35}
           style={{ marginLeft: 10 }}
           onPress={pickAfterImage}
@@ -167,22 +164,10 @@ const AddTestimonialScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  create: {
-    backgroundColor: colors.blue,
-    width: "70%",
-    borderRadius: 5,
-  },
   button: {
     backgroundColor: colors.blue,
     width: "80%",
     borderRadius: 5,
-  },
-  containerStyle: {
-    position: "absolute",
-    top: 5,
-    right: 5,
-    alignItems: "center",
-    flex: 0.15,
   },
   addPlanStyle: {
     position: "absolute",
@@ -208,16 +193,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textDecorationColor: colors.black,
     fontWeight: "bold",
-  },
-  workout: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignSelf: "center",
-    borderRadius: 5,
-    backgroundColor: colors.lightGrey,
-    padding: 20,
-    margin: 20,
-    width: "60%",
   },
   titleInput: {
     borderBottomWidth: 1,
