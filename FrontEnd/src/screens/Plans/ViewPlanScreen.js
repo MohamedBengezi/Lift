@@ -36,11 +36,10 @@ const ViewPlanScreen = ({ navigation }) => {
   }
 
   const onPress = (index) => {
-    console.log('Pressed!')
     if (currentDay != index) {
-      setCurrentDay(index);
+      setCurrentDay(index); AuthContext
       state.plan_tracker[plan.id] = index;
-      modifyUserInfo({ updatedUsername: "", bio: "", plan_tracker: state.plan_tracker })
+      modifyUserInfo({ updatedUsername: state.username, bio: state.userInfo.bio, plan_tracker: state.plan_tracker })
     }
   }
 

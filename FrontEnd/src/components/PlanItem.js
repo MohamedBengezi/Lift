@@ -13,11 +13,11 @@ const PlanItem = (props) => {
   let mainScreen = "ViewPlan";
   const { state, unfollowWorkoutPlan, followWorkoutPlan } = useContext(AuthContext);
   let planID = plan.id;
-  let rating = plan.rating;
+  let rating = (plan.rating) ? plan.rating : 0;
   let uid = firebaseApp.auth().currentUser.uid;
   const [isFollowing, setIsFollowing] = useState((plan.followers) ? plan.followers.includes(uid) : false);
 
-  if (!plan.id || !plan.rating || !plan.followers) return null;
+  if (!plan.id || !plan.followers) return null;
 
   return (
     <TouchableOpacity
