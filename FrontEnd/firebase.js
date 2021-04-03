@@ -7,23 +7,14 @@ import firebaseFunctions from "firebase/functions";
 import "firebase/storage";
 import property from "./src/property.json";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAxt8pC5E6NeUaqLxi2Lpudf32dJu4IqdU",
-  authDomain: "uplift-e96ab.firebaseapp.com",
-  databaseURL: "https://uplift-e96ab.firebaseio.com",
-  projectId: "uplift-e96ab",
-  storageBucket: "uplift-e96ab.appspot.com",
-  messagingSenderId: "814435036323",
-  appId: "1:814435036323:web:398dad86cb4081a1152316",
-  measurementId: "G-7RM09F25F7",
-};
+const firebaseConfig = property.firebase
 
 export const firebaseApp = firebase.initializeApp(firebaseConfig);
 let f1 = firebase.functions(firebaseApp);
 
-console.log("using emulator: "+property.useEmulator)
+console.log("using emulator: " + property.useEmulator)
 if (property.useEmulator) {
-  
+
   const emulator = require("./src/emulator_link.json");
   var link = emulator.tunnels[0].public_url;
   console.log("Emulator link: " + link);
@@ -32,9 +23,9 @@ if (property.useEmulator) {
       "Getting NGROK URL failed.\n 1) Please make sure you have NGROK installed \n 2) Please check if you are running 'startFirebaseEmulator.bat'. If this was not running, please run it and reload the application"
     );
   }
- // firebaseApp.auth().useEmulator(`${link}:9099`);
- // var db = firebase.firestore();
-//  db.useEmulator(link,8080);
+  // firebaseApp.auth().useEmulator(`${link}:9099`);
+  // var db = firebase.firestore();
+  //  db.useEmulator(link,8080);
 
   f1.useEmulator("10.0.2.2", 5001);
 }
@@ -55,14 +46,14 @@ export const uploadMedia = async (mediaURI, uid, postType) => {
   //Create firebase reference
   let ref = firebaseApp.storage().ref();
   let path = ``;
-  if(postType==="feedback"){
-    path=`public/feedback_posts/${uid}/${uuidv4()}`;
-  } else if (postType==="regular"){
-    path=`public/general_posts/${uid}/${uuidv4()}`;
-  } else if (postType === "testimonial"){
-    path=`public/workout_plans/${uid}/${uuidv4()}`;
-  } else if(postType === "profilePicture"){
-    path=`public/profiles/${uid}/${uuidv4()}`;
+  if (postType === "feedback") {
+    path = `public/feedback_posts/${uid}/${uuidv4()}`;
+  } else if (postType === "regular") {
+    path = `public/general_posts/${uid}/${uuidv4()}`;
+  } else if (postType === "testimonial") {
+    path = `public/workout_plans/${uid}/${uuidv4()}`;
+  } else if (postType === "profilePicture") {
+    path = `public/profiles/${uid}/${uuidv4()}`;
   }
 
   ref = ref.child(path);
