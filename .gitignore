@@ -106,4 +106,4 @@ dist
 # VS Code config
 .vscode/
 
-property.json
+./FrontEnd/src/property.json
