@@ -41,19 +41,23 @@ const Profile = (props) => {
       {
         key: "2",
         title: "following",
-        count: userInfo ? userInfo.following : 0,
+        count: 0,
       },
       {
         key: "3",
         title: "followers",
-        count: userInfo ? userInfo.followers : 0,
+        count: 0,
       },
     ],
   });
+  if (userInfo && userInfo.followers) tabs.routes[2].count = userInfo.followers.length;
+  if (userInfo && userInfo.following) tabs.routes[1].count = userInfo.following.length;
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getUserPost(setPosts);
+    if (userInfo && userInfo.followers) tabs.routes[2].count = userInfo.followers.length;
+    if (userInfo && userInfo.following) tabs.routes[1].count = userInfo.following.length;
     getFitbitInfo();
     wait(2000).then(() => {
       setRefreshing(false);
@@ -61,6 +65,7 @@ const Profile = (props) => {
   }, []);
   useEffect(() => {
     getUserPost(setPosts);
+
     getFitbitInfo();
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     LogBox.ignoreLogs(["Setting a timer"]);

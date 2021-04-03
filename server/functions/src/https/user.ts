@@ -17,8 +17,8 @@ export const addUserToDB = functions.https.onCall((data, context) => {
     .set({
       username: username,
       bio: "",
-      following: 0,
-      followers: 0,
+      following: [],
+      followers: [],
       fitbitInfo: fitbitInfo,
       workout_plans: [],
       plan_tracker: {},
@@ -101,9 +101,9 @@ export const modifyFollowing = functions.https.onCall(
       .doc(uidFollowing)
       .get()
       .then((doc) => {
-        return{ following: doc.get("following") };
+        return { following: doc.get("following") };
       });
-      const query2 = await usersRef
+    const query2 = await usersRef
       .doc(uidBeingFollowed)
       .get()
       .then((doc) => {
@@ -134,8 +134,8 @@ export const getUserInfo = functions.https.onCall(async (data, context) => {
   let returnData = {
     id: "",
     bio: "",
-    followers: 0,
-    following: 0,
+    followers: [],
+    following: [],
     profilePicture: "",
     plan_tracker: {},
   };

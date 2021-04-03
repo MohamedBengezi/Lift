@@ -32,24 +32,29 @@ const wait = timeout => {
 };
 
 const ViewProfile = (props) => {
-    const { state, getUserPost } = useContext(PostsContext);
+    const { state, getUserPost, modifyFollowing } = useContext(PostsContext);
     const [propTypes, setPropTypes] = useState({ ...props });
-    
-  //  const [userInfo, setUserInfo] = useState(propTypes.userInfo.data);
-  const userInfo = state.otherUserInfo;
+
+    //  const [userInfo, setUserInfo] = useState(propTypes.userInfo.data);
+    const userInfo = state.otherUserInfo;
+    console.log('userInfo: ', userInfo);
     const [posts, setPosts] = useState(null);
     const [isFollowing, setIsFollowing] = useState(false);
     const [tabs, setTabs] = useState({
         index: 0,
         routes: [
             { key: '1', title: 'posts', count: 0 },
-            { key: '2', title: 'following', count: userInfo ? userInfo.following :0  },
-            { key: '3', title: 'followers', count: userInfo ? userInfo.followers :0 },
+            { key: '2', title: 'following', count: 0 },
+            { key: '3', title: 'followers', count: 0 },
         ],
     })
+    if (userInfo && userInfo.followers) tabs.routes[2].count = userInfo.followers.length;
+    if (userInfo && userInfo.following) tabs.routes[1].count = userInfo.following.length;
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
+        if (userInfo && userInfo.followers) tabs.routes[2].count = userInfo.followers.length;
+        if (userInfo && userInfo.following) tabs.routes[1].count = userInfo.following.length;
         getUserPost(setPosts, propTypes.uid);
         wait(2000).then(() => {
             setRefreshing(false);
@@ -143,6 +148,7 @@ const ViewProfile = (props) => {
                 title={isFollowing ? "Unfollow" : "Follow"}
                 onPress={() => {
                     setIsFollowing(!isFollowing);
+                    if (!isFollowing) modifyFollowing({ uidBeingFollowed: propTypes.uid })
                 }}
                 buttonStyle={isFollowing ? styles.button : { ...styles.button, backgroundColor: colors.blue }}
                 titleStyle={styles.buttonText}
