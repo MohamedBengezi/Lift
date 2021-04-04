@@ -135,6 +135,8 @@ export const deleteFeedbackPost = functions.https.onCall(
     try {
       const postRef = admin.firestore().collection("feedback_posts").doc(docID);
       await postRef.delete();
+      const path = (await postRef.get()).data()?.mediaPath;
+      await storageUtils.deleteFile(path);
     } catch (err) {
       throw new functions.https.HttpsError(
         "internal",

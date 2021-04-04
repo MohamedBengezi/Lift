@@ -17,9 +17,9 @@ export const getDownloadURL = (filePath: string) => {
 
   async function getContentType() {
     const [metadata] = await storage
-    .bucket(BUCKET_PATH)
-    .file(filePath)
-    .getMetadata();
+      .bucket(BUCKET_PATH)
+      .file(filePath)
+      .getMetadata();
 
     return metadata.contentType;
   }
@@ -27,9 +27,12 @@ export const getDownloadURL = (filePath: string) => {
   const type = getContentType();
 
   const mediaData = {
-    downloadURL: storage.bucket(BUCKET_PATH).file(filePath).getSignedUrl({ action: "read", expires: "09-09-2051" }),
+    downloadURL: storage
+      .bucket(BUCKET_PATH)
+      .file(filePath)
+      .getSignedUrl({ action: "read", expires: "09-09-2051" }),
     contentType: type,
-  }
+  };
 
   return mediaData;
 };
@@ -50,4 +53,16 @@ export const moveFile = async (
   await storage.file(srcPath).copy(storage.file(destPath));
 
   return storage.file(srcPath).delete();
+};
+
+/**
+ * Deletes the specifed file at path
+ * @param {string} path
+ */
+export const deleteFile = (path: string | undefined) => {
+  if (path === undefined) {
+    return null;
+  }
+  const storage = admin.storage().bucket(BUCKET_PATH);
+  return storage.file(path).delete();
 };
