@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, Image, Alert, Platform } from "react-native";
 import { Input, Button } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -7,17 +7,15 @@ import { navigate } from "../navigationRef";
 import colors from "../hooks/colors";
 import { Context as AuthContext } from "../context/AuthContext";
 import property from "../property.json";
-import qs from "qs";
 import * as WebBrowser from "expo-web-browser";
-import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
-import axios from "axios";
+import { useAuthRequest } from "expo-auth-session";
 
 const SettingsScreen = ({ navigation }) => {
   const { signout, saveFitbitToken, state, addProfilePicture, modifyUserInfo } = useContext(
     AuthContext
   );
   const [image, setImage] = useState(null);
-  const [userInfo, setUserInfo] = useState({ updatedUsername: "", bio: "" });
+  const [userInfo, setUserInfo] = useState({ updatedUsername: "", bio: "", plan_tracker: state.plan_tracker });
 
   useEffect(() => {
     async () => {
@@ -31,7 +29,6 @@ const SettingsScreen = ({ navigation }) => {
       }
     };
   });
-  // getFitbitInfo();
 
 
 
@@ -48,7 +45,8 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const saveUserInfo = () => {
-    if (!image || userInfo.updatedUsername == "" && userInfo.bio == "" || userInfo.updatedUsername.trim() == state.username.trim()) {
+    console.log("userInfo bio", userInfo.bio)
+    if (userInfo.updatedUsername.length == 0 && userInfo.bio.length == 0 || userInfo.updatedUsername.length > 0 && userInfo.updatedUsername.trim() == state.username.trim()) {
       return Alert.alert(
         "Must input a new username or bio",
         "At least one input field can't be empty! If updating username it must be different from current one",
@@ -63,7 +61,7 @@ const SettingsScreen = ({ navigation }) => {
         { cancelable: false }
       );
     } else {
-      addProfilePicture({ uri: image });
+      if (image) addProfilePicture({ uri: image });
       state.username = userInfo.updatedUsername;
       modifyUserInfo(userInfo);
       navigation.goBack();
@@ -145,7 +143,6 @@ const SettingsScreen = ({ navigation }) => {
           <Ionicons
             name="md-add-circle"
             color={colors.black}
-            type="ionicon"
             size={35}
             style={{ marginLeft: 10 }}
             onPress={pickImage}

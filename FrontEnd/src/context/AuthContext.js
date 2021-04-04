@@ -58,6 +58,11 @@ const authReducer = (state, action) => {
         otherUsername: action.username,
         otherProfilePicture: action.userInfo.profilePicture,
       };
+    case "updatePlanTracker":
+      return {
+        ...state,
+        plan_tracker: action.plan_tracker
+      };
     case "getTestimonials":
       return {
         ...state,
@@ -316,6 +321,10 @@ const getUserInfo = (dispatch) => {
           res.data.profilePicture = undefined;
         }
         dispatch({
+          type: "updatePlanTracker",
+          plan_tracker: res.data.plan_tracker,
+        });
+        dispatch({
           type: "updateUserInfo",
           userInfo: res.data,
         });
@@ -368,6 +377,19 @@ const getOtherUserInfo = (dispatch) => {
           userInfo: res.data,
           username: data.username,
         });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
+const modifyFollowing = (dispatch) => {
+  return async (data) => {
+    var modifyFollowing = functions.httpsCallable("user-modifyFollowing");
+    modifyFollowing(data)
+      .then((res) => {
+        console.log("followed user!");
       })
       .catch((error) => {
         console.error(error);
@@ -723,6 +745,7 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserInfo,
     modifyUserInfo,
+    modifyFollowing,
     getUserPlans,
     getUserPost,
     getFeedbackPosts,
@@ -745,5 +768,5 @@ export const { Provider, Context } = createDataContext(
     getOtherUserInfo,
     getTestimonials
   },
-  { token: null, errorMessage: "", posts: {}, workout_plans: [] }
+  { token: null, errorMessage: "", posts: {}, workout_plans: [], plan_tracker: {} }
 );

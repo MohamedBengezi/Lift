@@ -1,8 +1,7 @@
-import React, { Component, useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Animated,
   Image,
-  Platform,
   ScrollView,
   SafeAreaView,
   RefreshControl,
@@ -12,24 +11,17 @@ import {
   LogBox,
   StatusBar,
 } from "react-native";
-import { Icon } from "react-native-elements";
 import {
   TabView,
-  TabBar,
-  TabViewPagerScroll,
-  TabViewPagerPan,
+  TabBar
 } from "react-native-tab-view";
-import PropTypes from "prop-types";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Spacer from "../components/Spacer";
-import Posts from "./helpers/Posts";
 import { navigate } from "../navigationRef";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Feed from "../components/Feed";
 import serverApi from "../api/server";
 import colors from "../hooks/colors";
 import { Context as PostsContext } from "../context/AuthContext";
-import { firebaseApp, functions } from "../../firebase";
 
 const wait = (timeout) => {
   return new Promise((resolve) => {
@@ -49,19 +41,23 @@ const Profile = (props) => {
       {
         key: "2",
         title: "following",
-        count: userInfo ? userInfo.following : 0,
+        count: 0,
       },
       {
         key: "3",
         title: "followers",
-        count: userInfo ? userInfo.followers : 0,
+        count: 0,
       },
     ],
   });
+  if (userInfo && userInfo.followers) tabs.routes[2].count = userInfo.followers.length;
+  if (userInfo && userInfo.following) tabs.routes[1].count = userInfo.following.length;
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getUserPost(setPosts);
+    if (userInfo && userInfo.followers) tabs.routes[2].count = userInfo.followers.length;
+    if (userInfo && userInfo.following) tabs.routes[1].count = userInfo.following.length;
     getFitbitInfo();
     wait(2000).then(() => {
       setRefreshing(false);
@@ -69,6 +65,7 @@ const Profile = (props) => {
   }, []);
   useEffect(() => {
     getUserPost(setPosts);
+
     getFitbitInfo();
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
     LogBox.ignoreLogs(["Setting a timer"]);
@@ -157,7 +154,6 @@ const Profile = (props) => {
                 <Ionicons
                   name="md-heart"
                   color={colors.red}
-                  type="ionicon"
                   size={15}
                 />
               </Text>
@@ -167,7 +163,6 @@ const Profile = (props) => {
                 <Ionicons
                   name="ios-flame"
                   color={colors.red}
-                  type="ionicon"
                   size={15}
                 />
               </Text>
@@ -194,7 +189,6 @@ const Profile = (props) => {
               <Ionicons
                 name="md-settings"
                 color="#505050"
-                type="ionicon"
                 size={35}
               />
             </TouchableOpacity>
@@ -231,16 +225,6 @@ const styles = StyleSheet.create({
   },
   scroll: {
     backgroundColor: colors.white,
-  },
-  sceneContainer: {
-    marginTop: 10,
-  },
-  socialIcon: {
-    marginLeft: 14,
-    marginRight: 14,
-  },
-  socialRow: {
-    flexDirection: "row",
   },
   tabBar: {
     backgroundColor: colors.lightGrey,

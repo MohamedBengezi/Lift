@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import { Button } from "react-native-elements";
 import { Context as AuthContext } from "../../context/AuthContext";
@@ -30,7 +30,7 @@ const CreatePlanScreen = ({ navigation }) => {
   plan = (navigation.getParam('plan')) ? navigation.getParam('plan') : plan;
 
 
-  
+
 
   const onSubmit = () => {
     plan.tags = plan.tags.split(',');
@@ -81,7 +81,7 @@ const CreatePlanScreen = ({ navigation }) => {
             defaultValue={1}
             style={{ width: 60, borderWidth: 1, marginRight: 5 }}
             itemStyle={{
-              justifyContent: 'flex-start', color: colors.black
+              justifyContent: 'flex-start'
             }}
             labelStyle={{ color: colors.black }}
             onChangeItem={item => plan.duration = item.value}
@@ -95,7 +95,7 @@ const CreatePlanScreen = ({ navigation }) => {
             defaultValue={'days'}
             style={{ width: 100, borderWidth: 1 }}
             itemStyle={{
-              justifyContent: 'flex-start', color: colors.black
+              justifyContent: 'flex-start'
             }}
             labelStyle={{ color: colors.black }}
             onChangeItem={item => plan.duration = plan.duration + " " + item.value}
@@ -119,7 +119,7 @@ const CreatePlanScreen = ({ navigation }) => {
             defaultValue={'beginner'}
             style={{ width: 150, borderWidth: 1 }}
             itemStyle={{
-              justifyContent: 'flex-start', color: colors.black
+              justifyContent: 'flex-start'
             }}
             labelStyle={{ color: colors.black }}
             onChangeItem={item => plan.experience_level = item.value}
@@ -138,7 +138,7 @@ const CreatePlanScreen = ({ navigation }) => {
             defaultValue={'strength'}
             style={{ width: 150, borderWidth: 1 }}
             itemStyle={{
-              justifyContent: 'flex-start', color: colors.black
+              justifyContent: 'flex-start'
             }}
             labelStyle={{ color: colors.black }}
             onChangeItem={item => plan.goal = item.value}

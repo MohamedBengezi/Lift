@@ -17,10 +17,11 @@ export const addUserToDB = functions.https.onCall((data, context) => {
     .set({
       username: username,
       bio: "",
-      following: 0,
-      followers: 0,
+      following: [],
+      followers: [],
       fitbitInfo: fitbitInfo,
       workout_plans: [],
+      plan_tracker: {},
     })
     .then(() => {
       return { message: "success" };
@@ -65,13 +66,19 @@ export const modifyUser = functions.https.onCall(async (data, context) => {
   const uid = context.auth!.uid;
   const updatedUsername = data.updatedUsername;
   const bio = data.bio;
+  const plan_tracker = data.plan_tracker;
+
   let info = {};
-  if (updatedUsername == "") {
-    info = { bio: bio };
-  } else if (bio == "") {
-    info = { username: updatedUsername };
-  } else {
-    info = { username: updatedUsername, bio: bio };
+
+  if (updatedUsername === "" && bio !== "") {
+    info = { bio: bio, plan_tracker: plan_tracker };
+  } else if (bio === "" && updatedUsername !== "") {
+    info = { username: updatedUsername, plan_tracker: plan_tracker };
+  } else if (bio !== "" && updatedUsername !== "") {
+    info = { username: updatedUsername, bio: bio, plan_tracker: plan_tracker };
+  }
+  else {
+    info = { plan_tracker: plan_tracker };
   }
   await admin.firestore().collection("users").doc(uid).update(info);
 });
@@ -81,13 +88,37 @@ export const deleteAccount = functions.https.onCall(async (data, context) => {
   await admin.firestore().collection("users").doc(uid).delete();
 });
 
-export const modifyFollowing = functions.https.onRequest(
-  async (request, response) => {
-    const following = request.body.following;
-    const uid = request.body.uid;
+export const modifyFollowing = functions.https.onCall(
+  async (data, context) => {
+    // a user follows another person
+    // updated following list of the user
+    // update follower list of the followed person
+    const uidFollowing = context.auth!.uid; // user performing the follow action
+    const uidBeingFollowed = data.uidBeingFollowed;
 
-    await admin.firestore().collection("users").doc(uid).update({
-      following: following,
+    const usersRef = admin.firestore().collection("users");
+    const query1 = await usersRef
+      .doc(uidFollowing)
+      .get()
+      .then((doc) => {
+        return { following: doc.get("following") };
+      });
+    const query2 = await usersRef
+      .doc(uidBeingFollowed)
+      .get()
+      .then((doc) => {
+        return { followers: doc.get("followers") };
+      });
+
+    query1.following.push(uidBeingFollowed);
+    query2.followers.push(uidFollowing);
+
+    await admin.firestore().collection("users").doc(uidFollowing).update({
+      following: query1.following,
+    });
+
+    await admin.firestore().collection("users").doc(uidBeingFollowed).update({
+      followers: query2.followers,
     });
   }
 );
@@ -103,9 +134,10 @@ export const getUserInfo = functions.https.onCall(async (data, context) => {
   let returnData = {
     id: "",
     bio: "",
-    followers: 0,
-    following: 0,
+    followers: [],
+    following: [],
     profilePicture: "",
+    plan_tracker: {},
   };
   await usersRef
     .where("username", "==", username)
@@ -121,6 +153,7 @@ export const getUserInfo = functions.https.onCall(async (data, context) => {
           followers: docData.followers,
           following: docData.following,
           profilePicture: docData.profilePicture,
+          plan_tracker: docData.plan_tracker,
         };
         console.log("Leaving foreach ", returnData);
         return;
@@ -191,9 +224,8 @@ async function getCaloriesBurned(token: string) {
     },
   });
   const date = new Date();
-  const fitbitDate = `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()}`;
+  const fitbitDate = `${date.getFullYear()}-${date.getMonth() + 1
+    }-${date.getDate()}`;
   await api
     .get(`/${fitbitDate}.json`)
     .then((res) => {

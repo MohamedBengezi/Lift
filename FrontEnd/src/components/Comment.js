@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, Image, Dimensions } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { navigate } from "../navigationRef";
 import colors from '../hooks/colors';
@@ -46,19 +45,19 @@ const Comment = ({ comment, index, isFeedback }) => { //pull out onPress and tit
                     onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: username })}>
                     <Image source={{ uri: profile_image || '' }} style={styles.commentAvatar} />
                 </TouchableOpacity>
-                <View style={styles.postUsernameLocationContainer}>
-                    <TouchableOpacity style={styles.postUsernameView}
+                <View>
+                    <TouchableOpacity
                         onPress={() => navigate('ViewProfile', { isHeaderShow: true, username: username })}>
                         <Text style={styles.commentUsernameLabel}>{username}</Text>
                     </TouchableOpacity>
-                    <View style={styles.postLocationView}>
+                    <View>
                         <Text style={styles.commentContentLabel}>{cmt}</Text>
                     </View>
                 </View>
                 <View style={styles.like}>
                     <Ionicons
                         name={liked ? "md-heart" : "md-heart-empty"}
-                        color={liked ? colors.red : null} type="ionicon" size={25}
+                        color={liked ? colors.red : null} size={25}
                         onPress={() => onPressLike()}
                     />
                 </View>
