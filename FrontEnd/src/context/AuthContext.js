@@ -384,6 +384,19 @@ const getOtherUserInfo = (dispatch) => {
   };
 };
 
+const modifyFollowing = (dispatch) => {
+  return async (data) => {
+    var modifyFollowing = functions.httpsCallable("user-modifyFollowing");
+    modifyFollowing(data)
+      .then((res) => {
+        console.log("followed user!");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+};
+
 const getUserPost = () => {
   return async (setPosts, userid) => {
     let uid = userid ? userid : firebaseApp.auth().currentUser.uid;
@@ -732,6 +745,7 @@ export const { Provider, Context } = createDataContext(
     uploadPost,
     getUserInfo,
     modifyUserInfo,
+    modifyFollowing,
     getUserPlans,
     getUserPost,
     getFeedbackPosts,
