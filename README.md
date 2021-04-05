@@ -8,5 +8,5 @@ Social Media App designed for weightlifting enthusiasts
 
 # Installation:
 - Clone repository
-- Run `npm install`
-- Run `expo start`
+- Run `installDependencies.bat` in `bat files` directory
+- Run `./startApp.bat`
