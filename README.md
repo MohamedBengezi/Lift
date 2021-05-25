@@ -12,4 +12,5 @@ Social Media App designed for weightlifting enthusiasts
 - place a file named `property.json` in src/FrontEnd/ with a firebase API key: `"firebase": "API_KEY"`and `useEmulator: false`
 - Run `./startApp.bat`
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/oYTnIJkU9dI/0.jpg)](https://www.youtube.com/watch?v=oYTnIJkU9dI)
+[![Introduction: ](https://img.youtube.com/vi/ybly7hHts2Q/0.jpg)](https://www.youtube.com/watch?v=ybly7hHts2Q)
+[![Demo: ](https://img.youtube.com/vi/GOmQPW8L2aA/0.jpg)](https://www.youtube.com/watch?v=GOmQPW8L2aA)
