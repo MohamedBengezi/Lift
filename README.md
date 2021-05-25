@@ -1,4 +1,4 @@
-# Lift
+# Uplift
 Social Media App designed for weightlifting enthusiasts
 
 # Prerequisites
